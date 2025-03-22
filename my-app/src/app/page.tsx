@@ -3,12 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SearchCard } from "@/custom/ui/search-card";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { mockStartups, Startup } from "@/types/startup";
 import { ArrowLeft, Search, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function Home() {
+  const isMobile = useIsMobile()
   const [searchQuery, setSearchQuery] = useState("")
   const [results, setResults] = useState<Startup[]>([])
   const [hasSearched, setHasSearched] = useState(false);
@@ -35,19 +37,21 @@ export default function Home() {
   return (
     <main className="flex min-h-screen h-screen overflow-hidden relative">
       {/* Mobile toggle button - only visible on small screens */}
-      <Button
-        variant="outline"
-        size="icon"
-        className="md:hidden fixed top-4 left-4 z-50"
-        onClick={() => setShowSearch(!showSearch)}
-        aria-label={showSearch ? "Close search" : "Open search"}
-      >
-        {showSearch ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
-      </Button>
+      {isMobile && (
+        <Button
+          variant="outline"
+          size="icon"
+          className="fixed top-4 left-4 z-50"
+          onClick={() => setShowSearch(!showSearch)}
+          aria-label={showSearch ? "Close search" : "Open search"}
+        >
+          {showSearch ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
+        </Button>
+      )}
 
       {/* Mobile search hint - only visible when search is hidden */}
-      {!showSearch && (
-        <div className="md:hidden fixed top-6 left-16 z-50 flex items-center text-sm text-gray-600 animate-pulse">
+      {isMobile && !showSearch && (
+        <div className="fixed top-6 left-16 z-50 flex items-center text-sm text-gray-600 animate-pulse">
           <ArrowLeft className="h-4 w-4 mr-1" />
           <span>Try searching for startups!</span>
         </div>

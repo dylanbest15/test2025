@@ -4,6 +4,7 @@ import { AppSidebar } from "@/custom/ui/app-sidebar";
 import { AppTopbar } from "@/custom/ui/app-topbar";
 import PitchDeck from "@/custom/ui/pitch-deck";
 import ProgressCard from "@/custom/ui/progress-card";
+import StartupDashboard from "@/custom/ui/startup-dashboard";
 import { mockStartups } from "@/types/startup";
 import { TabsList } from "@radix-ui/react-tabs";
 import { notFound } from "next/navigation";
@@ -30,20 +31,7 @@ export default async function Dashboard({ params }: DashboardProps) {
       <div className="flex flex-1">
         <SidebarProvider>
           <AppSidebar className="pt-16" startup={startup} />
-          <main className="flex-1 w-full mx-auto p-8 flex flex-col items-center">
-            <Tabs defaultValue="fund-pool" className="w-[400px]">
-              <TabsList className="grid w-full grid-cols-2 rounded bg-gray-100 mb-2">
-                <TabsTrigger value="fund-pool">Fund Pool</TabsTrigger>
-                <TabsTrigger value="pitch-deck">Pitch Deck</TabsTrigger>
-              </TabsList>
-              <TabsContent value="fund-pool">
-                <ProgressCard startup={startup}></ProgressCard>
-              </TabsContent>
-              <TabsContent value="pitch-deck">
-                <PitchDeck startup={startup}></PitchDeck>
-              </TabsContent>
-            </Tabs>
-          </main>
+          <StartupDashboard startup={startup}></StartupDashboard>
         </SidebarProvider>
       </div>
     </div>

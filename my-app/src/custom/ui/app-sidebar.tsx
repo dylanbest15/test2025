@@ -1,5 +1,4 @@
 import { MapPin, User } from "lucide-react"
-
 import {
   Sidebar,
   SidebarContent,

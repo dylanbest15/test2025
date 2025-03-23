@@ -1,12 +1,8 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { Tabs, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 import { AppSidebar } from "@/custom/ui/app-sidebar";
 import { AppTopbar } from "@/custom/ui/app-topbar";
-import PitchDeck from "@/custom/ui/pitch-deck";
-import ProgressCard from "@/custom/ui/progress-card";
 import StartupDashboard from "@/custom/ui/startup-dashboard";
 import { mockStartups } from "@/types/startup";
-import { TabsList } from "@radix-ui/react-tabs";
 import { notFound } from "next/navigation";
 
 interface DashboardProps {

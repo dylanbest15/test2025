@@ -85,7 +85,7 @@ export default function Home() {
                   {results.length > 0 ? (
                     results.map((startup) => (
                       <div key={startup.id}>
-                        <SearchCard {...startup}></SearchCard>
+                        <SearchCard startup={startup}></SearchCard>
                       </div>
                     ))
                   ) : (

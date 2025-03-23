@@ -2,9 +2,8 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Bell, LogOut, Search, User } from "lucide-react"
+import { Bell, LogOut, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useIsMobile } from "@/hooks/use-mobile"
+import { SearchBar } from "@/custom/ui/search-bar"
 
 interface TopbarProps {
   onSearch?: (query: string) => void
@@ -24,7 +23,6 @@ interface TopbarProps {
 }
 
 export function AppTopbar({ onSearch, onLogout, userName = "User", userAvatar, notificationCount = 0 }: TopbarProps) {
-  const isMobile = useIsMobile()
   const [searchQuery, setSearchQuery] = React.useState("")
 
   const handleSearch = (e: React.FormEvent) => {
@@ -40,18 +38,7 @@ export function AppTopbar({ onSearch, onLogout, userName = "User", userAvatar, n
         <Link href="/" className="flex items-center gap-2">
           <span className="text-xl font-bold">The Fund Pool</span>
         </Link>
-        <form onSubmit={handleSearch}>
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="w-64 rounded-md pl-8 md:w-80"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </form>
+        <SearchBar></SearchBar>
       </div>
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">

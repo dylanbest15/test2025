@@ -13,31 +13,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SearchBar } from "@/custom/ui/search-bar"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 interface TopbarProps {
-  onSearch?: (query: string) => void
   onLogout?: () => void
   userName?: string
   userAvatar?: string
   notificationCount?: number
 }
 
-export function AppTopbar({ onSearch, onLogout, userName = "User", userAvatar, notificationCount = 0 }: TopbarProps) {
-  const [searchQuery, setSearchQuery] = React.useState("")
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (onSearch) {
-      onSearch(searchQuery)
-    }
-  }
+export function AppTopbar({ onLogout, userName = "User", userAvatar, notificationCount = 0 }: TopbarProps) {
+  const isMobile = useIsMobile()
 
   return (
     <div className="sticky top-0 z-50 w-full flex h-16 items-center justify-between border-b bg-background px-4 md:px-6">
       <div className="flex items-center gap-4 md:gap-6">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold">The Fund Pool</span>
-        </Link>
+        {!isMobile && (
+          <Link href="/" className="flex items-center gap-2">
+            <span className="text-xl font-bold">The Fund Pool</span>
+          </Link>
+        )}
         <SearchBar></SearchBar>
       </div>
       <div className="flex items-center gap-2">

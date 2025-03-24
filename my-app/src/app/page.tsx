@@ -64,7 +64,7 @@ export default function Home() {
       >
         <div className="pt-10 md:pt-0">
           <div className="max-w-xl h-full flex flex-col">
-            <h2 className="text-2xl font-medium mb-6">Search for startups.</h2>
+            <h2 className="text-xl font-medium mb-6 mt-4">Search for startups.</h2>
 
             <div className="relative mb-6">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">

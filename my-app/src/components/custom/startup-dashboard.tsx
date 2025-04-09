@@ -2,8 +2,8 @@
 
 import { Tabs, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 import { TabsList } from "@radix-ui/react-tabs";
-import ProgressCard from "@/custom/ui/progress-card";
-import PitchDeck from "@/custom/ui/pitch-deck";
+import ProgressCard from "@/components/custom/progress-card";
+import PitchDeck from "@/components/custom/pitch-deck";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Startup } from "@/types/startup";
 

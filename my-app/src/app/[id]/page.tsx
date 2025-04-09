@@ -1,7 +1,7 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/custom/ui/app-sidebar";
-import { AppTopbar } from "@/custom/ui/app-topbar";
-import StartupDashboard from "@/custom/ui/startup-dashboard";
+import { AppSidebar } from "@/components/custom/app-sidebar";
+import { AppTopbar } from "@/components/custom/app-topbar";
+import StartupDashboard from "@/components/custom/startup-dashboard";
 import { mockStartups } from "@/types/startup";
 import { notFound } from "next/navigation";
 
@@ -22,14 +22,14 @@ export default async function Dashboard({ params }: DashboardProps) {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <AppTopbar notificationCount={3} />
-      <div className="flex flex-1">
+    // <div className="flex flex-col min-h-screen">
+      // <AppTopbar notificationCount={3} />
+      // <div className="flex flex-1">
         <SidebarProvider>
           <AppSidebar className="pt-16" startup={startup} />
           <StartupDashboard startup={startup}></StartupDashboard>
         </SidebarProvider>
-      </div>
-    </div>
+      // </div>
+    // </div>
   )
 }

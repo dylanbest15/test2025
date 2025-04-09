@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { SearchBar } from "@/custom/ui/search-bar"
+import { SearchBar } from "@/components/custom/search-bar"
 import { useIsMobile } from "@/hooks/use-mobile"
 
 interface TopbarProps {

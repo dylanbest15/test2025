@@ -1,4 +1,4 @@
-// import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import SearchDemo from "@/components/custom/search-demo";
 import Link from "next/link";
 import { signInAction } from "@/app/actions";
@@ -15,19 +15,18 @@ export default async function Home(props: { searchParams: Promise<Message> }) {
       <SearchDemo />
 
       {/* Fund Pool info - always visible */}
-      <div className="w-full md:w-1/2 p-6 md:p-10 flex items-center justify-center flex-shrink-0">
-        <div className="max-w-md">
+      <div className="w-full md:w-3/7 p-3 md:p-10 flex items-center justify-center flex-shrink-0">
+        <div className="max-w-md w-3/4">
           <h1 className="mb-2 text-4xl font-medium text-gray-900">The Fund Pool</h1>
           <p className="mb-8 text-gray-600">The new hub for startups and investors.</p>
 
           <div className="mb-8 h-px w-full bg-gray-200" />
 
-          {/* <p className="mb-6 text-gray-700">
+          <p className="mb-6 text-gray-700">
             Join as a startup and connect with investors. Join as an investor and connect with startups.
-          </p> */}
+          </p>
 
-          <form className="flex-1 flex flex-col min-w-64">
-            {/* <h1 className="text-2xl font-medium">Sign in</h1> */}
+          {/* <form className="flex-1 flex flex-col">
             <p className="text-sm text-foreground">
               Don't have an account?{" "}
               <Link className="text-foreground font-medium underline" href="/sign-up">
@@ -57,16 +56,16 @@ export default async function Home(props: { searchParams: Promise<Message> }) {
               </SubmitButton>
               <FormMessage message={searchParams} />
             </div>
-          </form>
+          </form> */}
 
-          {/* <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4">
             <Button asChild variant="default" className="bg-blue-500 hover:bg-blue-600">
               <Link href="/sign-in">Sign in</Link>
             </Button>
             <Button asChild variant="default" className="bg-blue-500 hover:bg-blue-600">
               <Link href="/sign-up">Sign up</Link>
             </Button>
-          </div> */}
+          </div>
         </div>
       </div>
     </main>

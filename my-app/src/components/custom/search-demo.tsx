@@ -58,7 +58,7 @@ export default function SearchDemo() {
 
       {/* Search section - hidden by default on mobile */}
       <div
-        className={`w-full md:w-1/2 p-6 md:p-10 border-r flex-shrink-0 overflow-hidden transition-all duration-300 absolute md:relative ${showSearch ? "left-0" : "-left-full"
+        className={`w-full md:w-4/7 p-6 md:p-10 border-r flex-shrink-0 overflow-hidden transition-all duration-300 absolute md:relative ${showSearch ? "left-0" : "-left-full"
           } md:left-0 h-full bg-background z-40`}
       >
         <div className="pt-10 md:pt-0">

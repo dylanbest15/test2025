@@ -22,14 +22,14 @@ export default async function Dashboard({ params }: DashboardProps) {
   }
 
   return (
-    // <div className="flex flex-col min-h-screen">
-      // <AppTopbar notificationCount={3} />
-      // <div className="flex flex-1">
+    <div className="flex flex-col min-h-screen">
+      <AppTopbar notificationCount={3} />
+      <div className="flex flex-1">
         <SidebarProvider>
           <AppSidebar className="pt-16" startup={startup} />
           <StartupDashboard startup={startup}></StartupDashboard>
         </SidebarProvider>
-      // </div>
-    // </div>
+      </div>
+    </div>
   )
 }

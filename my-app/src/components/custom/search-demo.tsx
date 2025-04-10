@@ -47,7 +47,6 @@ export default function SearchDemo() {
           {showSearch ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
         </Button>
       )}
-
       {/* Mobile search hint - only visible when search is hidden */}
       {isMobile && !showSearch && (
         <div className="fixed top-6 left-16 z-50 flex items-center text-sm text-gray-600 animate-pulse">
@@ -55,11 +54,10 @@ export default function SearchDemo() {
           <span>Try searching for startups!</span>
         </div>
       )}
-
       {/* Search section - hidden by default on mobile */}
       <div
-        className={`w-full md:w-4/7 p-6 md:p-10 border-r flex-shrink-0 overflow-hidden transition-all duration-300 absolute md:relative ${showSearch ? "left-0" : "-left-full"
-          } md:left-0 h-full bg-background z-40`}
+        className={`w-full md:w-1/2 p-6 md:p-10 flex-shrink-0 overflow-hidden transition-all duration-300 absolute md:relative ${showSearch ? "left-0" : "-left-full"
+          } md:left-0 h-full bg-[#f8f9fa] z-40`}
       >
         <div className="pt-10 md:pt-0">
           <div className="max-w-xl h-full flex flex-col">
@@ -72,12 +70,11 @@ export default function SearchDemo() {
               <Input
                 type="search"
                 placeholder="Search by startup name or location..."
-                className="pl-10"
+                className="pl-10 bg-white"
                 value={searchQuery}
                 onChange={handleSearch}
               />
             </div>
-
             {hasSearched && (
               <div className="max-h-[400px] overflow-y-auto pr-2">
                 <div className="space-y-3">

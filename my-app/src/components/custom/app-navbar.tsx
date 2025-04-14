@@ -15,7 +15,6 @@ import {
 import { SearchBar } from "@/components/custom/search-bar"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
 import NavItem from "./nav-item"
 
 interface NavbarProps {

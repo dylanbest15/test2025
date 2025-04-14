@@ -112,7 +112,6 @@ export function SearchBar() {
           />
         </div>
       </form>
-
       {/* Results dropdown */}
       {isOpen && results.length > 0 && (
         <div ref={dropdownRef} className="absolute z-10 mt-1 w-full rounded-md border border-border bg-card shadow-lg">
@@ -131,7 +130,6 @@ export function SearchBar() {
           </ul>
         </div>
       )}
-
       {isOpen && results.length === 0 && hasSearched && (
         <div className="absolute z-10 mt-1 w-full rounded-md border border-border bg-card p-4 shadow-lg">
           <p className="text-center text-sm text-muted-foreground">No results found</p>

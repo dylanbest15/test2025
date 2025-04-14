@@ -35,7 +35,6 @@ export function AppSidebar({ className, startup, ...props }: AppSidebarProps) {
             <User className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-medium">{startup.name}</span>
           </div>
-
           <div className="flex items-center gap-2">
             <MapPin className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm">{startup.location}</span>

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import SearchDemo from "@/components/custom/search-demo";
-import { RoleToggle } from "@/components/auth/role-toggle";
+import { TypeToggle } from "@/components/auth/type-toggle";
 import { SignupButton } from "@/components/auth/sign-up-button";
 
 export default async function Signup(props: {
@@ -40,8 +40,8 @@ export default async function Signup(props: {
               </Link>
             </p>
             </div>
-            {/* Client component with role toggle and messaging */}
-            <RoleToggle />
+            {/* Client component with type toggle and messaging */}
+            <TypeToggle />
             <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
               <Label htmlFor="email">Email</Label>
               <Input name="email" placeholder="you@example.com" required />

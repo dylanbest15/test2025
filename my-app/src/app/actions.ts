@@ -6,9 +6,9 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const signUpAction = async (formData: FormData) => {
-  // TODO: do something with formData.get("role")?.toString()
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
+  const type = formData.get("type")?.toString();
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
@@ -25,6 +25,9 @@ export const signUpAction = async (formData: FormData) => {
     password,
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
+      data: {
+        type
+      }
     },
   });
 

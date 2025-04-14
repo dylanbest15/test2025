@@ -18,31 +18,31 @@ export function SignupButton({
   pendingText?: string
 }) {
   const { pending } = useFormStatus()
-  const [role, setRole] = useState<string>("founder")
+  const [type, setType] = useState<string>("founder")
 
-  // Listen for changes to the hidden role input
+  // Listen for changes to the hidden type input
   useEffect(() => {
-    const roleInput = document.querySelector('input[name="role"]') as HTMLInputElement
-    if (roleInput) {
-      const updateRole = () => setRole(roleInput.value)
+    const typeInput = document.querySelector('input[name="type"]') as HTMLInputElement
+    if (typeInput) {
+      const updateType = () => setType(typeInput.value)
 
       // Initial value
-      updateRole()
+      updateType()
 
       // Set up a MutationObserver to watch for value changes
-      const observer = new MutationObserver(updateRole)
-      observer.observe(roleInput, { attributes: true })
+      const observer = new MutationObserver(updateType)
+      observer.observe(typeInput, { attributes: true })
 
       return () => observer.disconnect()
     }
   }, [])
 
-  // Apply different styling based on role
-  const buttonClass = `${className} ${role === "founder" ? "bg-blue-600 hover:bg-blue-700" : "bg-green-600 hover:bg-green-700"}`
+  // Apply different styling based on type
+  const buttonClass = `${className} ${type === "founder" ? "bg-blue-600 hover:bg-blue-700" : "bg-green-600 hover:bg-green-700"}`
 
   return (
     <Button className={buttonClass} type="submit" formAction={formAction} disabled={pending} aria-disabled={pending}>
-      {pending ? pendingText : children} {role === "founder" ? "as a Founder" : "as an Investor"}
+      {pending ? pendingText : children} {type === "founder" ? "as a Founder" : "as an Investor"}
     </Button>
   )
 }

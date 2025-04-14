@@ -7,15 +7,10 @@ import {
   SidebarHeader
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Startup } from "@/types/startup"
 
-interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  startup: Startup;
-}
-
-export function AppSidebar({ className, startup, ...props }: AppSidebarProps) {
+export function AppSidebar() {
   return (
-    <Sidebar className={className} {...props}>
+    <Sidebar className="pt-16">
       <SidebarHeader>
         <SidebarGroup>
           <div className="flex flex-col items-center gap-4 py-4">
@@ -33,11 +28,11 @@ export function AppSidebar({ className, startup, ...props }: AppSidebarProps) {
         <div className="w-full space-y-3 px-2">
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium">{startup.name}</span>
+            <span className="text-sm font-medium">example startup</span>
           </div>
           <div className="flex items-center gap-2">
             <MapPin className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm">{startup.location}</span>
+            <span className="text-sm">example location</span>
           </div>
         </div>
       </SidebarGroup>

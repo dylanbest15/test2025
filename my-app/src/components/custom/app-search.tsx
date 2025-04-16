@@ -50,7 +50,7 @@ export default function AppSearch() {
   }
 
   return (
-    <div className="w-full md:w-1/2 p-6 md:p-10 flex-shrink-0 overflow-hidden bg-[#f8f9fa] h-full">
+    <div className="w-full md:w-1/2 p-6 md:p-10 flex-shrink-0 overflow-hidden h-full">
       <div className="pt-4 md:pt-0">
         <div className="max-w-xl h-full flex flex-col">
 

@@ -4,6 +4,7 @@ export type Profile = {
   type: 'founder' | 'investor';
   first_name: string;
   last_name: string;
+  avatar_url: string;
   bio: string;
   active: boolean;
   updated_at: string | null;

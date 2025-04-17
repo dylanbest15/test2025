@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Pencil } from "lucide-react"
 import { ProfileEdit } from "@/app/(dashboard)/profile/profile-edit"
 import type { Profile } from "@/types/profile"
@@ -33,43 +34,52 @@ export default function ProfileView({ profile }: ProfileViewProps) {
     return `${firstName} ${lastName}`.trim()
   }
 
+  // Helper function to get initials for avatar
+  const getInitials = () => {
+    const firstName = profileData.first_name?.trim() || ""
+    const lastName = profileData.last_name?.trim() || ""
+
+    if (!firstName && !lastName) return "?"
+
+    const firstInitial = firstName ? firstName[0].toUpperCase() : ""
+    const lastInitial = lastName ? lastName[0].toUpperCase() : ""
+
+    return `${firstInitial}${lastInitial}`
+  }
+
   // Helper function to check if bio exists
   const hasBio = () => {
     return !!profileData.bio?.trim()
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <Card className="w-full mb-6">
-        <CardHeader className="pb-0 px-6">
-          <div className="flex justify-end">
-            <ProfileBadge
-              className="px-4 py-1.5 text-base font-medium"
-              variant={profileData.type === "founder" ? "default" : "success"}
-            >
-              {profileData.type.charAt(0).toUpperCase() + profileData.type.slice(1)}
-            </ProfileBadge>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <h3 className="text-sm font-medium text-muted-foreground">Email</h3>
-            <p>{profileData.email}</p>
-          </div>
+    <div className="container mx-auto p-2">
+      <div className="flex items-center justify-between mb-10">
+        <h1 className="text-3xl font-semibold">Profile</h1>
+        <ProfileBadge
+          className="px-4 py-1.5 text-base font-medium"
+          variant={profileData.type === "founder" ? "default" : "success"}
+        >
+          {profileData.type.charAt(0).toUpperCase() + profileData.type.slice(1)}
+        </ProfileBadge>
+      </div>
 
-          {hasName() && (
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground">Name</h3>
-              <p>{displayName()}</p>
+      <Card className="w-full mb-10">
+        <CardContent className="space-y-6 pt-2">
+          <div className="flex items-start gap-4">
+            <Avatar className="h-16 w-16">
+              <AvatarImage src={profileData.avatar_url || "/placeholder.svg"} alt={displayName()} />
+              <AvatarFallback className="text-lg">{getInitials()}</AvatarFallback>
+            </Avatar>
+            <div className="space-y-2">
+              <h3 className="text-lg font-medium">{displayName()}</h3>
+              <p className="text-sm text-muted-foreground">{profileData.email}</p>
             </div>
-          )}
-
-          {hasBio() && (
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground">Bio</h3>
-              <p className="text-sm leading-relaxed">{profileData.bio}</p>
-            </div>
-          )}
+          </div>
+          <hr />
+          <div className="pt-2">
+            <p className="text-sm leading-relaxed">{profileData.bio}</p>
+          </div>
         </CardContent>
       </Card>
 

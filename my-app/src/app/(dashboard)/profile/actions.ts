@@ -20,14 +20,17 @@ export async function updateProfile(id: string, body: Partial<Profile>) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
-  if (!res.ok) throw new Error('Failed to update profile');
-  return res.json();
+  const result = await res.json();
+  if (!res.ok) {
+    throw new Error(JSON.stringify(result.error));
+  }
+  return result;
 }
 
-export async function deleteProfile(id: string) {
-  const res = await fetch('/api/profiles/' + id, {
-    method: 'DELETE',
-  });
-  if (!res.ok) throw new Error('Failed to delete profile');
-  return res.json();
-}
+// export async function deleteProfile(id: string) {
+//   const res = await fetch('/api/profiles/' + id, {
+//     method: 'DELETE',
+//   });
+//   if (!res.ok) throw new Error('Failed to delete profile');
+//   return res.json();
+// }

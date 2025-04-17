@@ -22,11 +22,6 @@ export default function ProfileView({ profile }: ProfileViewProps) {
     setSidebarOpen(false)
   }
 
-  // Helper function to check if name exists
-  const hasName = () => {
-    return !!(profileData.first_name?.trim() || profileData.last_name?.trim())
-  }
-
   // Helper function to display name
   const displayName = () => {
     const firstName = profileData.first_name?.trim() || ""
@@ -45,11 +40,6 @@ export default function ProfileView({ profile }: ProfileViewProps) {
     const lastInitial = lastName ? lastName[0].toUpperCase() : ""
 
     return `${firstInitial}${lastInitial}`
-  }
-
-  // Helper function to check if bio exists
-  const hasBio = () => {
-    return !!profileData.bio?.trim()
   }
 
   return (

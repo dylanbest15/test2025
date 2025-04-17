@@ -1,3 +1,4 @@
+import { ProfileUpdateSchema } from "@/lib/validation/profiles";
 import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -20,14 +21,12 @@ export async function PUT(req: NextRequest, { params }: { params: { profileId: s
     updated_at: new Date().toISOString(),
   }
 
-  // Validate input
-  // const parseResult = ProfileUpdateSchema.safeParse(updateData);
-  // if (!parseResult.success) {
-  //   return NextResponse.json({ error: parseResult.error.format() }, { status: 400 });
-  // }
+  const parseResult = ProfileUpdateSchema.safeParse(updateData);
+  if (!parseResult.success) {
+    return NextResponse.json({ error: parseResult.error.format() }, { status: 400 });
+  }
 
-  // replace updateData with parseResults.data
-  const { data, error } = await supabase.from('profiles').update(updateData).eq('id', profileId).select().single();
+  const { data, error } = await supabase.from('profiles').update(parseResult.data).eq('id', profileId).select().single();
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

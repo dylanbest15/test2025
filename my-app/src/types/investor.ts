@@ -7,7 +7,7 @@ export type Investor = {
   investmentFocus?: string[]
 }
 
-// Mock data for startups
+// Mock data for investors
 export const mockInvestors: Investor[] = [
   {
     id: "inv1",

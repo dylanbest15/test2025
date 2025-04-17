@@ -27,7 +27,7 @@ export function ProfileEdit({ open, onOpenChange, profile, onUpdate }: ProfileEd
   const isMobile = useIsMobile();
   const [formData, setFormData] = useState<Profile>(profile)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const MAX_BIO_LENGTH = 250
+  const MAX_BIO_LENGTH = 200
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -143,7 +143,7 @@ export function ProfileEdit({ open, onOpenChange, profile, onUpdate }: ProfileEd
                         <InfoIcon className="h-4 w-4 text-muted-foreground" />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>When active, founders can send you invitations to view their startups.</p>
+                        <p>When your profile is set to 'Active', founders can send you invite notifications to view their startups.</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>

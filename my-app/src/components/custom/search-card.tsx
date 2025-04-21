@@ -1,10 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
-import { Startup } from "@/types/startup";
+import { mockStartup } from "@/types/startup";
 import Link from "next/link";
 
 interface StartupProps {
-  startup: Startup;
+  startup: mockStartup;
 }
 
 export function SearchCard({ startup }: StartupProps) {

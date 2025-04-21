@@ -5,10 +5,10 @@ import { TabsList } from "@radix-ui/react-tabs";
 import ProgressCard from "@/components/custom/progress-card";
 import PitchDeck from "@/components/custom/pitch-deck";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Startup } from "@/types/startup";
+import { mockStartup } from "@/types/startup";
 
 interface StartupDashboardProps {
-  startup: Startup;
+  startup: mockStartup;
 }
 
 export default function StartupDashboard({ startup }: StartupDashboardProps) {

@@ -2,14 +2,14 @@
 
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { mockStartups, Startup } from "@/types/startup"
+import { mockStartups, mockStartup } from "@/types/startup"
 import { Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 
 export function SearchBar() {
   const [searchQuery, setSearchQuery] = useState("")
-  const [results, setResults] = useState<Startup[]>([])
+  const [results, setResults] = useState<mockStartup[]>([])
   const [hasSearched, setHasSearched] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
@@ -70,7 +70,7 @@ export function SearchBar() {
   }
 
   // Handle result click
-  const handleResultClick = (startup: Startup) => {
+  const handleResultClick = (startup: mockStartup) => {
     setIsOpen(false)
     // Navigate to the startup page
     router.push(`/${startup.id}`)

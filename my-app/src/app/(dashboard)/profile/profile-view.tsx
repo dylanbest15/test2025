@@ -8,6 +8,7 @@ import { Pencil } from "lucide-react"
 import { ProfileEdit } from "@/app/(dashboard)/profile/profile-edit"
 import type { Profile } from "@/types/profile"
 import { ProfileBadge } from "@/components/custom/profile-badge"
+import { Separator } from "@/components/ui/separator"
 
 interface ProfileViewProps {
   profile: Profile
@@ -45,7 +46,7 @@ export default function ProfileView({ profile }: ProfileViewProps) {
   return (
     <div className="container mx-auto p-2">
       <div className="flex items-center justify-between mb-10">
-        <h1 className="text-3xl font-semibold">Profile</h1>
+        <h1 className="text-3xl font-bold">Profile</h1>
         <ProfileBadge
           className="px-4 py-1.5 text-base font-medium"
           variant={profileData.type === "founder" ? "default" : "success"}
@@ -66,7 +67,7 @@ export default function ProfileView({ profile }: ProfileViewProps) {
               <p className="text-sm text-muted-foreground">{profileData.email}</p>
             </div>
           </div>
-          <hr />
+          <Separator />
           <div className="pt-2">
             <p className="text-sm leading-relaxed">{profileData.bio}</p>
           </div>

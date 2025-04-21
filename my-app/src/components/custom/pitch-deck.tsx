@@ -1,8 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Startup } from "@/types/startup";
+import { mockStartup } from "@/types/startup";
 
 interface PitchCardProps {
-  startup: Startup;
+  startup: mockStartup;
 }
 
 export default function PitchDeck({ startup }: PitchCardProps) {

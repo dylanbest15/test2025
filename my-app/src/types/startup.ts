@@ -1,4 +1,4 @@
-export type Startup = {
+export type mockStartup = {
   id: number;
   name: string;
   location: string;
@@ -6,8 +6,20 @@ export type Startup = {
   fundGoal: number;
 }
 
+export type Startup = {
+  id: string;
+  name: string;
+  email: string;
+  city: string;
+  state: string;
+  overview: string;
+  year_founded: number;
+  updated_at: string | null;
+  created_at: string;
+}
+
 // Mock data for startups
-export const mockStartups: Startup[] = [
+export const mockStartups: mockStartup[] = [
   { id: 1, name: "TechNova", location: "San Francisco, CA", fundPool: 2500000, fundGoal: 4000000 },
   { id: 2, name: "GreenEnergy Solutions", location: "Austin, TX", fundPool: 1750000, fundGoal: 3000000 },
   { id: 3, name: "HealthAI", location: "Boston, MA", fundPool: 3200000, fundGoal: 5000000 },

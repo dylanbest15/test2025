@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { mockStartups, type Startup } from "@/types/startup"
+import { mockStartups, type mockStartup } from "@/types/startup"
 import { mockInvestors, type Investor } from "@/types/investor"
 import { useState } from "react"
 import { Search } from "lucide-react"
@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import InvestorCard from "./investor-card"
 
-type SearchResult = Startup | Investor
+type SearchResult = mockStartup | Investor
 type FilterType = "startups" | "investors"
 
 export default function AppSearch() {
@@ -110,7 +110,7 @@ export default function AppSearch() {
                   results.map((result) => (
                     <div key={result.id}>
                       {filterType === "startups" ? (
-                        <SearchCard startup={result as Startup} />
+                        <SearchCard startup={result as mockStartup} />
                       ) : (
                         <InvestorCard investor={result as Investor} />
                       )}

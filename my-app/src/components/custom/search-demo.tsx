@@ -1,6 +1,6 @@
 'use client';
 
-import { mockStartups, Startup } from "@/types/startup";
+import { mockStartups, mockStartup } from "@/types/startup";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { SearchCard } from "./search-card";
 export default function SearchDemo() {
   const isMobile = useIsMobile()
   const [searchQuery, setSearchQuery] = useState("")
-  const [results, setResults] = useState<Startup[]>([])
+  const [results, setResults] = useState<mockStartup[]>([])
   const [hasSearched, setHasSearched] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
 

@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { formatCurrency } from "@/lib/utils";
-import { Startup } from "@/types/startup";
+import { mockStartup } from "@/types/startup";
 
 interface ProgressCardProps {
-  startup: Startup;
+  startup: mockStartup;
 }
 
 export default function ProgressCard({ startup }: ProgressCardProps) {

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { statesAndProvinces } from "@/types/profile"
+import { statesAndProvinces } from "@/types/startup"
 import { toast } from "sonner";
 import { createMember, createStartup } from "./actions"
 import { User } from "@supabase/supabase-js"
@@ -51,6 +51,8 @@ export default function CompanyCreate({ user }: CompanyCreateProps) {
         description: "Your startup has been created successfully.",
       })
 
+
+      // TODO FIX THIS
       // Redirect to the startups page or refresh the current page
       // router.push("/company")
       // router.refresh()

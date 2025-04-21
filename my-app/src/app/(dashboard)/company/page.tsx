@@ -31,7 +31,7 @@ export default async function Company() {
     }
     if (startup) {
       return (
-        <CompanyView startup={startup} />
+        <CompanyView member={member} startup={startup} />
       )
     }
   }

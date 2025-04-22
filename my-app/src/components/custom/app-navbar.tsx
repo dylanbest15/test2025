@@ -1,8 +1,6 @@
 "use client"
-
-import * as React from "react"
 import Link from "next/link"
-import { Bell, Building, LogOut, Search, User } from "lucide-react"
+import { Bell, Building, LogOut, Menu, Search, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -16,17 +14,31 @@ import { SearchBar } from "@/components/custom/search-bar"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { usePathname } from "next/navigation"
 import NavItem from "./nav-item"
+import { useState } from "react"
+import { AppMenu } from "./app-menu"
+import { Profile } from "@/types/profile"
+import { Startup } from "@/types/startup"
+import { Member } from "@/types/member"
 
 interface NavbarProps {
   onLogout?: () => void
-  userName?: string
-  userAvatar?: string
+  profile: Profile;
+  member?: Member;
+  startup?: Startup;
   notificationCount?: number
 }
 
-export function AppNavbar({ onLogout, userName = "User", userAvatar, notificationCount = 0 }: NavbarProps) {
+export function AppNavbar({
+  onLogout,
+  profile,
+  member,
+  startup,
+  notificationCount = 0,
+}: NavbarProps) {
   const isMobile = useIsMobile()
   const pathname = usePathname()
+
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
 
   if (isMobile) {
     return (
@@ -59,11 +71,23 @@ export function AppNavbar({ onLogout, userName = "User", userAvatar, notificatio
             label="Alerts"
             isActive={pathname === "/notifications"}
           />
-          <NavItem
-            href="/profile"
-            icon={<User className="h-5 w-5" />}
-            label="Profile"
-            isActive={pathname === "/profile"}
+          <AppMenu
+            isOpen={isSheetOpen}
+            onOpenChange={setIsSheetOpen}
+            profile={profile}
+            member={member}
+            startup={startup}
+            trigger={
+              <div className="h-full">
+                <NavItem
+                  href="#"
+                  icon={<Menu className="h-5 w-5" />}
+                  label="Menu"
+                  isActive={isSheetOpen}
+                  onClick={() => setIsSheetOpen(true)}
+                />
+              </div>
+            }
           />
         </div>
       </div>
@@ -94,7 +118,7 @@ export function AppNavbar({ onLogout, userName = "User", userAvatar, notificatio
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{userName}</DropdownMenuLabel>
+            <DropdownMenuLabel>User</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/profile">
@@ -112,4 +136,3 @@ export function AppNavbar({ onLogout, userName = "User", userAvatar, notificatio
     </div>
   )
 }
-

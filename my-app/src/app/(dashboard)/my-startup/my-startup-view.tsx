@@ -5,13 +5,13 @@ import { MapPinIcon, MailIcon } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
-import { CompanyEdit } from "./company-edit"
+import { MyStartupEdit } from "@/app/(dashboard)/my-startup/my-startup-edit"
 
-interface CompanyViewProps {
+interface MyStartupViewProps {
   startup: Startup
 }
 
-export default function CompanyView({ startup }: CompanyViewProps) {
+export default function MyStartupView({ startup }: MyStartupViewProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [startupData, setStartupData] = useState(startup)
 
@@ -64,7 +64,7 @@ export default function CompanyView({ startup }: CompanyViewProps) {
         </div>
       )} */}
 
-      <CompanyEdit
+      <MyStartupEdit
         open={sidebarOpen}
         onOpenChange={setSidebarOpen}
         startup={startupData}

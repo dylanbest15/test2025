@@ -31,17 +31,17 @@ export function AppNavbar({
     return (
       <div className="fixed bottom-0 left-0 z-50 w-full h-16 border-t bg-white">
         <div className="grid h-full grid-cols-4">
+        <NavItem
+            href="/my-startup"
+            icon={<Building className="h-5 w-5" />}
+            label="My Startup"
+            isActive={pathname === "/my-startup"}
+          />
           <NavItem
             href="/search"
             icon={<Search className="h-5 w-5" />}
             label="Search"
             isActive={pathname === "/search"}
-          />
-          <NavItem
-            href="/company"
-            icon={<Building className="h-5 w-5" />}
-            label="Company"
-            isActive={pathname === "/company"}
           />
           <NavItem
             href="/notifications"

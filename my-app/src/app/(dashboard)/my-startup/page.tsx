@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import CompanyCreate from "@/app/(dashboard)/company/company-create";
-import CompanyView from "@/app/(dashboard)/company/company-view";
+import MyStartupView from "@/app/(dashboard)/my-startup/my-startup-view";
+import MyStartupCreate from "@/app/(dashboard)/my-startup/my-startup-create";
 
 export default async function Company() {
   const supabase = await createClient();
@@ -26,7 +26,7 @@ export default async function Company() {
 
   if (!profile.startup_id) {
     return (
-      <CompanyCreate profile={profile} />
+      <MyStartupCreate profile={profile} />
     )
   }
 
@@ -42,7 +42,7 @@ export default async function Company() {
     }
     if (startup) {
       return (
-        <CompanyView startup={startup} />
+        <MyStartupView startup={startup} />
       )
     }
   }

@@ -1,18 +1,12 @@
 import { Profile } from "@/types/profile";
 
-export async function getProfiles() {
-  const res = await fetch('/api/profiles');
-  if (!res.ok) throw new Error('Failed to fetch profiles');
-  return res.json();
-}
-
-export async function getProfile(id: string): Promise<Profile | null> {
-  const res = await fetch('/api/profiles/' + id, {
-    method: 'GET'
-  });
-  if (!res.ok) throw new Error('Failed to fetch profile');
-  return res.json();
-}
+// export async function getProfile(id: string): Promise<Profile | null> {
+//   const res = await fetch('/api/profiles/' + id, {
+//     method: 'GET'
+//   });
+//   if (!res.ok) throw new Error('Failed to fetch profile');
+//   return res.json();
+// }
 
 export async function updateProfile(id: string, body: Partial<Profile>) {
   const res = await fetch('/api/profiles/' + id, {

@@ -78,7 +78,7 @@ export default function MenuView({ profile, startup }: MenuViewProps) {
                 <p className="font-medium">{displayName()}</p>
                 <p className="text-sm text-muted-foreground">{profile.email}</p>
                 <Link
-                  href="/edit-profile"
+                  href="/menu/edit-profile"
                   className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
                 >
                   <Pencil size={12} />
@@ -137,7 +137,7 @@ export default function MenuView({ profile, startup }: MenuViewProps) {
                     </div>
                     {profile.startup_role === "admin" && (
                       <Link
-                        href="/startup/edit"
+                        href="/menu/edit-startup"
                         className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
                       >
                         <Pencil size={12} />

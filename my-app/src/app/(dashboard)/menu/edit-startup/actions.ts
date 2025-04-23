@@ -1,7 +1,7 @@
-import { Profile } from "@/types/profile";
+import { Startup } from "@/types/startup";
 
-export async function updateProfile(id: string, body: Partial<Profile>) {
-  const res = await fetch('/api/profiles/' + id, {
+export async function updateStartup(id: string, body: Partial<Startup>) {
+  const res = await fetch('/api/startups/' + id, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)

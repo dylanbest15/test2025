@@ -12,14 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Startup, statesAndProvinces } from "@/types/startup"
 import { toast } from "sonner";
 import { createStartup } from "./actions"
-import { updateProfile } from "../edit-profile/actions"
+import { updateProfile } from "../menu/edit-profile/actions"
 import { Profile } from "@/types/profile"
 
-interface CompanyCreateProps {
+interface MyStartupCreateProps {
   profile: Profile;
 }
 
-export default function CompanyCreate({ profile }: CompanyCreateProps) {
+export default function MyStartupCreate({ profile }: MyStartupCreateProps) {
   const [showForm, setShowForm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   // const router = useRouter()

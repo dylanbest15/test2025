@@ -12,14 +12,14 @@ import { toast } from "sonner"
 import type { Startup } from "@/types/startup"
 import { statesAndProvinces } from "@/types/startup"
 
-interface CompanyEditProps {
+interface MyStartupEditProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   startup: Startup
   onUpdate: (startup: Startup) => void
 }
 
-export function CompanyEdit({ open, onOpenChange, startup, onUpdate }: CompanyEditProps) {
+export function MyStartupEdit({ open, onOpenChange, startup, onUpdate }: MyStartupEditProps) {
   const [formData, setFormData] = useState<Startup>(startup)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const MAX_BIO_LENGTH = 200

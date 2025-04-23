@@ -1,20 +1,17 @@
 "use client"
 
 import type { Startup } from "@/types/startup"
-import { MapPinIcon, MailIcon, Pencil } from "lucide-react"
+import { MapPinIcon, MailIcon } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Member } from "@/types/member"
 import { CompanyEdit } from "./company-edit"
 
 interface CompanyViewProps {
-  member: Member;
   startup: Startup
 }
 
-export default function CompanyView({ member, startup }: CompanyViewProps) {
+export default function CompanyView({ startup }: CompanyViewProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [startupData, setStartupData] = useState(startup)
 
@@ -58,14 +55,14 @@ export default function CompanyView({ member, startup }: CompanyViewProps) {
         </Card>
       </div>
 
-      {member.role === 'admin' && (
+      {/* {profile.startup_role === 'admin' && (
         <div className="flex justify-end w-full">
           <Button onClick={() => setSidebarOpen(true)} size="sm">
             <Pencil className="h-4 w-4 mr-2" />
             Edit Company Details
           </Button>
         </div>
-      )}
+      )} */}
 
       <CompanyEdit
         open={sidebarOpen}

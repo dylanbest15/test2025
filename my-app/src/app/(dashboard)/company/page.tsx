@@ -14,29 +14,36 @@ export default async function Company() {
     return redirect("/sign-in");
   }
 
-  const { data: member, error: memberError } = await supabase.from('members').select().eq('profile_id', user.id).single();
-  if (memberError) {
-    console.error("Error fetching member:", memberError);
+  const { data: profile, error } = await supabase.from('profiles')
+    .select()
+    .eq('id', user.id)
+    .single();
+
+  if (error) {
+    console.error("Error fetching profile:", error);
+    // return notFound();
   }
-  if (!member) {
+
+  if (!profile.startup_id) {
     return (
-      <CompanyCreate user={user} />
+      <CompanyCreate profile={profile} />
     )
   }
 
-  if (member.startup_id) {
-    const { data: startup, error: startupError } = await supabase.from('startups').select().eq('id', member.startup_id).single();
+  if (profile.startup_id) {
+    const { data: startup, error: startupError } = await supabase.from('startups')
+      .select()
+      .eq('id', profile.startup_id)
+      .single();
+
     if (startupError) {
-      console.error("Error fetching startup:", startupError)
+      console.error("Error fetching startup:", startupError);
+      // return notFound();
     }
     if (startup) {
       return (
-        <CompanyView member={member} startup={startup} />
+        <CompanyView startup={startup} />
       )
     }
   }
-  
-  return (
-    <div>We found your company, but couldn't load the details.</div>
-  )
 }

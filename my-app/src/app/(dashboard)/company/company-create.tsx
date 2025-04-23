@@ -9,16 +9,17 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { statesAndProvinces } from "@/types/startup"
+import { Startup, statesAndProvinces } from "@/types/startup"
 import { toast } from "sonner";
-import { createMember, createStartup } from "./actions"
-import { User } from "@supabase/supabase-js"
+import { createStartup } from "./actions"
+import { updateProfile } from "../edit-profile/actions"
+import { Profile } from "@/types/profile"
 
 interface CompanyCreateProps {
-  user: User
+  profile: Profile;
 }
 
-export default function CompanyCreate({ user }: CompanyCreateProps) {
+export default function CompanyCreate({ profile }: CompanyCreateProps) {
   const [showForm, setShowForm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   // const router = useRouter()
@@ -40,11 +41,10 @@ export default function CompanyCreate({ user }: CompanyCreateProps) {
         year_founded: Number.parseInt(yearFoundedValue, 10),
       }
 
-      const startup = await createStartup(newStartup)
-      await createMember({
+      const startup: Startup = await createStartup(newStartup)
+      await updateProfile(profile.id, {
         startup_id: startup.id,
-        profile_id: user.id,
-        role: "admin",
+        startup_role: 'admin'
       })
 
       toast.success("Success!", {
@@ -54,11 +54,12 @@ export default function CompanyCreate({ user }: CompanyCreateProps) {
 
       // TODO FIX THIS
       // Redirect to the startups page or refresh the current page
-      // router.push("/company")
-      // router.refresh()
+      // router.push("/company") ??
+      // router.refresh() ??
+      // possibly make this create flow a pop out and pass startup back to company view after creation.
       setShowForm(false);
     } catch (error) {
-      console.error("Failed to create startup or member:", error)
+      console.error("Failed to create startup:", error)
       let errorMessage = "There was a problem creating your startup."
       if (error instanceof Error) {
         try {
@@ -84,7 +85,7 @@ export default function CompanyCreate({ user }: CompanyCreateProps) {
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <h1 className="text-3xl font-bold">My Startups</h1>
           <div className="max-w-md rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
-            <h2 className="mb-2 text-xl font-semibold">You are not a member of any startups</h2>
+            <h2 className="mb-2 text-xl font-semibold">You are do not have a startup.</h2>
             <p className="mb-6 text-gray-500">Create your first startup to get started.</p>
             <Button onClick={() => setShowForm(true)}>Create a Startup</Button>
           </div>

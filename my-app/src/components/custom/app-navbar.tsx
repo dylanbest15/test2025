@@ -13,32 +13,19 @@ import {
 import { SearchBar } from "@/components/custom/search-bar"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { usePathname } from "next/navigation"
-import NavItem from "./nav-item"
-import { useState } from "react"
-import { AppMenu } from "./app-menu"
-import { Profile } from "@/types/profile"
-import { Startup } from "@/types/startup"
-import { Member } from "@/types/member"
+import NavItem from "@/components/custom/nav-item"
 
 interface NavbarProps {
   onLogout?: () => void
-  profile: Profile;
-  member?: Member;
-  startup?: Startup;
   notificationCount?: number
 }
 
 export function AppNavbar({
   onLogout,
-  profile,
-  member,
-  startup,
   notificationCount = 0,
 }: NavbarProps) {
   const isMobile = useIsMobile()
   const pathname = usePathname()
-
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
 
   if (isMobile) {
     return (
@@ -71,23 +58,11 @@ export function AppNavbar({
             label="Alerts"
             isActive={pathname === "/notifications"}
           />
-          <AppMenu
-            isOpen={isSheetOpen}
-            onOpenChange={setIsSheetOpen}
-            profile={profile}
-            member={member}
-            startup={startup}
-            trigger={
-              <div className="h-full">
-                <NavItem
-                  href="#"
-                  icon={<Menu className="h-5 w-5" />}
-                  label="Menu"
-                  isActive={isSheetOpen}
-                  onClick={() => setIsSheetOpen(true)}
-                />
-              </div>
-            }
+          <NavItem
+            href="/menu"
+            icon={<Menu className="h-5 w-5" />}
+            label="Menu"
+            isActive={pathname === "/menu"}
           />
         </div>
       </div>

@@ -5,8 +5,10 @@ export type Profile = {
   first_name: string;
   last_name: string;
   avatar_url: string;
-  title: string;
   bio: string;
-  active: boolean;
+  founder_title: string;
+  startup_id: string;
+  startup_role: 'admin' | 'member';
+  investor_active: boolean;
   updated_at: string | null;
 };

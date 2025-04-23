@@ -20,8 +20,8 @@ export default function EditProfileForm({ profile }: EditProfileFormProps) {
   const [general, setGeneral] = useState({
     first_name: profile.first_name || "",
     last_name: profile.last_name || "",
-    title: profile.title || "",
-    active: profile.active
+    founder_title: profile.founder_title || "",
+    investor_active: profile.investor_active
   })
 
   const [bio, setBio] = useState(profile.bio || "")
@@ -35,8 +35,8 @@ export default function EditProfileForm({ profile }: EditProfileFormProps) {
     setGeneral({
       first_name: profile.first_name || "",
       last_name: profile.last_name || "",
-      title: profile.title || "",
-      active: profile.active
+      founder_title: profile.founder_title || "",
+      investor_active: profile.investor_active
     })
     setBio(profile.bio || "")
     setBioCount(profile.bio ? profile.bio.length : 0)
@@ -55,7 +55,7 @@ export default function EditProfileForm({ profile }: EditProfileFormProps) {
   }
 
   const handleCheckboxChange = (checked: boolean) => {
-    setGeneral((prev) => ({ ...prev, active: checked }))
+    setGeneral((prev) => ({ ...prev, investor_active: checked }))
   }
 
   const handleGeneralSubmit = async (e: React.FormEvent) => {
@@ -68,21 +68,21 @@ export default function EditProfileForm({ profile }: EditProfileFormProps) {
         last_name: general.last_name,
       }
 
-      // Include title field if profile is founder type
+      // Include founder_title field if profile is founder type
       if (profile.type === "founder") {
-        updateData.title = general.title
+        updateData.founder_title = general.founder_title
       }
 
-      // Include active field if profile is investor type
+      // Include investor_active field if profile is investor type
       if (profile.type === "investor") {
-        updateData.active = general.active
+        updateData.investor_active = general.investor_active
       }
 
       await updateProfile(profile.id, updateData);
       toast.success("General Info Updated", {
         description: "Your profile information has been saved.",
       })
-      // do i want something better than this?
+      // @dylan do i want something better than this?
       window.location.reload();
     } catch (error) {
       let errorMessage = "Failed to update profile"
@@ -115,7 +115,7 @@ export default function EditProfileForm({ profile }: EditProfileFormProps) {
       toast.success("Bio Updated", {
         description: "Your bio information has been saved.",
       })
-      // do i want something better than this?
+      // @dylan do i want something better than this?
       window.location.reload();
     } catch (error) {
       let errorMessage = "Failed to update bio"
@@ -138,13 +138,13 @@ export default function EditProfileForm({ profile }: EditProfileFormProps) {
 
   return (
     <div className="container max-w-md mx-auto p-4">
-      <Tabs defaultValue="name-title" className="w-full">
+      <Tabs defaultValue="general" className="w-full">
         <TabsList className="grid grid-cols-2 w-full mb-6">
-          <TabsTrigger value="name-title">General</TabsTrigger>
+          <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="bio">Bio</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="name-title" className="border rounded-md p-4">
+        <TabsContent value="general" className="border rounded-md p-4">
           <form onSubmit={handleGeneralSubmit} className="space-y-4">
             <div className="text-lg font-medium">General Info</div>
             <p className="text-sm text-muted-foreground">
@@ -163,8 +163,8 @@ export default function EditProfileForm({ profile }: EditProfileFormProps) {
 
             {profile.type === "founder" && (
               <div className="space-y-2">
-                <Label htmlFor="title">Title:</Label>
-                <Input id="title" value={general.title} onChange={handleGeneralChange} />
+                <Label htmlFor="founder_title">Title:</Label>
+                <Input id="founder_title" value={general.founder_title} onChange={handleGeneralChange} />
               </div>
             )}
 
@@ -176,9 +176,9 @@ export default function EditProfileForm({ profile }: EditProfileFormProps) {
                 </p>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-2">
-                    <Checkbox id="active" checked={general.active || false} onCheckedChange={handleCheckboxChange} />
+                    <Checkbox id="investor_active" checked={general.investor_active || false} onCheckedChange={handleCheckboxChange} />
                     <Label
-                      htmlFor="active"
+                      htmlFor="investor_active"
                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       Active

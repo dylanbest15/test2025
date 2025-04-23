@@ -5,10 +5,12 @@ import type { Profile } from "@/types/profile"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Building2, HelpCircle, LogOut, MapPin, Pencil, Sun, User } from "lucide-react"
-import type { ReactNode } from "react"
+import { useEffect, useTransition, type ReactNode } from "react"
 import type { Startup } from "@/types/startup"
 import Link from "next/link"
 import type { Member } from "@/types/member"
+import { signOutAction } from "@/app/actions"
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
 interface AppMenuProps {
   isOpen: boolean
@@ -20,14 +22,40 @@ interface AppMenuProps {
 }
 
 export function AppMenu({ isOpen, onOpenChange, profile, member, startup, trigger }: AppMenuProps) {
+  const [isPending, startTransition] = useTransition()
+
+  const handleLogout = () => {
+    startTransition(async () => {
+      await signOutAction()
+    })
+  }
+
+  // Helper function to display name
+  const displayName = () => {
+    const firstName = profile.first_name?.trim() || ""
+    const lastName = profile.last_name?.trim() || ""
+    return `${firstName} ${lastName}`.trim()
+  }
+
+  // Helper function to get initials for avatar
+  const getInitials = () => {
+    const firstName = profile.first_name?.trim() || ""
+    const lastName = profile.last_name?.trim() || ""
+
+    if (!firstName && !lastName) return "?"
+
+    const firstInitial = firstName ? firstName[0].toUpperCase() : ""
+    const lastInitial = lastName ? lastName[0].toUpperCase() : ""
+
+    return `${firstInitial}${lastInitial}`
+  }
+
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
       <SheetContent side="right" className="flex flex-col overflow-hidden" aria-describedby={undefined}>
-        {/* Main content area with scroll */}
         <div className="flex-1 overflow-y-auto">
           <div className="flex flex-col space-y-6 p-5">
-            {/* Profile Information Section */}
             <div className="relative">
               <div className="flex items-center gap-2">
                 <SheetTitle className="flex items-center gap-2 text-xl font-bold">
@@ -50,29 +78,50 @@ export function AppMenu({ isOpen, onOpenChange, profile, member, startup, trigge
               </div>
 
               <div className="mt-4 flex flex-col items-center pt-2">
-                {/* Profile picture on its own row */}
-                <div className="h-20 w-20 rounded-full bg-muted mb-4"></div>
-                {/* Profile details below */}
+                {/* <div className="h-20 w-20 rounded-full bg-muted mb-4"></div> */}
+                <Avatar className="h-20 w-20 mb-4">
+                  <AvatarImage src={profile.avatar_url || "/placeholder.svg"} alt={displayName()} />
+                  <AvatarFallback className="text-lg">{getInitials()}</AvatarFallback>
+                </Avatar>
                 <div className="text-center w-full">
-                  <p className="font-medium">
-                    {profile.first_name} {profile.last_name}
-                  </p>
+                  <p className="font-medium">{displayName()}</p>
                   <p className="text-sm text-muted-foreground">{profile.email}</p>
-
-                  {/* Edit Profile Link */}
-                  <Link
-                    href="/profile/edit"
-                    className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-                  >
-                    <Pencil size={12} />
-                    Edit Profile
-                  </Link>
                 </div>
+                {profile.type === "investor" && (
+                  <>
+                    {profile.bio && (
+                      <div className="mt-3 text-xs">
+                        <Separator className="mb-4" />
+                        <p className="text-muted-foreground">{profile.bio}</p>
+                      </div>
+                    )}
+                    <Separator className="mt-4 mb-2"/>
+                    <div className="mt-2 mb-2">
+                      <Badge
+                        variant="outline"
+                        className={
+                          profile.active ? "border-green-500 text-green-500" : "border-gray-500 text-gray-500"
+                        }
+                      >
+                        {profile.active ? "Active" : "Inactive"}
+                      </Badge>
+                      <span className="text-sm text-muted-foreground p-2">
+                        {profile.active ? "You are set to active." : "You are set to inactive."}
+                      </span>
+                    </div>
+                  </>
+                )}
+                <Link
+                  href="/edit-profile"
+                  className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                  onClick={() => onOpenChange(false)}
+                >
+                  <Pencil size={12} />
+                  Edit Profile
+                </Link>
               </div>
             </div>
-
-            {/* Startup Information Section - Restored */}
-            {startup && (
+            {profile.type === "founder" && startup && (
               <>
                 <Separator />
                 <div className="relative">
@@ -97,8 +146,6 @@ export function AppMenu({ isOpen, onOpenChange, profile, member, startup, trigge
                           {startup.city}, {startup.state}
                         </p>
                       </div>
-
-                      {/* Edit Startup Link - only visible if user is an admin */}
                       {member && member.role === "admin" && (
                         <Link
                           href="/startup/edit"
@@ -115,7 +162,6 @@ export function AppMenu({ isOpen, onOpenChange, profile, member, startup, trigge
             )}
           </div>
         </div>
-
         <div className="border-t border-border p-4">
           <a href="#" className="flex items-center gap-2 py-1.5 text-sm hover:text-foreground/80">
             <Sun size={16} />
@@ -125,13 +171,14 @@ export function AppMenu({ isOpen, onOpenChange, profile, member, startup, trigge
             <HelpCircle size={16} />
             Help Center
           </a>
-          <a
-            href="/logout"
+          <button
+            onClick={handleLogout}
+            disabled={isPending}
             className="flex items-center gap-2 py-1.5 text-sm text-destructive hover:text-destructive/80"
           >
             <LogOut size={16} />
-            Logout
-          </a>
+            {isPending ? "Logging out..." : "Logout"}
+          </button>
         </div>
       </SheetContent>
     </Sheet>

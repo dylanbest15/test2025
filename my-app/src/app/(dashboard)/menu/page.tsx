@@ -40,6 +40,12 @@ export default async function Menu() {
     }
 
   return (
-    <MenuView profile={profile} startup={startup} />
+    <div className="w-full mb-[100px]">
+      <MenuView profile={profile} startup={startup} />
+      <div className="flex flex-col items-center space-y-1 text-xs text-sidebar-foreground/70">
+        <div className="font-semibold">© 2025 The Fund Pool, Inc.</div>
+        <div>All rights reserved.</div>
+      </div>
+    </div>
   )
 }

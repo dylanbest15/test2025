@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toast } from "sonner"
 import type { Profile } from "@/types/profile"
-import { updateProfile } from "@/app/(dashboard)/menu/edit-profile/actions"
+import { updateProfile } from "@/app/(dashboard)/menu/(profile-section)/actions"
 import { Checkbox } from "@/components/ui/checkbox"
 
 interface EditProfileFormProps {

@@ -12,11 +12,13 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { Profile } from "@/types/profile"
 import type { Startup } from "@/types/startup"
 import { Building2, ChevronRight, HelpCircle, LogOut, MapPin, Settings, Sun, User } from "lucide-react"
-import { useState, useTransition } from "react"
+import { useCallback, useState, useTransition } from "react"
 import StartupGeneralInfo from "@/components/custom/menu-sheets/startup-general-info"
 import StartupManageTeam from "@/components/custom/menu-sheets/startup-manage-team"
 import SettingsAccount from "@/components/custom/menu-sheets/settings-account"
 import SettingsNotifications from "@/components/custom/menu-sheets/settings-notifications"
+import { updateProfile } from "./(profile-section)/actions"
+import { updateStartup } from "./(startup-section)/actions"
 
 interface MenuViewProps {
   profile: Profile
@@ -38,6 +40,8 @@ type SheetType =
 export default function MenuView({ profile, startup }: MenuViewProps) {
   const [isPending, startTransition] = useTransition()
   const [activeSheet, setActiveSheet] = useState<SheetType>(null)
+  const [currentProfile, setCurrentProfile] = useState<Profile>(profile)
+  const [currentStartup, setCurrentStartup] = useState<Startup | undefined>(startup)
 
   const handleLogout = () => {
     startTransition(async () => {
@@ -47,15 +51,15 @@ export default function MenuView({ profile, startup }: MenuViewProps) {
 
   // Helper function to display name
   const displayName = () => {
-    const firstName = profile.first_name?.trim() || ""
-    const lastName = profile.last_name?.trim() || ""
+    const firstName = currentProfile.first_name?.trim() || ""
+    const lastName = currentProfile.last_name?.trim() || ""
     return `${firstName} ${lastName}`.trim()
   }
 
   // Helper function to get initials for avatar
   const getInitials = () => {
-    const firstName = profile.first_name?.trim() || ""
-    const lastName = profile.last_name?.trim() || ""
+    const firstName = currentProfile.first_name?.trim() || ""
+    const lastName = currentProfile.last_name?.trim() || ""
 
     if (!firstName && !lastName) return "?"
 
@@ -64,6 +68,57 @@ export default function MenuView({ profile, startup }: MenuViewProps) {
 
     return `${firstInitial}${lastInitial}`
   }
+
+  const handleUpdateProfile = useCallback(
+    async (profileData: Partial<Profile>) => {
+      try {
+        // Call the server action to update the database
+        await updateProfile(currentProfile.id, profileData)
+
+        // Update the local state with the new data
+        setCurrentProfile((prev) => ({
+          ...prev,
+          ...profileData,
+        }))
+
+        return true
+      } catch (error) {
+        console.error("Failed to update profile:", error)
+        throw error
+      }
+    },
+    [currentProfile.id],
+  )
+
+  const handleUpdateStartup = useCallback(
+    async (startupData: Partial<Startup>) => {
+      try {
+        // Make sure currentStartup exists before trying to update it
+        if (!currentStartup) {
+          throw new Error("No startup data available to update")
+        }
+        
+        // Call the server action to update the database
+        await updateStartup(currentStartup.id, startupData)
+
+        // Update the local state with the new data
+        setCurrentStartup((prev) => {
+          if (!prev) return undefined
+          
+          return {
+            ...prev,
+            ...startupData,
+          }
+        })
+
+        return true
+      } catch (error) {
+        console.error("Failed to update startup:", error)
+        throw error
+      }
+    },
+    [currentStartup],
+  )
 
   return (
     <div className="w-full">
@@ -133,7 +188,7 @@ export default function MenuView({ profile, startup }: MenuViewProps) {
           </div>
 
           {/* Startup (admin) Section */}
-          {startup && profile.startup_role === "admin" && (
+          {currentStartup && profile.startup_role === "admin" && (
             <div className="w-full mt-8">
               <div className="flex items-center gap-2 mb-4">
                 <h2 className="flex items-center gap-2 text-xl font-bold">
@@ -262,65 +317,69 @@ export default function MenuView({ profile, startup }: MenuViewProps) {
       {/* Profile Sheets */}
       <Sheet open={activeSheet === "name-and-bio"} onOpenChange={() => setActiveSheet(null)}>
         <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
-          <SheetTitle>Personal Information</SheetTitle>
-          <ProfileNameAndBio profile={profile} onClose={() => setActiveSheet(null)} />
+          <SheetTitle className="sr-only"></SheetTitle>
+          <ProfileNameAndBio profile={currentProfile} updateProfile={handleUpdateProfile} onClose={() => setActiveSheet(null)} />
         </SheetContent>
       </Sheet>
 
       <Sheet open={activeSheet === "profile-picture"} onOpenChange={() => setActiveSheet(null)}>
         <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
-          <SheetTitle>Personal Picture</SheetTitle>
+          <SheetTitle className="sr-only"></SheetTitle>
           <ProfilePicture profile={profile} onClose={() => setActiveSheet(null)} />
         </SheetContent>
       </Sheet>
 
       <Sheet open={activeSheet === "investor-industries"} onOpenChange={() => setActiveSheet(null)}>
         <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
-          <SheetTitle>Investor Industries</SheetTitle>
+          <SheetTitle className="sr-only"></SheetTitle>
           <InvestorIndustries profile={profile} onClose={() => setActiveSheet(null)} />
         </SheetContent>
       </Sheet>
 
       {/* Startup Sheets */}
-      <Sheet open={activeSheet === "general-info"} onOpenChange={() => setActiveSheet(null)}>
-        <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
-          <SheetTitle>General Info</SheetTitle>
-          <StartupGeneralInfo startup={startup} onClose={() => setActiveSheet(null)} />
-        </SheetContent>
-      </Sheet>
+      {currentStartup && profile.startup_role === "admin" && (
+        <>
+          <Sheet open={activeSheet === "general-info"} onOpenChange={() => setActiveSheet(null)}>
+            <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
+              <SheetTitle className="sr-only"></SheetTitle>
+              <StartupGeneralInfo startup={currentStartup} updateStartup={handleUpdateStartup} onClose={() => setActiveSheet(null)} />
+            </SheetContent>
+          </Sheet>
 
-      <Sheet open={activeSheet === "overview"} onOpenChange={() => setActiveSheet(null)}>
-        <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
-          <SheetTitle>Overview</SheetTitle>
-          <StartupOverview startup={startup} onClose={() => setActiveSheet(null)} />
-        </SheetContent>
-      </Sheet>
+          <Sheet open={activeSheet === "overview"} onOpenChange={() => setActiveSheet(null)}>
+            <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
+              <SheetTitle className="sr-only"></SheetTitle>
+              <StartupOverview startup={startup} onClose={() => setActiveSheet(null)} />
+            </SheetContent>
+          </Sheet>
 
-      <Sheet open={activeSheet === "logo"} onOpenChange={() => setActiveSheet(null)}>
-        <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
-          <SheetTitle>Logo</SheetTitle>
-          <StartupLogo startup={startup} onClose={() => setActiveSheet(null)} />
-        </SheetContent>
-      </Sheet>
+          <Sheet open={activeSheet === "logo"} onOpenChange={() => setActiveSheet(null)}>
+            <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
+              <SheetTitle className="sr-only"></SheetTitle>
+              <StartupLogo startup={startup} onClose={() => setActiveSheet(null)} />
+            </SheetContent>
+          </Sheet>
 
-      <Sheet open={activeSheet === "manage-team"} onOpenChange={() => setActiveSheet(null)}>
-        <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
-          <SheetTitle>Manage Team</SheetTitle>
-          <StartupManageTeam startup={startup} onClose={() => setActiveSheet(null)} />
-        </SheetContent>
-      </Sheet>
+          <Sheet open={activeSheet === "manage-team"} onOpenChange={() => setActiveSheet(null)}>
+            <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
+              <SheetTitle className="sr-only"></SheetTitle>
+              <StartupManageTeam startup={startup} onClose={() => setActiveSheet(null)} />
+            </SheetContent>
+          </Sheet>
+        </>
+      )}
 
       {/* Settings Sheets */}
       <Sheet open={activeSheet === "account"} onOpenChange={() => setActiveSheet(null)}>
         <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
-          <SheetTitle>Account</SheetTitle>
+          <SheetTitle className="sr-only"></SheetTitle>
           <SettingsAccount onClose={() => setActiveSheet(null)} />
         </SheetContent>
       </Sheet>
 
       <Sheet open={activeSheet === "notifications"} onOpenChange={() => setActiveSheet(null)}>
         <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
-          <SheetTitle>Notifications</SheetTitle>
+          <SheetTitle className="sr-only"></SheetTitle>
           <SettingsNotifications onClose={() => setActiveSheet(null)} />
         </SheetContent>
       </Sheet>

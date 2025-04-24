@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Startup, statesAndProvinces } from "@/types/startup"
 import { toast } from "sonner";
 import { createStartup } from "./actions"
-import { updateProfile } from "../menu/edit-profile/actions"
+import { updateProfile } from "../menu/(profile-section)/actions"
 import { Profile } from "@/types/profile"
 
 interface MyStartupCreateProps {

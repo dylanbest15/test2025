@@ -1,11 +1,11 @@
 import { Profile } from "@/types/profile";
 
-interface PersonalInformationProps {
+interface ProfileNameAndBioProps {
   profile: Profile;
   onClose: () => void
 }
 
-export default function PersonalInformation({ profile, onClose }: PersonalInformationProps) {
+export default function ProfileNameAndBio({ profile, onClose }: ProfileNameAndBioProps) {
   return (
     <div className="flex h-full flex-col">
       

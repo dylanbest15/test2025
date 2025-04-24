@@ -2,11 +2,8 @@
 
 import { signOutAction } from "@/app/actions"
 import InvestorIndustries from "@/components/custom/menu-sheets/investor-industries"
-import PersonalInformation from "@/components/custom/menu-sheets/personal-information"
-import ProfileBio from "@/components/custom/menu-sheets/profile-bio"
+import ProfileNameAndBio from "@/components/custom/menu-sheets/profile-name-and-bio"
 import ProfilePicture from "@/components/custom/menu-sheets/profile-picture"
-import SettingsSheet from "@/components/custom/menu-sheets/settings-sheet"
-import StartupDetails from "@/components/custom/menu-sheets/startup-details"
 import StartupLogo from "@/components/custom/menu-sheets/startup-logo"
 import StartupOverview from "@/components/custom/menu-sheets/startup-overview"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -14,8 +11,12 @@ import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { Profile } from "@/types/profile"
 import type { Startup } from "@/types/startup"
-import { Building2, ChevronRight, MapPin, Settings, User } from "lucide-react"
+import { Building2, ChevronRight, HelpCircle, LogOut, MapPin, Settings, Sun, User } from "lucide-react"
 import { useState, useTransition } from "react"
+import StartupGeneralInfo from "@/components/custom/menu-sheets/startup-general-info"
+import StartupManageTeam from "@/components/custom/menu-sheets/startup-manage-team"
+import SettingsAccount from "@/components/custom/menu-sheets/settings-account"
+import SettingsNotifications from "@/components/custom/menu-sheets/settings-notifications"
 
 interface MenuViewProps {
   profile: Profile
@@ -23,14 +24,15 @@ interface MenuViewProps {
 }
 
 type SheetType =
-  | "personal-information"
-  | "profile-bio"
+  | "name-and-bio"
   | "profile-picture"
   | "investor-industries"
-  | "startup-details"
-  | "startup-overview"
-  | "startup-logo"
-  | "settings"
+  | "general-info"
+  | "overview"
+  | "logo"
+  | "manage-team"
+  | "account"
+  | "notifications"
   | null
 
 export default function MenuView({ profile, startup }: MenuViewProps) {
@@ -67,7 +69,11 @@ export default function MenuView({ profile, startup }: MenuViewProps) {
     <div className="w-full">
       <div className="flex-1 overflow-y-auto">
         <div className="space-y-3 p-5 w-full">
+
+          {/* Profile Section */}
           <div className="w-full">
+
+            {/* Profile Header */}
             <div className="flex items-center justify-between gap-2 mb-4">
               <div className="flex items-center gap-2">
                 <h2 className="flex items-center gap-2 text-xl font-bold">
@@ -88,55 +94,25 @@ export default function MenuView({ profile, startup }: MenuViewProps) {
                   </Badge>
                 )}
               </div>
-              <button
-                onClick={() => setActiveSheet("settings")}
-                className="p-1.5 rounded-full hover:bg-muted transition-colors"
-                aria-label="Settings"
-              >
-                <Settings size={18} />
-              </button>
             </div>
-            <div className="mt-4 flex items-start w-full gap-4 mb-6">
-              <Avatar className="h-20 w-20 flex-shrink-0">
+
+            {/* Profile Display */}
+            <div className="mt-8 flex flex-col items-center w-full mb-6">
+              <Avatar className="h-20 w-20 mb-2">
                 <AvatarImage src={profile.avatar_url || "/placeholder.svg"} alt={displayName()} />
                 <AvatarFallback className="text-lg">{getInitials()}</AvatarFallback>
               </Avatar>
-              <div className="flex flex-col">
-                <p className="font-medium">{displayName()}</p>
-                <p className="text-sm text-muted-foreground">{profile.email}</p>
-              </div>
+              <p className="font-medium">{displayName()}</p>
             </div>
             <div className="mt-4">
-              {/* Personal Information */}
-              <button
-                onClick={() => setActiveSheet("personal-information")}
-                className="flex items-center justify-between w-full py-3 border-b hover:bg-muted/50 px-2 rounded-sm"
-              >
-                <div className="text-left">
-                  <p className="text-sm font-medium">Personal Information</p>
-                  {/* <p className="text-sm text-muted-foreground">Change your name and title</p> */}
-                </div>
-                <ChevronRight size={16} />
-              </button>
 
-              {/* Profile Bio */}
+              {/* Name, Title(founder), & Bio */}
               <button
-                onClick={() => setActiveSheet("profile-bio")}
+                onClick={() => setActiveSheet("name-and-bio")}
                 className="flex items-center justify-between w-full py-3 border-b hover:bg-muted/50 px-2 rounded-sm"
               >
                 <div className="text-left">
-                  <p className="text-sm font-medium">About You</p>
-                </div>
-                <ChevronRight size={16} />
-              </button>
-
-              {/* Profile Picture */}
-              <button
-                onClick={() => setActiveSheet("profile-picture")}
-                className="flex items-center justify-between w-full py-3 border-b hover:bg-muted/50 px-2 rounded-sm"
-              >
-                <div className="text-left">
-                  <p className="text-sm font-medium">Profile Picture</p>
+                  <p className="text-sm font-medium">Name, Title, and Bio</p>
                 </div>
                 <ChevronRight size={16} />
               </button>
@@ -148,93 +124,146 @@ export default function MenuView({ profile, startup }: MenuViewProps) {
                   className="flex items-center justify-between w-full py-3 hover:bg-muted/50 px-2 rounded-sm"
                 >
                   <div className="text-left">
-                    <p className="text-sm font-medium">Your Industries</p>
+                    <p className="text-sm font-medium">Interests and Industries</p>
                   </div>
                   <ChevronRight size={16} />
                 </button>
               )}
             </div>
           </div>
-          {startup && (
-            <>
-              <div className="w-full mt-8">
-                <div className="flex items-center gap-2 mb-4">
-                  <h2 className="flex items-center gap-2 text-xl font-bold">
-                    <Building2 size={18} />
-                    My Startup
-                  </h2>
-                  {profile.startup_role && <Badge variant="secondary">{profile.startup_role}</Badge>}
-                </div>
-                <div className="mt-4 flex items-start w-full gap-4 mb-6">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-md bg-muted flex-shrink-0">
-                    {/* <Building2 size={36} className="text-muted-foreground" /> */}
-                    <p>Logo</p>
-                  </div>
-                  <div className="flex flex-col">
-                    <p className="font-medium">{startup.name}</p>
-                    <div className="flex items-center gap-1.5 mt-1">
-                      <MapPin size={14} className="text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
-                        {startup.city}, {startup.state}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-4">
-                  {/* Startup Details */}
-                  <button
-                    onClick={() => setActiveSheet("startup-details")}
-                    className="flex items-center justify-between w-full py-3 border-b hover:bg-muted/50 px-2 rounded-sm"
-                    disabled={profile.startup_role !== "admin"}
-                  >
-                    <div className="text-left">
-                      <p className="text-sm font-medium">Company Details</p>
-                    </div>
-                    <ChevronRight size={16} />
-                  </button>
 
-                  {/* Startup Overview */}
-                  <button
-                    onClick={() => setActiveSheet("startup-overview")}
-                    className="flex items-center justify-between w-full py-3 border-b hover:bg-muted/50 px-2 rounded-sm"
-                    disabled={profile.startup_role !== "admin"}
-                  >
-                    <div className="text-left">
-                      <p className="text-sm font-medium">Company Overview</p>
-                    </div>
-                    <ChevronRight size={16} />
-                  </button>
-
-                  {/* Startup Logo */}
-                  <button
-                    onClick={() => setActiveSheet("startup-logo")}
-                    className="flex items-center justify-between w-full py-3 border-b hover:bg-muted/50 px-2 rounded-sm"
-                    disabled={profile.startup_role !== "admin"}
-                  >
-                    <div className="text-left">
-                      <p className="text-sm font-medium">Company Logo</p>
-                    </div>
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
+          {/* Startup (admin) Section */}
+          {startup && profile.startup_role === "admin" && (
+            <div className="w-full mt-8">
+              <div className="flex items-center gap-2 mb-4">
+                <h2 className="flex items-center gap-2 text-xl font-bold">
+                  <Building2 size={18} />
+                  My Startup
+                </h2>
+                {profile.startup_role && <Badge variant="secondary">{profile.startup_role}</Badge>}
               </div>
-            </>
+              <div className="mt-4">
+
+                {/* General Info */}
+                <button
+                  onClick={() => setActiveSheet("general-info")}
+                  className="flex items-center justify-between w-full py-3 border-b hover:bg-muted/50 px-2 rounded-sm"
+                  disabled={profile.startup_role !== "admin"}
+                >
+                  <div className="text-left">
+                    <p className="text-sm font-medium">General Info</p>
+                  </div>
+                  <ChevronRight size={16} />
+                </button>
+
+                {/* Overview */}
+                <button
+                  onClick={() => setActiveSheet("overview")}
+                  className="flex items-center justify-between w-full py-3 border-b hover:bg-muted/50 px-2 rounded-sm"
+                  disabled={profile.startup_role !== "admin"}
+                >
+                  <div className="text-left">
+                    <p className="text-sm font-medium">Overview</p>
+                  </div>
+                  <ChevronRight size={16} />
+                </button>
+
+                {/* Logo */}
+                <button
+                  onClick={() => setActiveSheet("logo")}
+                  className="flex items-center justify-between w-full py-3 border-b hover:bg-muted/50 px-2 rounded-sm"
+                  disabled={profile.startup_role !== "admin"}
+                >
+                  <div className="text-left">
+                    <p className="text-sm font-medium">Logo</p>
+                  </div>
+                  <ChevronRight size={16} />
+                </button>
+
+                {/* Manage Team */}
+                <button
+                  onClick={() => setActiveSheet("manage-team")}
+                  className="flex items-center justify-between w-full py-3 border-b hover:bg-muted/50 px-2 rounded-sm"
+                  disabled={profile.startup_role !== "admin"}
+                >
+                  <div className="text-left">
+                    <p className="text-sm font-medium">Manage Team</p>
+                  </div>
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
           )}
+
+          {/* Settings Section */}
+          <div className="w-full mt-8">
+            <div className="flex items-center gap-2 mb-4">
+              <h2 className="flex items-center gap-2 text-xl font-bold">
+                <Settings size={18} />
+                Settings
+              </h2>
+            </div>
+            <div className="mt-4">
+
+              {/* Account */}
+              <button
+                onClick={() => setActiveSheet("account")}
+                className="flex items-center justify-between w-full py-3 border-b hover:bg-muted/50 px-2 rounded-sm"
+              >
+                <div className="text-left">
+                  <p className="text-sm font-medium">Account</p>
+                </div>
+                <ChevronRight size={16} />
+              </button>
+
+              {/* Notifications */}
+              <button
+                onClick={() => setActiveSheet("notifications")}
+                className="flex items-center justify-between w-full py-3 border-b hover:bg-muted/50 px-2 rounded-sm"
+              >
+                <div className="text-left">
+                  <p className="text-sm font-medium">Notifications</p>
+                </div>
+                <ChevronRight size={16} />
+              </button>
+
+              {/* Dark Mode */}
+              <button
+                className="flex items-center w-full py-3 gap-2 border-b hover:bg-muted/50 px-2 rounded-sm"
+                disabled={profile.startup_role !== "admin"}
+              >
+                <Sun size={18} />
+                <p className="text-sm font-medium">Dark Mode</p>
+              </button>
+
+              {/* Help Center */}
+              <button
+                className="flex items-center w-full py-3 gap-2 border-b hover:bg-muted/50 px-2 rounded-sm"
+                disabled={profile.startup_role !== "admin"}
+              >
+                <HelpCircle size={18} />
+                <p className="text-sm font-medium">Help Center</p>
+              </button>
+
+              {/* Logout */}
+              <button
+                onClick={handleLogout}
+                className="flex items-center w-full py-3 gap-2 border-b text-destructive hover:bg-muted/50 px-2 rounded-sm"
+                disabled={isPending}
+              >
+                <LogOut size={18} />
+                <p className="text-sm font-medium">{isPending ? "Logging out..." : "Logout"}</p>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Profile Sheets */}
-      <Sheet open={activeSheet === "personal-information"} onOpenChange={() => setActiveSheet(null)}>
+      <Sheet open={activeSheet === "name-and-bio"} onOpenChange={() => setActiveSheet(null)}>
         <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
           <SheetTitle>Personal Information</SheetTitle>
-          <PersonalInformation profile={profile} onClose={() => setActiveSheet(null)} />
-        </SheetContent>
-      </Sheet>
-
-      <Sheet open={activeSheet === "profile-bio"} onOpenChange={() => setActiveSheet(null)}>
-        <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
-          <SheetTitle>Profile Bio</SheetTitle>
-          <ProfileBio profile={profile} onClose={() => setActiveSheet(null)} />
+          <ProfileNameAndBio profile={profile} onClose={() => setActiveSheet(null)} />
         </SheetContent>
       </Sheet>
 
@@ -253,32 +282,46 @@ export default function MenuView({ profile, startup }: MenuViewProps) {
       </Sheet>
 
       {/* Startup Sheets */}
-      <Sheet open={activeSheet === "startup-details"} onOpenChange={() => setActiveSheet(null)}>
+      <Sheet open={activeSheet === "general-info"} onOpenChange={() => setActiveSheet(null)}>
         <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
-          <SheetTitle>Company Details</SheetTitle>
-          <StartupDetails startup={startup} onClose={() => setActiveSheet(null)} />
+          <SheetTitle>General Info</SheetTitle>
+          <StartupGeneralInfo startup={startup} onClose={() => setActiveSheet(null)} />
         </SheetContent>
       </Sheet>
 
-      <Sheet open={activeSheet === "startup-overview"} onOpenChange={() => setActiveSheet(null)}>
+      <Sheet open={activeSheet === "overview"} onOpenChange={() => setActiveSheet(null)}>
         <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
-          <SheetTitle>Company Overview</SheetTitle>
+          <SheetTitle>Overview</SheetTitle>
           <StartupOverview startup={startup} onClose={() => setActiveSheet(null)} />
         </SheetContent>
       </Sheet>
 
-      <Sheet open={activeSheet === "startup-logo"} onOpenChange={() => setActiveSheet(null)}>
+      <Sheet open={activeSheet === "logo"} onOpenChange={() => setActiveSheet(null)}>
         <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
-          <SheetTitle>Company Logo</SheetTitle>
+          <SheetTitle>Logo</SheetTitle>
           <StartupLogo startup={startup} onClose={() => setActiveSheet(null)} />
         </SheetContent>
       </Sheet>
 
-      {/* Settings Sheet */}
-      <Sheet open={activeSheet === "settings"} onOpenChange={() => setActiveSheet(null)}>
+      <Sheet open={activeSheet === "manage-team"} onOpenChange={() => setActiveSheet(null)}>
         <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
-          <SheetTitle>Settings</SheetTitle>
-          <SettingsSheet onClose={() => setActiveSheet(null)} onLogout={handleLogout} isPending={isPending} />
+          <SheetTitle>Manage Team</SheetTitle>
+          <StartupManageTeam startup={startup} onClose={() => setActiveSheet(null)} />
+        </SheetContent>
+      </Sheet>
+
+      {/* Settings Sheets */}
+      <Sheet open={activeSheet === "account"} onOpenChange={() => setActiveSheet(null)}>
+        <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
+          <SheetTitle>Account</SheetTitle>
+          <SettingsAccount onClose={() => setActiveSheet(null)} />
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={activeSheet === "notifications"} onOpenChange={() => setActiveSheet(null)}>
+        <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
+          <SheetTitle>Notifications</SheetTitle>
+          <SettingsNotifications onClose={() => setActiveSheet(null)} />
         </SheetContent>
       </Sheet>
     </div>

@@ -5,20 +5,13 @@ import { MapPinIcon, MailIcon } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useState } from "react"
-import { MyStartupEdit } from "@/app/(dashboard)/my-startup/my-startup-edit"
 
 interface MyStartupViewProps {
   startup: Startup
 }
 
 export default function MyStartupView({ startup }: MyStartupViewProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [startupData, setStartupData] = useState(startup)
-
-  const handleUpdateStartup = (updatedStartup: typeof startup) => {
-    setStartupData(updatedStartup)
-    setSidebarOpen(false)
-  }
 
   return (
     <div className="container mx-auto py-8 px-6 max-w-5xl">
@@ -54,22 +47,6 @@ export default function MyStartupView({ startup }: MyStartupViewProps) {
           </CardContent>
         </Card>
       </div>
-
-      {/* {profile.startup_role === 'admin' && (
-        <div className="flex justify-end w-full">
-          <Button onClick={() => setSidebarOpen(true)} size="sm">
-            <Pencil className="h-4 w-4 mr-2" />
-            Edit Company Details
-          </Button>
-        </div>
-      )} */}
-
-      <MyStartupEdit
-        open={sidebarOpen}
-        onOpenChange={setSidebarOpen}
-        startup={startupData}
-        onUpdate={handleUpdateStartup}
-      />
     </div>
   )
 }

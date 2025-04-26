@@ -135,10 +135,6 @@ export default function StartupOverview({ startup, updateStartup, onClose }: Sta
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-4">
           <div className="space-y-2">
-            {/* <Label htmlFor="overview">Overview</Label>
-            <p className="text-xs text-muted-foreground">
-              Keep it brief and highlight the important facts about your startup.
-            </p> */}
             <Textarea
               id="overview"
               maxLength={300}

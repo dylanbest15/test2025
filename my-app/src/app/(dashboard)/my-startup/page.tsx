@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import MyStartupView from "@/app/(dashboard)/my-startup/my-startup-view";
 import MyStartupCreate from "@/app/(dashboard)/my-startup/my-startup-create";
 
-export default async function Company() {
+export default async function MyStartup() {
   const supabase = await createClient();
 
   const {

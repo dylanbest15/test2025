@@ -205,7 +205,7 @@ export default function StartupGeneralInfo({ startup, updateStartup, onClose }: 
               type="number"
               value={formData.year_founded || ""}
               onChange={handleInputChange}
-              placeholder="e.g. 2020"
+              placeholder="e.g. 2025"
               className={invalidFields.has("year_founded") ? "border-destructive" : ""}
             />
           </div>

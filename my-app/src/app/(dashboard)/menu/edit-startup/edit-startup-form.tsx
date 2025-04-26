@@ -201,7 +201,7 @@ export default function EditStartupForm({ startup }: EditStartupFormProps) {
             <div className="space-y-2">
               <Label htmlFor="state">State/Province:</Label>
               <Select value={details.state} onValueChange={handleStateChange}>
-                <SelectTrigger id="state">
+                <SelectTrigger id="state" autoFocus>
                   <SelectValue placeholder="Select a state or province" />
                 </SelectTrigger>
                 <SelectContent>

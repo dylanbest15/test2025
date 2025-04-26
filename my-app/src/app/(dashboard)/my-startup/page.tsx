@@ -1,49 +1,46 @@
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
-import MyStartupView from "@/app/(dashboard)/my-startup/my-startup-view";
-import MyStartupCreate from "@/app/(dashboard)/my-startup/my-startup-create";
+import { createClient } from "@/utils/supabase/server"
+import { redirect } from "next/navigation"
+import MyStartupView from "@/app/(dashboard)/my-startup/my-startup-view"
+import CreateStartupWrapper from "./(create-startup)/create-startup-wrapper"
 
 export default async function MyStartup() {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    return redirect("/sign-in");
+    return redirect("/sign-in")
   }
 
-  const { data: profile, error } = await supabase.from('profiles')
-    .select()
-    .eq('id', user.id)
-    .single();
+  const { data: profile, error } = await supabase.from("profiles").select().eq("id", user.id).single()
 
   if (error) {
-    console.error("Error fetching profile:", error);
+    console.error("Error fetching profile:", error)
     // return notFound();
   }
 
+  // If the user doesn't have a startup, render the create form
   if (!profile.startup_id) {
-    return (
-      <MyStartupCreate profile={profile} />
-    )
+    return <CreateStartupWrapper profile={profile} />
   }
 
+  // If the user has a startup, fetch and render it
   if (profile.startup_id) {
-    const { data: startup, error: startupError } = await supabase.from('startups')
+    const { data: startup, error: startupError } = await supabase
+      .from("startups")
       .select()
-      .eq('id', profile.startup_id)
-      .single();
+      .eq("id", profile.startup_id)
+      .single()
 
     if (startupError) {
-      console.error("Error fetching startup:", startupError);
+      console.error("Error fetching startup:", startupError)
       // return notFound();
     }
+
     if (startup) {
-      return (
-        <MyStartupView startup={startup} />
-      )
+      return <MyStartupView startup={startup} />
     }
   }
 }

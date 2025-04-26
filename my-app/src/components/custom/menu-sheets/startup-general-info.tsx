@@ -223,7 +223,7 @@ export default function StartupGeneralInfo({ startup, updateStartup, onClose }: 
           <div className="space-y-2">
             <Label htmlFor="state">State or Province</Label>
             <Select value={formData.state} onValueChange={handleStateChange}>
-              <SelectTrigger className={`w-full ${invalidFields.has("state") ? "border-destructive" : ""}`}>
+              <SelectTrigger className={`w-full ${invalidFields.has("state") ? "border-destructive" : ""}`} autoFocus>
                 <SelectValue placeholder="Select a state or province" />
               </SelectTrigger>
               <SelectContent>

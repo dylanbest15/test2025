@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -19,29 +19,16 @@ interface StartupGeneralInfoProps {
 
 export default function StartupGeneralInfo({ startup, updateStartup, onClose }: StartupGeneralInfoProps) {
   const [formData, setFormData] = useState({
-    name: startup?.name || "",
-    city: startup?.city || "",
-    state: startup?.state || "",
-    email: startup?.email || "",
-    year_founded: startup?.year_founded || undefined,
+    name: startup.name || "",
+    city: startup.city || "",
+    state: startup.state || "",
+    email: startup.email || "",
+    year_founded: startup.year_founded || undefined,
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formChanged, setFormChanged] = useState(false)
   const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set())
-
-  // Update state if startup prop changes
-  useEffect(() => {
-    setFormData({
-      name: startup.name || "",
-      city: startup.city || "",
-      state: startup.state || "",
-      email: startup.email || "",
-      year_founded: startup?.year_founded || undefined,
-    })
-    setFormChanged(false)
-    setInvalidFields(new Set())
-  }, [startup])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target

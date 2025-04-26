@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -30,19 +30,6 @@ export default function ProfileNameAndBio({ profile, updateProfile, onClose }: P
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formChanged, setFormChanged] = useState(false)
   const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set())
-
-  // Update state if profile prop changes
-  useEffect(() => {
-    setFormData({
-      first_name: profile.first_name || "",
-      last_name: profile.last_name || "",
-      founder_title: profile.founder_title || "",
-      bio: profile.bio || "",
-    })
-    setBioCount(profile.bio ? profile.bio.length : 0)
-    setFormChanged(false)
-    setInvalidFields(new Set())
-  }, [profile])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target
@@ -213,7 +200,7 @@ export default function ProfileNameAndBio({ profile, updateProfile, onClose }: P
               maxLength={300}
               value={formData.bio}
               onChange={handleInputChange}
-              className={cn("h-[120px] resize-none", invalidFields.has("founder_title") ? "border-destructive" : "" )}
+              className={cn("h-[120px] resize-none", invalidFields.has("bio") ? "border-destructive" : "" )}
             />
             <div className="text-xs text-right text-muted-foreground">{bioCount}/300</div>
           </div>

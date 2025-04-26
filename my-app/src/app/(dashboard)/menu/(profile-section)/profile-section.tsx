@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import ProfileNameAndBio from "@/components/custom/menu-sheets/profile-name-and-bio";
 import ProfilePicture from "@/components/custom/menu-sheets/profile-picture";
 import InvestorIndustries from "@/components/custom/menu-sheets/investor-industries";
-import { ChevronRight, User } from "lucide-react";
+import { ChevronRight, Pencil, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
@@ -98,11 +98,19 @@ export default function ProfileSection({ profile }: ProfileSectionProps) {
             </div>
 
             {/* Profile Display */}
-            <div className="mt-8 flex flex-col items-center w-full mb-6">
-              <Avatar className="h-20 w-20 mb-2">
-                <AvatarImage src={profile.avatar_url || "/placeholder.svg"} alt={displayName()} />
-                <AvatarFallback className="text-lg">{getInitials()}</AvatarFallback>
-              </Avatar>
+            <div className="mt-8 flex flex-row items-center w-full mb-6">
+              <div className="relative mr-4">
+                <Avatar className="h-20 w-20 cursor-pointer" onClick={() => setActiveSheet("profile-picture")}>
+                  <AvatarImage src={profile.avatar_url || "/placeholder.svg"} alt={displayName()} />
+                  <AvatarFallback className="text-lg">{getInitials()}</AvatarFallback>
+                </Avatar>
+                <div
+                  className="absolute -top-1 -right-1 bg-background rounded-full p-1 border shadow-sm cursor-pointer"
+                  onClick={() => setActiveSheet("profile-picture")}
+                >
+                  <Pencil size={14} />
+                </div>
+              </div>
               <p className="font-medium">{displayName()}</p>
             </div>
             <div className="mt-4">
@@ -113,7 +121,7 @@ export default function ProfileSection({ profile }: ProfileSectionProps) {
                 className="flex items-center justify-between w-full py-3 border-b hover:bg-muted/50 px-2 rounded-sm"
               >
                 <div className="text-left">
-                  <p className="text-sm font-medium">Name, Title, and Bio</p>
+                  <p className="text-sm font-medium">Name {profile.type === "founder" && ( ', Title,' )} and Bio</p>
                 </div>
                 <ChevronRight size={16} />
               </button>

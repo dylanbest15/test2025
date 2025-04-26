@@ -123,7 +123,7 @@ export default function StartupSection({ startup }: StartupSectionProps) {
       <Sheet open={activeSheet === "overview"} onOpenChange={() => setActiveSheet(null)}>
         <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
           <SheetTitle className="sr-only"></SheetTitle>
-          <StartupOverview startup={startup} onClose={() => setActiveSheet(null)} />
+          <StartupOverview startup={currentStartup} updateStartup={handleUpdateStartup} onClose={() => setActiveSheet(null)} />
         </SheetContent>
       </Sheet>
 

@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { Bell, Building, LogOut, Menu, Search, User } from "lucide-react"
+import { Bell, Building, FileText, LogOut, Menu, Search, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -16,11 +16,13 @@ import { usePathname } from "next/navigation"
 import NavItem from "@/components/custom/nav-item"
 
 interface NavbarProps {
+  type: string
   onLogout?: () => void
   notificationCount?: number
 }
 
 export function AppNavbar({
+  type,
   onLogout,
   notificationCount = 0,
 }: NavbarProps) {
@@ -31,18 +33,38 @@ export function AppNavbar({
     return (
       <div className="fixed bottom-0 left-0 z-50 w-full h-16 border-t bg-white">
         <div className="grid h-full grid-cols-4">
-        <NavItem
-            href="/my-startup"
-            icon={<Building className="h-5 w-5" />}
-            label="My Startup"
-            isActive={pathname === "/my-startup"}
-          />
-          <NavItem
-            href="/search"
-            icon={<Search className="h-5 w-5" />}
-            label="Search"
-            isActive={pathname === "/search"}
-          />
+          {type === "founder" && (
+            <>
+            <NavItem
+              href="/my-startup"
+              icon={<Building className="h-5 w-5" />}
+              label="My Startup"
+              isActive={pathname === "/my-startup"}
+            />
+            <NavItem
+              href="/search"
+              icon={<Search className="h-5 w-5" />}
+              label="Search"
+              isActive={pathname === "/search"}
+            />
+            </>
+          )}
+          {type === "investor" && (
+            <>
+            <NavItem
+              href="/search"
+              icon={<Search className="h-5 w-5" />}
+              label="Startups"
+              isActive={pathname === "/search"}
+            />
+            <NavItem
+              href="/following"
+              icon={<FileText className="h-5 w-5" />}
+              label="Following"
+              isActive={pathname === "/following"}
+            />
+            </>
+          )}
           <NavItem
             href="/notifications"
             icon={
@@ -55,7 +77,7 @@ export function AppNavbar({
                 )}
               </div>
             }
-            label="Alerts"
+            label="Notifications"
             isActive={pathname === "/notifications"}
           />
           <NavItem

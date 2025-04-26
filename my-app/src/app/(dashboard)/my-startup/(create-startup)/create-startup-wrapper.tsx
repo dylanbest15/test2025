@@ -3,8 +3,8 @@
 import { Profile } from "@/types/profile";
 import { Startup } from "@/types/startup";
 import { useState } from "react";
-import MyStartupView from "@/app/(dashboard)/my-startup/my-startup-view";
 import CreateStartupForm from "@/app/(dashboard)/my-startup/(create-startup)/create-startup-form";
+import ViewStartup from "@/app/(dashboard)/my-startup/(view-startup)/view-startup";
 
 interface CreateStartupWrapperProps {
   profile: Profile;
@@ -19,7 +19,7 @@ export default function CreateStartupWrapper({ profile }: CreateStartupWrapperPr
 
   // If a startup was created, render the view component
   if (createdStartup) {
-    return <MyStartupView startup={createdStartup} />
+    return <ViewStartup startup={createdStartup} />
   }
 
   // Otherwise render the create form

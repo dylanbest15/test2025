@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
-import MyStartupView from "@/app/(dashboard)/my-startup/my-startup-view"
-import CreateStartupWrapper from "./(create-startup)/create-startup-wrapper"
+import CreateStartupWrapper from "@/app/(dashboard)/my-startup/(create-startup)/create-startup-wrapper"
+import ViewStartup from "@/app/(dashboard)/my-startup/(view-startup)/view-startup"
 
 export default async function MyStartup() {
   const supabase = await createClient()
@@ -40,7 +40,7 @@ export default async function MyStartup() {
     }
 
     if (startup) {
-      return <MyStartupView startup={startup} />
+      return <ViewStartup startup={startup} />
     }
   }
 }

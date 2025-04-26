@@ -12,3 +12,16 @@ export const ProfileUpdateSchema = z.object({
   investor_active: z.boolean().optional(),
   updated_at: z.string().datetime()
 });
+
+export const FounderNameAndBioSchema = z.object({
+  first_name: z.string().min(2).max(30).regex(nameRegex),
+  last_name: z.string().min(2).max(30).regex(nameRegex),
+  bio: z.string().max(300).optional(),
+  founder_title: z.string().min(2).max(30).regex(nameRegex)
+})
+
+export const InvestorNameAndBioSchema = z.object({
+  first_name: z.string().min(2).max(30).regex(nameRegex),
+  last_name: z.string().min(2).max(30).regex(nameRegex),
+  bio: z.string().max(300).optional(),
+})

@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
 import { statesAndProvinces, type Startup } from "@/types/startup"
+import { StartupGeneralInfoSchema } from "@/lib/validation/startups"
 
 interface StartupGeneralInfoProps {
   startup: Startup
@@ -22,26 +23,24 @@ export default function StartupGeneralInfo({ startup, updateStartup, onClose }: 
     city: startup?.city || "",
     state: startup?.state || "",
     email: startup?.email || "",
-    year_founded: startup?.year_founded?.toString() || "",
+    year_founded: startup?.year_founded || undefined,
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formChanged, setFormChanged] = useState(false)
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set())
 
   // Update state if startup prop changes
   useEffect(() => {
-    if (startup) {
-      setFormData({
-        name: startup.name || "",
-        city: startup.city || "",
-        state: startup.state || "",
-        email: startup.email || "",
-        year_founded: startup.year_founded?.toString() || "",
-      })
-      setFormChanged(false)
-      setErrors({})
-    }
+    setFormData({
+      name: startup.name || "",
+      city: startup.city || "",
+      state: startup.state || "",
+      email: startup.email || "",
+      year_founded: startup?.year_founded || undefined,
+    })
+    setFormChanged(false)
+    setInvalidFields(new Set())
   }, [startup])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,18 +49,16 @@ export default function StartupGeneralInfo({ startup, updateStartup, onClose }: 
     // Update form data with the new value
     const updatedFormData = {
       ...formData,
-      [id]: value,
+      [id]: id === "year_founded" ? (value ? Number(value) : undefined) : value,
     }
 
     setFormData(updatedFormData)
 
     // Clear error for this field if it exists
-    if (errors[id]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev }
-        delete newErrors[id]
-        return newErrors
-      })
+    if (invalidFields.has(id)) {
+      const newInvalidFields = new Set(invalidFields)
+      newInvalidFields.delete(id)
+      setInvalidFields(newInvalidFields)
     }
 
     // Check if any field has changed from original startup
@@ -70,7 +67,7 @@ export default function StartupGeneralInfo({ startup, updateStartup, onClose }: 
       updatedFormData.city !== (startup?.city || "") ||
       updatedFormData.state !== (startup?.state || "") ||
       updatedFormData.email !== (startup?.email || "") ||
-      updatedFormData.year_founded !== (startup?.year_founded?.toString() || "")
+      updatedFormData.year_founded !== startup?.year_founded
 
     setFormChanged(hasChanged)
   }
@@ -85,12 +82,10 @@ export default function StartupGeneralInfo({ startup, updateStartup, onClose }: 
     setFormData(updatedFormData)
 
     // Clear error for state field if it exists
-    if (errors.state) {
-      setErrors((prev) => {
-        const newErrors = { ...prev }
-        delete newErrors.state
-        return newErrors
-      })
+    if (invalidFields.has("state")) {
+      const newInvalidFields = new Set(invalidFields)
+      newInvalidFields.delete("state")
+      setInvalidFields(newInvalidFields)
     }
 
     // Check if state has changed from original startup
@@ -99,37 +94,45 @@ export default function StartupGeneralInfo({ startup, updateStartup, onClose }: 
       updatedFormData.city !== (startup?.city || "") ||
       value !== (startup?.state || "") ||
       updatedFormData.email !== (startup?.email || "") ||
-      updatedFormData.year_founded !== (startup?.year_founded?.toString() || "")
+      updatedFormData.year_founded !== startup?.year_founded
 
     setFormChanged(hasChanged)
   }
 
   const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {}
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Startup name is required"
+    // Prepare data for Zod validation
+    const updateData: Partial<Startup> = {
+      name: formData.name,
+      email: formData.email,
+      city: formData.city,
+      state: formData.state,
+      year_founded: formData.year_founded,
     }
 
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required"
-    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address"
+    const parseResult = StartupGeneralInfoSchema.safeParse(updateData)
+
+    if (!parseResult.success) {
+      // Just track which fields are invalid without storing error messages
+      const newInvalidFields = new Set<string>()
+      const formattedErrors = parseResult.error.format()
+
+      // Add field names with errors to the set
+      Object.entries(formattedErrors).forEach(([key, value]) => {
+        if (
+          key !== "_errors" &&
+          ((typeof value === "object" && value !== null && "_errors" in value && value._errors.length > 0) ||
+            (Array.isArray(value) && value.length > 0))
+        ) {
+          newInvalidFields.add(key)
+        }
+      })
+
+      setInvalidFields(newInvalidFields)
+      return false
     }
 
-    if (formData.year_founded) {
-      const year = Number.parseInt(formData.year_founded)
-      const currentYear = new Date().getFullYear()
-
-      if (isNaN(year)) {
-        newErrors.year_founded = "Year must be a number"
-      } else if (year < 1900 || year > currentYear) {
-        newErrors.year_founded = `Year must be between 1900 and ${currentYear}`
-      }
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    setInvalidFields(new Set())
+    return true
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -147,11 +150,7 @@ export default function StartupGeneralInfo({ startup, updateStartup, onClose }: 
         city: formData.city,
         state: formData.state,
         email: formData.email,
-      }
-
-      // Only include year_founded if it's provided
-      if (formData.year_founded) {
-        updateData.year_founded = Number.parseInt(formData.year_founded)
+        year_founded: formData.year_founded,
       }
 
       // Use the updateStartup function passed from the parent
@@ -196,24 +195,20 @@ export default function StartupGeneralInfo({ startup, updateStartup, onClose }: 
               id="name"
               value={formData.name}
               onChange={handleInputChange}
-              className={errors.name ? "border-destructive" : ""}
+              className={invalidFields.has("name") ? "border-destructive" : ""}
             />
-            {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <p className="text-xs text-muted-foreground">
-              This is the email that will appear to investors.
-            </p>
+            <p className="text-xs text-muted-foreground">This is the email that will appear to investors.</p>
             <Input
               id="email"
               type="email"
               value={formData.email}
               onChange={handleInputChange}
-              className={errors.email ? "border-destructive" : ""}
+              className={invalidFields.has("email") ? "border-destructive" : ""}
             />
-            {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
           </div>
 
           <div className="space-y-2">
@@ -221,23 +216,27 @@ export default function StartupGeneralInfo({ startup, updateStartup, onClose }: 
             <Input
               id="year_founded"
               type="number"
-              value={formData.year_founded}
+              value={formData.year_founded || ""}
               onChange={handleInputChange}
               placeholder="e.g. 2020"
-              className={errors.year_founded ? "border-destructive" : ""}
+              className={invalidFields.has("year_founded") ? "border-destructive" : ""}
             />
-            {errors.year_founded && <p className="text-xs text-destructive">{errors.year_founded}</p>}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="city">City</Label>
-            <Input id="city" value={formData.city} onChange={handleInputChange} />
+            <Input
+              id="city"
+              value={formData.city}
+              onChange={handleInputChange}
+              className={invalidFields.has("city") ? "border-destructive" : ""}
+            />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="state">State or Province</Label>
             <Select value={formData.state} onValueChange={handleStateChange}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className={`w-full ${invalidFields.has("state") ? "border-destructive" : ""}`}>
                 <SelectValue placeholder="Select a state or province" />
               </SelectTrigger>
               <SelectContent>

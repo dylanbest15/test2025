@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 const nameRegex = /^[a-zA-Z\s'-]+$/;
+const StartupRoleSchema = z.enum(["admin", "member"])
 
 // API Update Schema (everything optional except updated_at)
 export const ProfileUpdateSchema = z.object({
@@ -8,8 +9,8 @@ export const ProfileUpdateSchema = z.object({
   last_name: z.string().min(2).max(30).regex(nameRegex).optional(),
   bio: z.string().max(300).optional(),
   founder_title: z.string().min(2).max(30).regex(nameRegex).optional(),
-  startup_id: z.string().optional(),
-  startup_role: z.string().optional(),
+  startup_id: z.string().uuid().optional(),
+  startup_role: StartupRoleSchema,
   investor_active: z.boolean().optional(),
   updated_at: z.string().datetime()
 });

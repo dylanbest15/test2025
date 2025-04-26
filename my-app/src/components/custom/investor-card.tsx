@@ -1,6 +1,6 @@
-import { Investor } from "@/types/investor";
+import { mockInvestor } from "@/types/startup";
 
-export default function InvestorCard({ investor }: { investor: Investor }) {
+export default function InvestorCard({ investor }: { investor: mockInvestor }) {
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-center gap-3">

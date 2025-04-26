@@ -1,11 +1,3 @@
-export type mockStartup = {
-  id: number;
-  name: string;
-  location: string;
-  fundPool: number;
-  fundGoal: number;
-}
-
 export type Startup = {
   id: string;
   name: string;
@@ -86,6 +78,14 @@ export const statesAndProvinces = [
 ]
 
 // Mock data for startups
+export type mockStartup = {
+  id: number;
+  name: string;
+  location: string;
+  fundPool: number;
+  fundGoal: number;
+}
+
 export const mockStartups: mockStartup[] = [
   { id: 1, name: "TechNova", location: "San Francisco, CA", fundPool: 2500000, fundGoal: 4000000 },
   { id: 2, name: "GreenEnergy Solutions", location: "Austin, TX", fundPool: 1750000, fundGoal: 3000000 },
@@ -117,4 +117,41 @@ export const mockStartups: mockStartup[] = [
   { id: 28, name: "Sustainable Agriculture", location: "Madison, WI", fundPool: 2300000, fundGoal: 4000000 },
   { id: 29, name: "Microchip Design", location: "Austin, TX", fundPool: 7800000, fundGoal: 12000000 },
   { id: 30, name: "Solar Energy", location: "Albuquerque, NM", fundPool: 3900000, fundGoal: 6500000 },
+]
+
+export type mockInvestor = {
+  id: string
+  name: string
+  location: string
+  logo: string
+  description: string
+  investmentFocus?: string[]
+}
+
+// Mock data for investors
+export const mockInvestors: mockInvestor[] = [
+  {
+    id: "inv1",
+    name: "Sequoia Capital",
+    location: "Menlo Park, CA",
+    logo: "/abstract-geometric-shapes.png",
+    description: "Sequoia Capital is an American venture capital firm.",
+    investmentFocus: ["SaaS", "AI", "Fintech"],
+  },
+  {
+    id: "inv2",
+    name: "Andreessen Horowitz",
+    location: "Menlo Park, CA",
+    logo: "/abstract-geometric-AH.png",
+    description: "Andreessen Horowitz (a16z) is a venture capital firm that backs bold entrepreneurs.",
+    investmentFocus: ["Crypto", "Fintech", "Healthcare"],
+  },
+  {
+    id: "inv3",
+    name: "Y Combinator",
+    location: "Mountain View, CA",
+    logo: "/yc-logo-abstract.png",
+    description: "Y Combinator is an American seed accelerator.",
+    investmentFocus: ["Early Stage", "B2B", "Consumer"],
+  },
 ]

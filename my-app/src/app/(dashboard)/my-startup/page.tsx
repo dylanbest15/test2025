@@ -11,7 +11,7 @@ export default async function MyStartup() {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return redirect("/sign-in")
+    return redirect("/")
   }
 
   const { data: profile, error } = await supabase.from("profiles").select().eq("id", user.id).single()
@@ -28,19 +28,37 @@ export default async function MyStartup() {
 
   // If the user has a startup, fetch and render it
   if (profile.startup_id) {
-    const { data: startup, error: startupError } = await supabase
+    const { data: startup, error: startupErr } = await supabase
       .from("startups")
       .select()
       .eq("id", profile.startup_id)
       .single()
 
-    if (startupError) {
-      console.error("Error fetching startup:", startupError)
+    if (startupErr) {
+      console.error("Error fetching startup:", startupErr)
+      // return notFound();
+    }
+
+    // Fetch the fund pool
+    const { data: fundPool, error: fundPoolErr } = await supabase
+    .from("fund_pools")
+    .select()
+    .eq("id", profile.startup_id)
+    .single()
+
+    // TODO: THIS STUFF ACROSS APP
+    if (error && error.code === 'PGRST116') {
+      // Resource not found, handle gracefully
+      return { data: null, error: null }
+    }
+
+    if (fundPoolErr) {
+      console.error("Error fetching fund pool:", fundPoolErr)
       // return notFound();
     }
 
     if (startup) {
-      return <ViewStartup startup={startup} />
+      return <ViewStartup startup={startup} fundPool={fundPool} />
     }
   }
 }

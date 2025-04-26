@@ -12,7 +12,7 @@ export default async function Menu() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect("/sign-in");
+    return redirect("/");
   }
 
   const { data: profile, error } = await supabase.from('profiles')

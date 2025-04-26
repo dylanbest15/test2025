@@ -2,17 +2,24 @@
 
 import { useState } from "react"
 import type { Startup } from "@/types/startup"
-import { MapPinIcon, MailIcon, FileText, Building2 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { MapPinIcon, MailIcon, FileText, Building2, PlusCircle } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import FundPoolCard from "@/app/(dashboard)/my-startup/(view-startup)/fund-pool-card"
+import { FundPool } from "@/types/fund-pool"
 
 interface ViewStartupProps {
   startup: Startup
+  fundPool?: FundPool
 }
 
-export default function ViewStartup({ startup }: ViewStartupProps) {
+export default function ViewStartup({ startup, fundPool }: ViewStartupProps) {
   const [activeTab, setActiveTab] = useState("pitch-deck")
+  // fundPool = {
+  //   fund_goal: 5000,
+  //   status: 'open'
+  // }
 
   return (
     <div className="container mx-auto py-8 px-6 max-w-5xl">
@@ -53,7 +60,10 @@ export default function ViewStartup({ startup }: ViewStartupProps) {
             <TabsTrigger value="ask-founders">Ask The Founders</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="pitch-deck" className="mt-4">
+          <TabsContent value="pitch-deck" className="mt-4 space-y-4">
+            <FundPoolCard fundPool={fundPool} />
+
+            {/* Pitch Deck Card */}
             <Card>
               <CardHeader>
                 <CardTitle>Pitch Deck</CardTitle>

@@ -45,8 +45,7 @@ export default function FundPoolCard({ fundPool, onCreateFundPool }: FundPoolPro
               </div>
 
               <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Progress</span>
+                <div className="flex justify-end text-sm">
                   <span>$0 of {formatCurrency(fundPool.fund_goal)}</span>
                 </div>
                 <Progress value={0} className="h-2" />

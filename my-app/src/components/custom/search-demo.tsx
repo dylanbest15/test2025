@@ -1,21 +1,23 @@
 'use client';
 
-import { mockStartups, mockStartup } from "@/types/startup";
+import { Startup } from "@/types/startup";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Search, X } from "lucide-react";
+import { ArrowLeft, Loader, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { SearchCard } from "./search-card";
+import { getStartups } from "@/app/(dashboard)/search/actions";
 
 export default function SearchDemo() {
   const isMobile = useIsMobile()
   const [searchQuery, setSearchQuery] = useState("")
-  const [results, setResults] = useState<mockStartup[]>([])
+  const [results, setResults] = useState<Startup[]>([])
   const [hasSearched, setHasSearched] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [loading, setLoading] = useState(false)
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value
     setSearchQuery(query)
 
@@ -24,12 +26,15 @@ export default function SearchDemo() {
       setHasSearched(false)
     } else {
       setHasSearched(true)
-      const filteredResults = mockStartups.filter(
-        (startup) =>
-          startup.name.toLowerCase().includes(query.toLowerCase()) ||
-          startup.location.toLowerCase().includes(query.toLowerCase()),
-      )
-      setResults(filteredResults)
+      setLoading(true)
+      try {
+        const startups = await getStartups(query)
+        setResults(startups)
+      } catch (error) {
+        console.log('Error fetching startups', error)
+      } finally {
+        setLoading(false)
+      }
     }
   }
 
@@ -68,7 +73,7 @@ export default function SearchDemo() {
               </div>
               <Input
                 type="search"
-                placeholder="Search by startup name or location..."
+                placeholder="Search by startup name..."
                 className="pl-10 bg-white"
                 value={searchQuery}
                 onChange={handleSearch}
@@ -77,7 +82,11 @@ export default function SearchDemo() {
             {hasSearched && (
               <div className="max-h-[400px] overflow-y-auto pr-2">
                 <div className="space-y-3">
-                  {results.length > 0 ? (
+                  {loading ? (
+                    <div className="flex justify-center items-center py-8">
+                      <Loader className="h-8 w-8 text-gray-400 animate-spin" />
+                    </div>
+                  ) : results.length > 0 ? (
                     results.map((startup) => (
                       <div key={startup.id}>
                         <SearchCard startup={startup}></SearchCard>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import type { Startup } from "@/types/startup"
 import { MapPinIcon, MailIcon, FileText, Building2, PlusCircle } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
@@ -8,18 +8,46 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import FundPoolCard from "@/app/(dashboard)/my-startup/(view-startup)/fund-pool-card"
 import { FundPool } from "@/types/fund-pool"
+import { createFundPool } from "./actions"
+import { toast } from "sonner"
 
 interface ViewStartupProps {
   startup: Startup
-  fundPool?: FundPool
+  fundPool: FundPool | null;
 }
 
 export default function ViewStartup({ startup, fundPool }: ViewStartupProps) {
   const [activeTab, setActiveTab] = useState("pitch-deck")
-  // fundPool = {
-  //   fund_goal: 5000,
-  //   status: 'open'
-  // }
+  const [currentFundPool, setCurrentFundPool] = useState<FundPool | null>(fundPool)
+
+  const handleCreateFundPool = useCallback(
+    async (amount: number) => {
+      try {
+        const fundPoolData = {
+          startup_id: startup.id,
+          fund_goal: amount
+        }
+        const newFundPool = await createFundPool(fundPoolData)
+
+        // Update the local state with the new data
+        setCurrentFundPool((prev) => ({
+          ...prev,
+          ...newFundPool,
+        }))
+
+        toast.success("Success!", {
+          description: "Your fund pool has been created successfully.",
+        })
+        return true
+      } catch (error) {
+        toast.error("Operation failed", {
+          description: "Failed to create fund pool.",
+        })
+        console.error("Failed to create fund pool:", error)
+        throw error
+      }
+    }, [startup.id]
+  )
 
   return (
     <div className="container mx-auto py-8 px-6 max-w-5xl">
@@ -61,7 +89,7 @@ export default function ViewStartup({ startup, fundPool }: ViewStartupProps) {
           </TabsList>
 
           <TabsContent value="pitch-deck" className="mt-4 space-y-4">
-            <FundPoolCard fundPool={fundPool} />
+            <FundPoolCard fundPool={currentFundPool} onCreateFundPool={handleCreateFundPool} />
 
             {/* Pitch Deck Card */}
             <Card>

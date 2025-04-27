@@ -40,19 +40,14 @@ export default async function MyStartup() {
     }
 
     // Fetch the fund pool
-    const { data: fundPool, error: fundPoolErr } = await supabase
+    let { data: fundPool, error: fundPoolErr } = await supabase
     .from("fund_pools")
     .select()
     .eq("id", profile.startup_id)
     .single()
 
-    // TODO: THIS STUFF ACROSS APP
-    if (error && error.code === 'PGRST116') {
-      // Resource not found, handle gracefully
-      return { data: null, error: null }
-    }
-
-    if (fundPoolErr) {
+    // ignore PGRST116 error (no fund pool exists)
+    if (fundPoolErr && fundPoolErr.code !== 'PGRST116') {
       console.error("Error fetching fund pool:", fundPoolErr)
       // return notFound();
     }

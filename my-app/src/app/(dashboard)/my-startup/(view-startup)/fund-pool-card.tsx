@@ -11,8 +11,8 @@ import { useState } from "react"
 import { FundPoolCreate } from "@/app/(dashboard)/my-startup/(view-startup)/fund-pool-create"
 
 interface FundPoolProps {
-  fundPool: FundPool | undefined
-  onCreateFundPool?: (amount: number) => void
+  fundPool: FundPool | null;
+  onCreateFundPool: (amount: number) => void
 }
 
 export default function FundPoolCard({ fundPool, onCreateFundPool }: FundPoolProps) {

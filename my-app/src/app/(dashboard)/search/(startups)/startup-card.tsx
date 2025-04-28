@@ -1,25 +1,22 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
-import { Building, X } from "lucide-react"
+import { Building } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetClose } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTitle, } from "@/components/ui/sheet"
 import type { Startup } from "@/types/startup"
 import ViewStartupResult from "@/app/(dashboard)/search/[startupId]/view-startup-result"
 import Link from "next/link"
+import { FundPool } from "@/types/fund-pool"
 
-interface SearchCardProps {
+interface StartupCardProps {
   startup: Startup
 }
 
-export function SearchCard({ startup }: SearchCardProps) {
+export function StartupCard({ startup }: StartupCardProps) {
   const isMobile = useIsMobile()
-  const router = useRouter()
   const [sheetOpen, setSheetOpen] = useState(false)
 
   const handleCardClick = (e: React.MouseEvent) => {

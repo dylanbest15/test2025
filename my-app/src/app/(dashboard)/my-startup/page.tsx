@@ -43,7 +43,7 @@ export default async function MyStartup() {
     let { data: fundPool, error: fundPoolErr } = await supabase
     .from("fund_pools")
     .select()
-    .eq("id", profile.startup_id)
+    .eq("startup_id", profile.startup_id)
     .single()
 
     // ignore PGRST116 error (no fund pool exists)

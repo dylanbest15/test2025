@@ -2,19 +2,19 @@ import { ProfileUpdateSchema } from "@/lib/validation/profiles";
 import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, { params }: { params: { profileId: string } }) {
-  const supabase = await createClient();
-  const { profileId } = await params;
-  const { data, error } = await supabase.from('profiles').select().eq('id', profileId).single();
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-  return NextResponse.json(data);
-}
+// export async function GET(req: NextRequest, { params }: { params: { profileId: string } }) {
+//   const supabase = await createClient();
+//   const { profileId } = await params;
+//   const { data, error } = await supabase.from('profiles').select().eq('id', profileId).single();
+//   if (error) {
+//     return NextResponse.json({ error: error.message }, { status: 500 });
+//   }
+//   return NextResponse.json(data);
+// }
 
 export async function PUT(req: NextRequest, { params }: { params: { profileId: string } }) {
   const supabase = await createClient();
-  const { profileId } = await params;
+  const { profileId } = params;
   const body = await req.json();
   const updateData = {
     ...body,

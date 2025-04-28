@@ -10,7 +10,7 @@ export const ProfileUpdateSchema = z.object({
   bio: z.string().max(300).optional(),
   founder_title: z.string().min(2).max(30).regex(nameRegex).optional(),
   startup_id: z.string().uuid().optional(),
-  startup_role: StartupRoleSchema,
+  startup_role: StartupRoleSchema.optional(),
   investor_active: z.boolean().optional(),
   updated_at: z.string().datetime()
 });

@@ -81,7 +81,7 @@ export default function SearchDemo() {
             </div>
             {hasSearched && (
               <div className="max-h-[400px] overflow-y-auto pr-2">
-                <div className="space-y-3">
+                <div className="space-y-3 mb-4">
                   {loading ? (
                     <div className="flex justify-center items-center py-8">
                       <Loader className="h-8 w-8 text-gray-400 animate-spin" />

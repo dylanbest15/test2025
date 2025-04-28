@@ -1,7 +1,7 @@
-import AppSearch from "@/components/custom/app-search";
+import StartupSearch from "@/app/(dashboard)/search/(startups)/startup-search";
 
 export default function Search() {
   return (
-    <AppSearch />
+    <StartupSearch />
   )
 }

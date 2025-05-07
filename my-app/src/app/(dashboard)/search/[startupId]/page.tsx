@@ -24,8 +24,6 @@ export default async function StartupResult({ params }: StartupResultProps) {
       // return notFound();
     }
 
-    console.log(startupId);
-
     // Fetch the fund pool
     let { data: fundPool, error: fundPoolErr } = await supabase
     .from("fund_pools")

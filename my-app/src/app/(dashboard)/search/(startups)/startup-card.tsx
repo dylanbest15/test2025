@@ -5,11 +5,10 @@ import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Building } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { Sheet, SheetContent, SheetTitle, } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { Startup } from "@/types/startup"
 import ViewStartupResult from "@/app/(dashboard)/search/[startupId]/view-startup-result"
 import Link from "next/link"
-import { FundPool } from "@/types/fund-pool"
 
 interface StartupCardProps {
   startup: Startup
@@ -47,13 +46,17 @@ export function StartupCard({ startup }: StartupCardProps) {
           </CardContent>
         </Card>
       </Link>
-      
+
       {/* Mobile Sheet */}
       {isMobile && (
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-          <SheetContent side="right" className="w-full sm:max-w-md p-0" aria-describedby={undefined}>
-            <SheetTitle className="sr-only"></SheetTitle>
-            <ViewStartupResult startup={startup} />
+          <SheetContent
+            side="right"
+            className="w-full sm:max-w-md p-0 overflow-hidden flex flex-col [&>button]:hidden"
+            aria-describedby={undefined}
+          >
+            <SheetTitle className="sr-only">Startup Details</SheetTitle>
+            <ViewStartupResult startup={startup} onBack={() => setSheetOpen(false)} />
           </SheetContent>
         </Sheet>
       )}

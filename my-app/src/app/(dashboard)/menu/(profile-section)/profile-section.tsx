@@ -1,6 +1,6 @@
 'use client'
 
-import { Profile } from "@/types/profile";
+import { displayName, getInitials, Profile } from "@/types/profile";
 import { useCallback, useState } from "react";
 import { updateProfile } from "./actions";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -24,26 +24,6 @@ type SheetType =
 export default function ProfileSection({ profile }: ProfileSectionProps) {
   const [activeSheet, setActiveSheet] = useState<SheetType>(null)
   const [currentProfile, setCurrentProfile] = useState<Profile>(profile)
-
-  // Helper function to display name
-  const displayName = () => {
-    const firstName = currentProfile.first_name?.trim() || ""
-    const lastName = currentProfile.last_name?.trim() || ""
-    return `${firstName} ${lastName}`.trim()
-  }
-
-  // Helper function to get initials for avatar
-  const getInitials = () => {
-    const firstName = currentProfile.first_name?.trim() || ""
-    const lastName = currentProfile.last_name?.trim() || ""
-
-    if (!firstName && !lastName) return "?"
-
-    const firstInitial = firstName ? firstName[0].toUpperCase() : ""
-    const lastInitial = lastName ? lastName[0].toUpperCase() : ""
-
-    return `${firstInitial}${lastInitial}`
-  }
 
   const handleUpdateProfile = useCallback(
     async (profileData: Partial<Profile>) => {
@@ -101,8 +81,8 @@ export default function ProfileSection({ profile }: ProfileSectionProps) {
             <div className="mt-8 flex flex-row items-center w-full mb-6">
               <div className="relative mr-4">
                 <Avatar className="h-20 w-20 cursor-pointer" onClick={() => setActiveSheet("profile-picture")}>
-                  <AvatarImage src={profile.avatar_url || "/placeholder.svg"} alt={displayName()} />
-                  <AvatarFallback className="text-lg">{getInitials()}</AvatarFallback>
+                  <AvatarImage src={profile.avatar_url || "/placeholder.svg"} alt={displayName(profile)} />
+                  <AvatarFallback className="text-lg">{getInitials(profile)}</AvatarFallback>
                 </Avatar>
                 <div
                   className="absolute -top-1 -right-1 bg-background rounded-full p-1 border shadow-sm cursor-pointer"
@@ -111,7 +91,7 @@ export default function ProfileSection({ profile }: ProfileSectionProps) {
                   <Pencil size={14} />
                 </div>
               </div>
-              <p className="font-medium">{displayName()}</p>
+              <p className="font-medium">{displayName(profile)}</p>
             </div>
             <div className="mt-4">
 

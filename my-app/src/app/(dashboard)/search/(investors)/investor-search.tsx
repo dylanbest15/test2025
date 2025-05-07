@@ -1,15 +1,15 @@
 'use client';
 
-import { Startup } from "@/types/startup";
 import { useState } from "react";
 import { Loader, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { getStartups } from "@/app/(dashboard)/search/actions";
-import { StartupCard } from "@/app/(dashboard)/search/(startups)/startup-card";
+import { getInvestors } from "@/app/(dashboard)/search/actions";
+import { Profile } from "@/types/profile";
+import { InvestorCard } from "@/app/(dashboard)/search/(investors)/investor-card";
 
-export default function StartupSearch() {
+export default function InvestorSearch() {
   const [searchQuery, setSearchQuery] = useState("")
-  const [results, setResults] = useState<Startup[]>([])
+  const [results, setResults] = useState<Profile[]>([])
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false)
 
@@ -24,8 +24,8 @@ export default function StartupSearch() {
       setHasSearched(true)
       setLoading(true)
       try {
-        const startups = await getStartups(query)
-        setResults(startups)
+        const investors = await getInvestors(query)
+        setResults(investors)
       } catch (error) {
         console.log('Error fetching startups', error)
       } finally {
@@ -43,7 +43,7 @@ export default function StartupSearch() {
             </div>
             <Input
               type="search"
-              placeholder="Search by startup name..."
+              placeholder="Search by investor name..."
               className="pl-10 bg-white"
               value={searchQuery}
               onChange={handleSearch}
@@ -57,13 +57,13 @@ export default function StartupSearch() {
                     <Loader className="h-8 w-8 text-gray-400 animate-spin" />
                   </div>
                 ) : results.length > 0 ? (
-                  results.map((startup) => (
-                    <div key={startup.id}>
-                      <StartupCard startup={startup}></StartupCard>
+                  results.map((investor) => (
+                    <div key={investor.id}>
+                      <InvestorCard investor={investor}></InvestorCard>
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-500 text-center py-4">No startups found matching your search.</p>
+                  <p className="text-gray-500 text-center py-4">No investors found matching your search.</p>
                 )}
               </div>
             </div>

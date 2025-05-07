@@ -14,7 +14,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: NextRequest, { params }: { params: { profileId: string } }) {
   const supabase = await createClient();
-  const { profileId } = params;
+  const { profileId } = await params;
   const body = await req.json();
   const updateData = {
     ...body,

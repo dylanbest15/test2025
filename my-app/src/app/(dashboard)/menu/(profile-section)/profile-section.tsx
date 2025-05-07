@@ -2,28 +2,30 @@
 
 import { displayName, getInitials, Profile } from "@/types/profile";
 import { useCallback, useState } from "react";
-import { updateProfile } from "./actions";
+import { updateIndustries, updateProfile } from "@/app/(dashboard)/menu/(profile-section)/actions";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import ProfileNameAndBio from "@/components/custom/menu-sheets/profile-name-and-bio";
 import ProfilePicture from "@/components/custom/menu-sheets/profile-picture";
-import InvestorIndustries from "@/components/custom/menu-sheets/investor-industries";
 import { ChevronRight, Pencil, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import Industries from "@/components/custom/menu-sheets/industries";
 
 interface ProfileSectionProps {
   profile: Profile;
+  industries: string[];
 }
 
 type SheetType =
   | "name-and-bio"
   | "profile-picture"
-  | "investor-industries"
+  | "industries"
   | null
 
-export default function ProfileSection({ profile }: ProfileSectionProps) {
+export default function ProfileSection({ profile, industries }: ProfileSectionProps) {
   const [activeSheet, setActiveSheet] = useState<SheetType>(null)
   const [currentProfile, setCurrentProfile] = useState<Profile>(profile)
+  const [currentIndustries, setCurrentIndustries] = useState<string[]>(industries)
 
   const handleUpdateProfile = useCallback(
     async (profileData: Partial<Profile>) => {
@@ -44,6 +46,24 @@ export default function ProfileSection({ profile }: ProfileSectionProps) {
       }
     },
     [currentProfile.id],
+  )
+
+  const handleUpdateIndustries = useCallback(
+    async(industryData: string[]) => {
+      try {
+        // Call the server action to update the database
+        await updateIndustries(currentProfile.id, industryData)
+
+        // Update the local state with the new data
+        setCurrentIndustries(industryData);
+        
+        return true
+      } catch (error) {
+        console.error("Failed to update profile:", error)
+        throw error
+      }
+    },
+    []
   )
 
   return (
@@ -109,7 +129,7 @@ export default function ProfileSection({ profile }: ProfileSectionProps) {
               {/* Investor Industries */}
               {profile.type === "investor" && (
                 <button
-                  onClick={() => setActiveSheet("investor-industries")}
+                  onClick={() => setActiveSheet("industries")}
                   className="flex items-center justify-between w-full py-3 hover:bg-muted/50 px-2 rounded-sm"
                 >
                   <div className="text-left">
@@ -139,10 +159,10 @@ export default function ProfileSection({ profile }: ProfileSectionProps) {
         </SheetContent>
       </Sheet>
 
-      <Sheet open={activeSheet === "investor-industries"} onOpenChange={() => setActiveSheet(null)}>
+      <Sheet open={activeSheet === "industries"} onOpenChange={() => setActiveSheet(null)}>
         <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
           <SheetTitle className="sr-only"></SheetTitle>
-          <InvestorIndustries profile={profile} onClose={() => setActiveSheet(null)} />
+          <Industries initialIndustries={currentIndustries} updateIndustries={handleUpdateIndustries} onClose={() => setActiveSheet(null)} />
         </SheetContent>
       </Sheet>
     </div>

@@ -25,6 +25,21 @@ export default async function Menu() {
     // return notFound();
   }
 
+  let industries = [];
+  if (profile.type === 'investor') {
+    const { data: industryRes, error: industryErr } = await supabase.from('industries')
+    .select()
+    .eq('profile_id', profile.id)
+
+    if (industryErr) {
+      console.error("Error fetching industries:", industryErr);
+      // return notFound();
+    }
+    if (industryRes) {
+      industries = industryRes.map(industry => industry.name);
+    }
+  }
+
   let startup = null;
   if (profile.startup_id) {
     const { data: startupRes, error: startupErr } = await supabase.from('startups')
@@ -43,7 +58,7 @@ export default async function Menu() {
 
   return (
     <div className="w-full mb-[100px]">
-      <ProfileSection profile={profile} />
+      <ProfileSection profile={profile} industries={industries} />
       {startup && profile.startup_role === "admin" && (
         <StartupSection startup={startup} />
       )}

@@ -2,7 +2,7 @@
 
 import { Startup } from "@/types/startup";
 import { useCallback, useState } from "react";
-import { updateStartup } from "./actions";
+import { updateIndustries, updateStartup } from "@/app/(dashboard)/menu/(startup-section)/actions";
 import { Building2, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -10,21 +10,26 @@ import StartupGeneralInfo from "@/components/custom/menu-sheets/startup-general-
 import StartupOverview from "@/components/custom/menu-sheets/startup-overview";
 import StartupLogo from "@/components/custom/menu-sheets/startup-logo";
 import StartupManageTeam from "@/components/custom/menu-sheets/startup-manage-team";
+import Industries from "@/components/custom/menu-sheets/industries";
 
 interface StartupSectionProps {
   startup: Startup;
+  industries: string[]
 }
 
 type SheetType =
   | "general-info"
   | "overview"
   | "logo"
+  | "industries"
   | "manage-team"
   | null
 
-export default function StartupSection({ startup }: StartupSectionProps) {
+export default function StartupSection({ startup, industries }: StartupSectionProps) {
   const [activeSheet, setActiveSheet] = useState<SheetType>(null)
   const [currentStartup, setCurrentStartup] = useState<Startup>(startup)
+  const [currentIndustries, setCurrentIndustries] = useState<string[]>(industries)
+
 
   const handleUpdateStartup = useCallback(
     async (startupData: Partial<Startup>) => {
@@ -46,6 +51,24 @@ export default function StartupSection({ startup }: StartupSectionProps) {
     },
     [currentStartup.id],
   )
+
+  const handleUpdateIndustries = useCallback(
+      async(industryData: string[]) => {
+        try {
+          // Call the server action to update the database
+          await updateIndustries(currentStartup.id, industryData)
+  
+          // Update the local state with the new data
+          setCurrentIndustries(industryData);
+          
+          return true
+        } catch (error) {
+          console.error("Failed to update profile:", error)
+          throw error
+        }
+      },
+      [currentStartup.id]
+    )
 
   return (
     <div className="w-full">
@@ -96,6 +119,17 @@ export default function StartupSection({ startup }: StartupSectionProps) {
                 <ChevronRight size={16} />
               </button>
 
+              {/* Startup Industries */}
+              <button
+                onClick={() => setActiveSheet("industries")}
+                className="flex items-center justify-between w-full py-3 hover:bg-muted/50 px-2 rounded-sm"
+              >
+                <div className="text-left">
+                  <p className="text-sm font-medium">Industries</p>
+                </div>
+                <ChevronRight size={16} />
+              </button>
+
               {/* Manage Team */}
               <button
                 onClick={() => setActiveSheet("manage-team")}
@@ -124,6 +158,13 @@ export default function StartupSection({ startup }: StartupSectionProps) {
         <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
           <SheetTitle className="sr-only"></SheetTitle>
           <StartupOverview startup={currentStartup} updateStartup={handleUpdateStartup} onClose={() => setActiveSheet(null)} />
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={activeSheet === "industries"} onOpenChange={() => setActiveSheet(null)}>
+        <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
+          <SheetTitle className="sr-only"></SheetTitle>
+          <Industries initialIndustries={currentIndustries} updateIndustries={handleUpdateIndustries} onClose={() => setActiveSheet(null)} maxSelections={2} />
         </SheetContent>
       </Sheet>
 

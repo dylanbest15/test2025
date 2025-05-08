@@ -63,7 +63,7 @@ export default function ProfileSection({ profile, industries }: ProfileSectionPr
         throw error
       }
     },
-    []
+    [currentProfile.id]
   )
 
   return (

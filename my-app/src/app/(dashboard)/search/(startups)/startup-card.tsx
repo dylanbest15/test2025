@@ -18,6 +18,12 @@ export function StartupCard({ startup }: StartupCardProps) {
   const isMobile = useIsMobile()
   const [sheetOpen, setSheetOpen] = useState(false)
 
+  // Function to truncate bio text
+  const truncateOverview = (overview: string, maxLength = 150) => {
+    if (!overview) return ""
+    return overview.length > maxLength ? `${overview.substring(0, maxLength)}...` : overview
+  }
+
   const handleCardClick = (e: React.MouseEvent) => {
     if (isMobile) {
       e.preventDefault()
@@ -29,18 +35,19 @@ export function StartupCard({ startup }: StartupCardProps) {
     <>
       <Link href={`/search/${startup.id}`} onClick={handleCardClick}>
         <Card className="overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer">
-          <CardContent className="p-2 ps-4">
-            <div className="flex items-center gap-3">
+          <CardContent className="ps-4">
+            <div className="flex items-start">
               {/* Logo placeholder */}
-              <div className="flex-shrink-0 w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center">
+              <div className="flex-shrink-0 w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center mr-4">
                 <Building className="h-5 w-5 text-gray-400" />
               </div>
 
-              <div className="flex-grow min-w-0">
-                <h3 className="font-medium text-base truncate">{startup.name}</h3>
-                <p className="text-sm text-gray-500">
-                  {startup.city}, {startup.state} • Founded {startup.year_founded}
+              <div>
+                <h3 className="font-medium text-base leading-tight">{startup.name}</h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  {startup.city}, {startup.state}
                 </p>
+                <p className="text-sm text-gray-500 mt-1">{truncateOverview(startup.overview)}</p>
               </div>
             </div>
           </CardContent>

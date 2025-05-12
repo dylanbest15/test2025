@@ -24,6 +24,20 @@ export default async function StartupResult({ params }: StartupResultProps) {
       // return notFound();
     }
 
+    let industries = [];
+    // Fetch startup industries
+    const { data: industryRes, error: industryErr } = await supabase.from('industries')
+      .select()
+      .eq('startup_id', startup.id)
+
+    if (industryErr) {
+      console.error("Error fetching industries:", industryErr);
+      // return notFound();
+    }
+    if (industryRes) {
+      industries = industryRes.map(industry => industry.name);
+    }
+
     // Fetch the fund pool
     let { data: fundPool, error: fundPoolErr } = await supabase
     .from("fund_pools")
@@ -39,7 +53,7 @@ export default async function StartupResult({ params }: StartupResultProps) {
 
     if (startup) {
       return (
-        <ViewStartupResult startup={startup} fundPool={fundPool} />
+        <ViewStartupResult startup={startup} industries={industries} fundPool={fundPool} />
       )
     }
   }

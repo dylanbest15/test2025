@@ -2,21 +2,22 @@
 
 import { useCallback, useState } from "react"
 import type { Startup } from "@/types/startup"
-import { MapPinIcon, MailIcon, FileText, Building2, PlusCircle } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { MapPinIcon, MailIcon, FileText, Building2, Calendar } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import FundPoolCard from "@/app/(dashboard)/my-startup/(view-startup)/fund-pool-card"
-import { FundPool } from "@/types/fund-pool"
+import type { FundPool } from "@/types/fund-pool"
 import { createFundPool } from "./actions"
 import { toast } from "sonner"
 
 interface ViewStartupProps {
   startup: Startup
-  fundPool: FundPool | null;
+  industries: string[]
+  fundPool: FundPool | null
 }
 
-export default function ViewStartup({ startup, fundPool }: ViewStartupProps) {
+export default function ViewStartup({ startup, industries, fundPool }: ViewStartupProps) {
   const [activeTab, setActiveTab] = useState("pitch-deck")
   const [currentFundPool, setCurrentFundPool] = useState<FundPool | null>(fundPool)
 
@@ -25,7 +26,7 @@ export default function ViewStartup({ startup, fundPool }: ViewStartupProps) {
       try {
         const fundPoolData = {
           startup_id: startup.id,
-          fund_goal: amount
+          fund_goal: amount,
         }
         const newFundPool = await createFundPool(fundPoolData)
 
@@ -46,7 +47,8 @@ export default function ViewStartup({ startup, fundPool }: ViewStartupProps) {
         console.error("Failed to create fund pool:", error)
         throw error
       }
-    }, [startup.id]
+    },
+    [startup.id],
   )
 
   return (
@@ -73,10 +75,20 @@ export default function ViewStartup({ startup, fundPool }: ViewStartupProps) {
                 <MailIcon className="h-3 w-3" />
                 <span>{startup.email}</span>
               </div>
+              <div className="flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
+                <span>Founded in {startup.year_founded}</span>
+              </div>
             </div>
-            <Badge variant="outline" className="text-xs px-2 py-0.5 h-auto mt-1">
-              Founded {startup.year_founded}
-            </Badge>
+            {industries && industries.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {industries.map((industry, index) => (
+                  <Badge key={index} variant="secondary" className="text-xs px-2 py-0.5 h-auto">
+                    {industry}
+                  </Badge>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         <p className="text-sm leading-relaxed">{startup.overview}</p>

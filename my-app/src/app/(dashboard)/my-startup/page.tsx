@@ -39,12 +39,26 @@ export default async function MyStartup() {
       // return notFound();
     }
 
+    let industries = [];
+    // Fetch startup industries
+    const { data: industryRes, error: industryErr } = await supabase.from('industries')
+      .select()
+      .eq('startup_id', startup.id)
+
+    if (industryErr) {
+      console.error("Error fetching industries:", industryErr);
+      // return notFound();
+    }
+    if (industryRes) {
+      industries = industryRes.map(industry => industry.name);
+    }
+
     // Fetch the fund pool
     let { data: fundPool, error: fundPoolErr } = await supabase
-    .from("fund_pools")
-    .select()
-    .eq("startup_id", profile.startup_id)
-    .single()
+      .from("fund_pools")
+      .select()
+      .eq("startup_id", profile.startup_id)
+      .single()
 
     // ignore PGRST116 error (no fund pool exists)
     if (fundPoolErr && fundPoolErr.code !== 'PGRST116') {
@@ -53,7 +67,7 @@ export default async function MyStartup() {
     }
 
     if (startup) {
-      return <ViewStartup startup={startup} fundPool={fundPool} />
+      return <ViewStartup startup={startup} industries={industries} fundPool={fundPool} />
     }
   }
 }

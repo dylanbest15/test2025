@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeft, Building2, FileText, MailIcon, MapPinIcon } from "lucide-react"
+import { ArrowLeft, Building2, Calendar, FileText, MailIcon, MapPinIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -12,30 +12,46 @@ import { createClient } from "@/utils/supabase/client"
 
 interface ViewStartupResultProps {
   startup: Startup
+  industries?: string[]
   fundPool?: FundPool
   onBack?: () => void
 }
 
-export default function ViewStartupResult({ startup, fundPool: fundPoolProp, onBack }: ViewStartupResultProps) {
+export default function ViewStartupResult({ startup, industries: industriesProp, fundPool: fundPoolProp, onBack }: ViewStartupResultProps) {
   const [activeTab, setActiveTab] = useState("pitch-deck")
+  const [industries, setIndustries] = useState<string[] | []>(industriesProp || []);
   const [fundPool, setFundPool] = useState<FundPool | null>(fundPoolProp || null)
   const [isLoading, setIsLoading] = useState(!fundPoolProp)
 
   // Fetch fund pool data if not provided through props
   useEffect(() => {
-    async function loadFundPool() {
-      if (!fundPoolProp) {
+    async function loadData() {
+      if (!industriesProp || !fundPoolProp) {
         try {
           const supabase = await createClient()
           setIsLoading(true)
 
-          const { data, error } = await supabase.from("fund_pools").select().eq("startup_id", startup.id).single()
+          const { data: industryData, error: industryErr } = await supabase.from("industries")
+            .select()
+            .eq("startup_id", startup.id)
+
+          if (industryErr) {
+            console.error("Error fetching industries:", industryErr);
+            // return notFound();
+          } else {
+            setIndustries(industryData.map(industry => industry.name));
+          }
+
+          const { data: fundPoolData, error: fundPoolErr } = await supabase.from("fund_pools")
+            .select()
+            .eq("startup_id", startup.id)
+            .single()
 
           // ignore PGRST116 error (no fund pool exists)
-          if (error && error.code !== "PGRST116") {
-            console.error("Error fetching fund pool:", error)
+          if (fundPoolErr && fundPoolErr.code !== "PGRST116") {
+            console.error("Error fetching fund pool:", fundPoolErr)
           } else {
-            setFundPool(data)
+            setFundPool(fundPoolData)
           }
         } catch (error) {
           console.error("Failed to fetch fund pool:", error)
@@ -46,8 +62,8 @@ export default function ViewStartupResult({ startup, fundPool: fundPoolProp, onB
       }
     }
 
-    loadFundPool()
-  }, [startup.id, fundPoolProp])
+    loadData()
+  }, [startup.id, industriesProp, fundPoolProp])
 
   return (
     <div className="h-full overflow-auto">
@@ -85,10 +101,20 @@ export default function ViewStartupResult({ startup, fundPool: fundPoolProp, onB
                   <MailIcon className="h-3 w-3" />
                   <span>{startup.email}</span>
                 </div>
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  <span>Founded in {startup.year_founded}</span>
+                </div>
               </div>
-              <Badge variant="outline" className="text-xs px-2 py-0.5 h-auto mt-1">
-                Founded {startup.year_founded}
-              </Badge>
+              {industries && industries.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {industries.map((industry, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs px-2 py-0.5 h-auto">
+                      {industry}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <p className="text-sm leading-relaxed">{startup.overview}</p>

@@ -121,7 +121,7 @@ export default function ProfileSection({ profile, industries }: ProfileSectionPr
                 className="flex items-center justify-between w-full py-3 border-b hover:bg-muted/50 px-2 rounded-sm"
               >
                 <div className="text-left">
-                  <p className="text-sm font-medium">Name {profile.type === "founder" && ( ', Title,' )} and Bio</p>
+                  <p className="text-sm font-medium">Name{profile.type === "founder" && ( ', Title,' )} and Bio</p>
                 </div>
                 <ChevronRight size={16} />
               </button>

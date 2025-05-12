@@ -114,7 +114,7 @@ export default function StartupSection({ startup, industries }: StartupSectionPr
                 className="flex items-center justify-between w-full py-3 border-b hover:bg-muted/50 px-2 rounded-sm"
               >
                 <div className="text-left">
-                  <p className="text-sm font-medium">Logo</p>
+                  <p className="text-sm font-medium">Upload Logo</p>
                 </div>
                 <ChevronRight size={16} />
               </button>

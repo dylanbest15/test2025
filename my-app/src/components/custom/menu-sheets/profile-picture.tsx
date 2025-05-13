@@ -61,6 +61,14 @@ export default function ProfilePicture({ profile, onClose }: ProfilePictureProps
       setIsUploading(true)
       setError(null)
 
+      // If there's an existing avatar URL, extract the file name to delete it
+      if (profile.avatar_url) {
+        const fileName = profile.avatar_url.split("/").pop()
+        if (fileName) {
+          await supabase.storage.from("profile-pictures").remove([fileName])
+        }
+      }
+
       // Create a unique file name
       const fileExt = selectedFile.name.split(".").pop()
       const fileName = `${profile.id}-${Date.now()}.${fileExt}`
@@ -71,6 +79,7 @@ export default function ProfilePicture({ profile, onClose }: ProfilePictureProps
         .upload(fileName, selectedFile, {
           cacheControl: "3600",
           upsert: false,
+          contentType: selectedFile.type
         })
 
       if (uploadError) {
@@ -94,39 +103,6 @@ export default function ProfilePicture({ profile, onClose }: ProfilePictureProps
       setIsUploading(false)
     }
   }, [selectedFile, profile.id, supabase, onClose])
-
-  // Remove the current profile picture
-  const removeProfilePicture = useCallback(async () => {
-    try {
-      setIsUploading(true)
-      setError(null)
-
-      // If there's an existing avatar URL, extract the file name to delete it
-      if (profile.avatar_url) {
-        const fileName = profile.avatar_url.split("/").pop()
-        if (fileName) {
-          // Delete from storage (this is optional, you might want to keep old images)
-          await supabase.storage.from("profile-pictures").remove([fileName])
-        }
-      }
-
-      // Update profile with null avatar_url
-      // await updateProfile(profile.id, { avatar_url: null })
-      console.log(profile.id);
-
-      // Reset state
-      setPreviewUrl(null)
-      setSelectedFile(null)
-
-      // Close the sheet
-      onClose()
-    } catch (err) {
-      console.error("Error removing profile picture:", err)
-      setError("Failed to remove profile picture. Please try again.")
-    } finally {
-      setIsUploading(false)
-    }
-  }, [profile.id, profile.avatar_url, supabase, onClose])
 
   // Reset the selected file
   const resetSelection = () => {
@@ -184,17 +160,6 @@ export default function ProfilePicture({ profile, onClose }: ProfilePictureProps
                   disabled={isUploading}
                 />
               </label>
-
-              {profile.avatar_url && (
-                <Button
-                  variant="outline"
-                  className="w-full text-destructive hover:text-destructive"
-                  onClick={removeProfilePicture}
-                  disabled={isUploading}
-                >
-                  Remove Profile Picture
-                </Button>
-              )}
             </div>
           )}
         </div>

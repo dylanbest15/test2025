@@ -101,7 +101,7 @@ export default function ProfileSection({ profile, industries }: ProfileSectionPr
             <div className="mt-8 flex flex-row items-center w-full mb-6">
               <div className="relative mr-4">
                 <Avatar className="h-20 w-20 cursor-pointer" onClick={() => setActiveSheet("profile-picture")}>
-                  <AvatarImage src={profile.avatar_url || "/placeholder.svg"} alt={displayName(profile)} />
+                  <AvatarImage src={profile.avatar_url || "/placeholder.svg"} alt={displayName(profile)} className="object-cover" />
                   <AvatarFallback className="text-lg">{getInitials(profile)}</AvatarFallback>
                 </Avatar>
                 <div

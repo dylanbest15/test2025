@@ -23,7 +23,7 @@ export default function ViewStartupResult({ startup, industries: industriesProp,
   const [fundPool, setFundPool] = useState<FundPool | null>(fundPoolProp || null)
   const [isLoading, setIsLoading] = useState(!fundPoolProp)
 
-  // Fetch fund pool data if not provided through props
+  // Fetch industry and fund pool data if not provided through props
   useEffect(() => {
     async function loadData() {
       if (!industriesProp || !fundPoolProp) {

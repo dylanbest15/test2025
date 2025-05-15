@@ -19,6 +19,7 @@ export const StartupUpdateSchema = z.object({
   email: z.string().min(2).max(30).optional(),
   city: z.string().min(2).max(50).regex(nameRegex).optional(),
   state: z.string().min(2).max(2).regex(nameRegex).optional(),
+  logo_url: z.string().min(2).optional(),
   overview: z.string().max(300).optional(),
   year_founded: z.number().int().gte(1900, "Year founded must be no earlier than 1900")
     .lte(new Date().getFullYear(), `Year founded can't be in the future`).optional(),

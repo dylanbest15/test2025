@@ -4,6 +4,7 @@ export type Startup = {
   email: string;
   city: string;
   state: string;
+  logo_url: string;
   overview: string;
   year_founded: number;
   updated_at: string | null;

@@ -171,7 +171,7 @@ export default function StartupSection({ startup, industries }: StartupSectionPr
       <Sheet open={activeSheet === "logo"} onOpenChange={() => setActiveSheet(null)}>
         <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
           <SheetTitle className="sr-only"></SheetTitle>
-          <StartupLogo startup={startup} onClose={() => setActiveSheet(null)} />
+          <StartupLogo startup={currentStartup} updateStartup={handleUpdateStartup} onClose={() => setActiveSheet(null)} />
         </SheetContent>
       </Sheet>
 

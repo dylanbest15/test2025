@@ -6,17 +6,17 @@ import type { Profile } from "@/types/profile"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { displayName, getInitials } from "@/types/profile"
-import { ArrowLeft, Upload, X } from "lucide-react"
+import { ArrowLeft, Upload } from "lucide-react"
 import { useCallback, useState } from "react"
 import { createClient } from "@/utils/supabase/client"
-import { updateProfile } from "@/app/(dashboard)/menu/(profile-section)/actions"
 
 interface ProfilePictureProps {
   profile: Profile
+  updateProfile: (data: Partial<Profile>) => Promise<boolean>
   onClose: () => void
 }
 
-export default function ProfilePicture({ profile, onClose }: ProfilePictureProps) {
+export default function ProfilePicture({ profile, updateProfile, onClose }: ProfilePictureProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(profile.avatar_url)
   const [isUploading, setIsUploading] = useState(false)
@@ -92,7 +92,7 @@ export default function ProfilePicture({ profile, onClose }: ProfilePictureProps
       } = supabase.storage.from("profile-pictures").getPublicUrl(data.path)
 
       // Update the profile with the new avatar URL
-      await updateProfile(profile.id, { avatar_url: publicUrl })
+      await updateProfile({ avatar_url: publicUrl })
 
       // Close the sheet
       onClose()

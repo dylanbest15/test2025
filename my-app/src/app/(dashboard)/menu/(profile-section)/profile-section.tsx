@@ -101,7 +101,7 @@ export default function ProfileSection({ profile, industries }: ProfileSectionPr
             <div className="mt-8 flex flex-row items-center w-full mb-6">
               <div className="relative mr-4">
                 <Avatar className="h-20 w-20 cursor-pointer" onClick={() => setActiveSheet("profile-picture")}>
-                  <AvatarImage src={profile.avatar_url || "/placeholder.svg"} alt={displayName(profile)} className="object-cover" />
+                  <AvatarImage src={currentProfile.avatar_url || "/placeholder.svg"} alt={displayName(currentProfile)} className="object-cover" />
                   <AvatarFallback className="text-lg">{getInitials(profile)}</AvatarFallback>
                 </Avatar>
                 <div
@@ -155,7 +155,7 @@ export default function ProfileSection({ profile, industries }: ProfileSectionPr
       <Sheet open={activeSheet === "profile-picture"} onOpenChange={() => setActiveSheet(null)}>
         <SheetContent side="right" className="w-full sm:max-w-full p-0" aria-describedby={undefined}>
           <SheetTitle className="sr-only"></SheetTitle>
-          <ProfilePicture profile={profile} onClose={() => setActiveSheet(null)} />
+          <ProfilePicture profile={currentProfile} updateProfile={handleUpdateProfile} onClose={() => setActiveSheet(null)} />
         </SheetContent>
       </Sheet>
 

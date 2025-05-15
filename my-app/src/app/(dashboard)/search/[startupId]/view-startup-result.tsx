@@ -82,10 +82,22 @@ export default function ViewStartupResult({ startup, industries: industriesProp,
         <div className="space-y-6">
           {/* Header Section with Logo and Name */}
           <div className="flex items-start gap-4">
-            {/* Larger square logo with icon */}
-            <div className="h-20 w-20 bg-gray-100 flex flex-shrink-0 items-center justify-center rounded-md">
-              <Building2 className="h-10 w-10 text-gray-400" />
-            </div>
+            <div className="relative">
+            {startup.logo_url ? (
+              <div className="h-20 w-20 border-2 border-border overflow-hidden rounded-md flex items-center justify-center">
+                <img
+                  src={startup.logo_url || "/placeholder.svg"}
+                  alt={`${startup.name || "Company"} logo`}
+                  className="object-contain max-h-full max-w-full"
+                  style={{ objectPosition: "center" }}
+                />
+              </div>
+            ) : (
+              <div className="h-20 w-20 bg-gray-100 flex items-center justify-center rounded-md border-2 border-border">
+                <Building2 className="h-10 w-10 text-gray-400" />
+              </div>
+            )}
+          </div>
 
             {/* Name and details */}
             <div className="space-y-2">

@@ -22,7 +22,7 @@ export function InvestorCard({ investor }: InvestorCardProps) {
         <div className="flex justify-between items-start">
           <div className="flex">
             <Avatar className="h-10 w-10 mr-4 flex-shrink-0">
-              <AvatarImage src={investor.avatar_url || "/placeholder.svg"} alt={displayName(investor)} />
+              <AvatarImage src={investor.avatar_url || "/placeholder.svg"} alt={displayName(investor)} className="object-cover" />
               <AvatarFallback>{getInitials(investor)}</AvatarFallback>
             </Avatar>
 

@@ -56,7 +56,6 @@ export default function ViewStartup({ startup, industries, fundPool }: ViewStart
       <div className="space-y-6">
         {/* Header Section with Logo and Name */}
         <div className="flex items-start gap-4">
-          {/* Larger square logo with icon */}
           <div className="relative">
             {startup.logo_url ? (
               <div className="h-20 w-20 border-2 border-border overflow-hidden rounded-md flex items-center justify-center">

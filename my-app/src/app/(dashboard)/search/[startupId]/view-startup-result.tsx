@@ -6,9 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { FundPool } from "@/types/fund-pool"
 import type { Startup } from "@/types/startup"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import ViewFundPool from "./view-fund-pool"
 import { createClient } from "@/utils/supabase/client"
+import { toast } from "sonner"
 
 interface ViewStartupResultProps {
   startup: Startup
@@ -64,6 +65,33 @@ export default function ViewStartupResult({ startup, industries: industriesProp,
 
     loadData()
   }, [startup.id, industriesProp, fundPoolProp])
+
+  const handleJoinFundPool = useCallback(
+    async (amount: number) => {
+      try {
+        const investmentData = {
+          startup_id: startup.id,
+          investment: amount,
+        }
+
+        // TODO: make sure this is an investor only action
+        // TODO: create investment, email, and notification
+        console.log(investmentData);
+        
+        toast.success("Success!", {
+          description: "You have requested to join a fund pool!",
+        })
+        return true
+      } catch (error) {
+        toast.error("Operation failed", {
+          description: "Failed to join fund pool.",
+        })
+        console.error("Failed to join fund pool:", error)
+        throw error
+      }
+    },
+    [startup.id],
+  )
 
   return (
     <div className="h-full overflow-auto">
@@ -139,7 +167,7 @@ export default function ViewStartupResult({ startup, industries: industriesProp,
             </TabsList>
 
             <TabsContent value="pitch-deck" className="mt-4 space-y-4">
-              <ViewFundPool fundPool={fundPool} />
+              <ViewFundPool fundPool={fundPool} onJoinFundPool={handleJoinFundPool} />
 
               {/* Pitch Deck Card */}
               <Card>

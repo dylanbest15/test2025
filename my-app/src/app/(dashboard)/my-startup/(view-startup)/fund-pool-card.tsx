@@ -27,39 +27,48 @@ export default function FundPoolCard({ fundPool, onCreateFundPool }: FundPoolPro
 
   return (
     <>
-      <Card>
-        <CardContent>
+      <Card className="relative overflow-hidden border-2">
+        {fundPool?.status === "open" && (
+          <div className="absolute right-0 top-0">
+            <Badge
+              variant="outline"
+              className="rounded-none rounded-bl-md bg-green-50 text-green-700 border-green-200 px-3 py-1.5 font-medium"
+            >
+              Open for funding
+            </Badge>
+          </div>
+        )}
+
+        <CardContent className="p-6">
           {fundPool ? (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-sm text-muted-foreground">Funding Goal</p>
-                  <p className="text-xl font-bold">{formatCurrency(fundPool.fund_goal)}</p>
-                </div>
-                <Badge
-                  variant={fundPool.status === "open" ? "outline" : "default"}
-                  className={fundPool.status === "open" ? "bg-green-50 text-green-700 border-green-200" : ""}
-                >
-                  {fundPool.status === "open" ? "Open for funding" : "Completed"}
-                </Badge>
+            <div className="space-y-5">
+              <div>
+                <p className="text-sm text-muted-foreground">Funding Goal</p>
+                <p className="text-2xl font-bold">{formatCurrency(fundPool.fund_goal)}</p>
               </div>
 
               <div className="space-y-2">
-                <div className="flex justify-end text-sm">
+                <div className="flex justify-between text-sm">
+                  <span className="font-medium">Progress</span>
                   <span>$0 of {formatCurrency(fundPool.fund_goal)}</span>
                 </div>
-                <Progress value={0} className="h-2" />
+                <Progress value={0} className="h-2.5" />
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center">
-              <p className="text-muted-foreground mb-4">No fund pool has been created yet.</p>
+            <div className="flex flex-col items-center justify-center py-2">
+              <p className="text-muted-foreground mb-6">No fund pool has been created yet.</p>
               <Button
-                className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                className="w-full py-6 text-base font-semibold shadow-lg transition-all duration-200 
+                bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700
+                border-0 relative overflow-hidden group"
                 onClick={() => setDialogOpen(true)}
               >
-                <PlusCircle className="h-4 w-4" />
-                Create Fund Pool
+                <div className="absolute inset-0 w-3 bg-white/20 skew-x-[-20deg] group-hover:animate-shimmer" />
+                <div className="flex items-center justify-center gap-2">
+                  <PlusCircle className="h-5 w-5" />
+                  <span>Create Fund Pool</span>
+                </div>
               </Button>
             </div>
           )}

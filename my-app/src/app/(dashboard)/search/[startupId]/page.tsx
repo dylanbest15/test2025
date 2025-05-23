@@ -37,6 +37,28 @@ export default async function StartupResult({ params }: StartupResultProps) {
     if (industryRes) {
       industries = industryRes.map(industry => industry.name);
     }
+    
+    // Get the current user's session
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    let favorite = null;
+    // Fetch favorite data
+    if (session?.user) {
+      // Check if the startup exists in the user's favorites
+      const { data: favoriteRes, error: favoriteErr } = await supabase
+        .from("favorites")
+        .select("id")
+        .eq("startup_id", startupId)
+        .eq("profile_id", session.user.id)
+        .maybeSingle();
+      
+      if (favoriteErr) {
+        console.error("Error checking if startup is favorited:", favoriteErr);
+      }
+      if (favoriteRes) {
+        favorite = favoriteRes;
+      }
+    }
 
     // Fetch the fund pool
     let { data: fundPool, error: fundPoolErr } = await supabase
@@ -53,7 +75,7 @@ export default async function StartupResult({ params }: StartupResultProps) {
 
     if (startup) {
       return (
-        <ViewStartupResult startup={startup} industries={industries} fundPool={fundPool} />
+        <ViewStartupResult startup={startup} industries={industries} favorite={favorite} fundPool={fundPool} />
       )
     }
   }

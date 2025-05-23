@@ -55,6 +55,7 @@ export default function ViewFundPoolCard({ fundPool, onJoinFundPool }: ViewFundP
                 <Progress value={0} className="h-2.5" />
               </div>
 
+              {/* TODO: only show button to investors */}
               <div className="pt-2">
                 <Button
                   className="w-full py-6 text-base font-semibold shadow-lg transition-all duration-200 

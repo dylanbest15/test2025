@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeft, Building2, Calendar, FileText, MailIcon, MapPinIcon } from "lucide-react"
+import { ArrowLeft, Building2, Calendar, FileText, Heart, MailIcon, MapPinIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -10,40 +10,79 @@ import { useCallback, useEffect, useState } from "react"
 import ViewFundPool from "./view-fund-pool"
 import { createClient } from "@/utils/supabase/client"
 import { toast } from "sonner"
+import { redirect } from "next/navigation"
+import { createFavorite, deleteFavorite } from "./actions"
+import { Favorite } from "@/types/favorite"
 
 interface ViewStartupResultProps {
   startup: Startup
   industries?: string[]
+  favorite?: Partial<Favorite> | null;
   fundPool?: FundPool
   onBack?: () => void
 }
 
-export default function ViewStartupResult({ startup, industries: industriesProp, fundPool: fundPoolProp, onBack }: ViewStartupResultProps) {
+export default function ViewStartupResult({
+  startup,
+  industries: industriesProp,
+  fundPool: fundPoolProp,
+  favorite: favoriteProp,
+  onBack,
+}: ViewStartupResultProps) {
   const [activeTab, setActiveTab] = useState("pitch-deck")
-  const [industries, setIndustries] = useState<string[] | []>(industriesProp || []);
+  const [profileId, setProfileId] = useState<string>("")
+  const [industries, setIndustries] = useState<string[] | []>(industriesProp || [])
   const [fundPool, setFundPool] = useState<FundPool | null>(fundPoolProp || null)
+  const [favorite, setFavorite] = useState<Partial<Favorite> | null>(favoriteProp || null)
   const [isLoading, setIsLoading] = useState(!fundPoolProp)
+  const [following, setFollowing] = useState(favoriteProp ? true : false)
 
+  // Fetch user data for profile id
   // Fetch industry and fund pool data if not provided through props
   useEffect(() => {
     async function loadData() {
-      if (!industriesProp || !fundPoolProp) {
-        try {
-          const supabase = await createClient()
-          setIsLoading(true)
+      try {
+        setIsLoading(true)
+        const supabase = await createClient()
 
-          const { data: industryData, error: industryErr } = await supabase.from("industries")
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (session?.user) {
+          setProfileId(session?.user.id)
+        } else {
+          return redirect("/")
+        }
+
+        if (!industriesProp || !favoriteProp || !fundPoolProp) {
+          const { data: industryData, error: industryErr } = await supabase
+            .from("industries")
             .select()
             .eq("startup_id", startup.id)
 
           if (industryErr) {
-            console.error("Error fetching industries:", industryErr);
+            console.error("Error fetching industries:", industryErr)
             // return notFound();
           } else {
-            setIndustries(industryData.map(industry => industry.name));
+            setIndustries(industryData.map((industry) => industry.name))
           }
 
-          const { data: fundPoolData, error: fundPoolErr } = await supabase.from("fund_pools")
+          const { data: favoriteData, error: favoriteErr } = await supabase
+            .from("favorites")
+            .select("id")
+            .eq("startup_id", startup.id)
+            .eq("profile_id", session.user.id)
+            .maybeSingle();
+
+          if (favoriteErr) {
+            console.error("Error checking if startup is favorited:", favoriteErr);
+            // return notFound();
+          } else {
+            setFavorite(favoriteData)
+            setFollowing(!!favoriteData)
+          }
+
+          const { data: fundPoolData, error: fundPoolErr } = await supabase
+            .from("fund_pools")
             .select()
             .eq("startup_id", startup.id)
             .single()
@@ -54,17 +93,48 @@ export default function ViewStartupResult({ startup, industries: industriesProp,
           } else {
             setFundPool(fundPoolData)
           }
-        } catch (error) {
-          console.error("Failed to fetch fund pool:", error)
-          setFundPool(null)
-        } finally {
-          setIsLoading(false)
         }
+      } catch (error) {
+        console.error("Failed to fetch fund pool:", error)
+        setFundPool(null)
+      } finally {
+        setIsLoading(false)
       }
     }
 
     loadData()
-  }, [startup.id, industriesProp, fundPoolProp])
+  }, [startup.id, industriesProp, favoriteProp, fundPoolProp])
+
+  const handleFollowClick = useCallback(async () => {
+    try {
+      const favoriteData = {
+        startup_id: startup.id,
+        profile_id: profileId,
+      }
+
+      if (!favorite) {
+        const newFavorite = await createFavorite(favoriteData)
+        setFavorite(newFavorite);
+      } else {
+        await deleteFavorite(favorite.id!)
+        setFavorite(null);
+      }
+
+      // Toggle the following state
+      setFollowing((prev) => !prev)
+
+      toast.success(`${following ? "Unfollowed" : "Following"} ${startup.name}`, {
+        description: following ? "Removed from your followed startups" : "Added to your followed startups",
+      })
+      return true
+    } catch (error) {
+      toast.error("Operation failed", {
+        description: "Failed to follow startup.",
+      })
+      console.error("Failed to follow startup:", error)
+      throw error
+    }
+  }, [following, startup.id, startup.name, profileId])
 
   const handleJoinFundPool = useCallback(
     async (amount: number) => {
@@ -76,8 +146,8 @@ export default function ViewStartupResult({ startup, industries: industriesProp,
 
         // TODO: make sure this is an investor only action
         // TODO: create investment, email, and notification
-        console.log(investmentData);
-        
+        console.log(investmentData)
+
         toast.success("Success!", {
           description: "You have requested to join a fund pool!",
         })
@@ -106,26 +176,38 @@ export default function ViewStartupResult({ startup, industries: industriesProp,
           </button>
         </div>
       )}
-      <div className="container mx-auto py-8 px-6 max-w-5xl">
+      <div className="container mx-auto py-8 px-6">
+        {/* TODO: only show button to investors */}
+        <div className="relative">
+          <button
+            onClick={handleFollowClick}
+            className="absolute right-0 top-0 p-2"
+            aria-label={following ? "Unfollow startup" : "Follow startup"}
+          >
+            <Heart
+              className={`h-6 w-6 transition-colors ${following ? "fill-red-500 text-red-500" : "text-gray-400 hover:text-gray-600"}`}
+            />
+          </button>
+        </div>
         <div className="space-y-6">
           {/* Header Section with Logo and Name */}
           <div className="flex items-start gap-4">
             <div className="relative">
-            {startup.logo_url ? (
-              <div className="h-20 w-20 border-2 border-border overflow-hidden rounded-md flex items-center justify-center">
-                <img
-                  src={startup.logo_url || "/placeholder.svg"}
-                  alt={`${startup.name || "Company"} logo`}
-                  className="object-contain max-h-full max-w-full"
-                  style={{ objectPosition: "center" }}
-                />
-              </div>
-            ) : (
-              <div className="h-20 w-20 bg-gray-100 flex items-center justify-center rounded-md border-2 border-border">
-                <Building2 className="h-10 w-10 text-gray-400" />
-              </div>
-            )}
-          </div>
+              {startup.logo_url ? (
+                <div className="h-20 w-20 border-2 border-border overflow-hidden rounded-md flex items-center justify-center">
+                  <img
+                    src={startup.logo_url || "/placeholder.svg"}
+                    alt={`${startup.name || "Company"} logo`}
+                    className="object-contain max-h-full max-w-full"
+                    style={{ objectPosition: "center" }}
+                  />
+                </div>
+              ) : (
+                <div className="h-20 w-20 bg-gray-100 flex items-center justify-center rounded-md border-2 border-border">
+                  <Building2 className="h-10 w-10 text-gray-400" />
+                </div>
+              )}
+            </div>
 
             {/* Name and details */}
             <div className="space-y-2">

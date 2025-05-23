@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const FundPoolStatusSchema = z.enum(["open", "completed"])
+// const FundPoolStatusSchema = z.enum(["open", "completed"])
 
 // API Create Schema
 export const FundPoolCreateSchema = z.object({

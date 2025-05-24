@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { PlusCircle } from "lucide-react"
 import type { FundPool } from "@/types/fund-pool"
-import { JoinFundPool } from "./join-fund-pool"
+import { JoinFundPool } from "@/app/(dashboard)/search/[startupId]/(components)/join-fund-pool"
 import { useState } from "react"
 
 interface ViewFundPoolProps {

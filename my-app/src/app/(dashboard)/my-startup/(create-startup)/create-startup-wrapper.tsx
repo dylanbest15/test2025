@@ -19,7 +19,7 @@ export default function CreateStartupWrapper({ profile }: CreateStartupWrapperPr
 
   // If a startup was created, render the view component
   if (createdStartup) {
-    return <ViewStartup startup={createdStartup} />
+    return <ViewStartup startup={createdStartup} industries={[]} fundPool={null} />
   }
 
   // Otherwise render the create form

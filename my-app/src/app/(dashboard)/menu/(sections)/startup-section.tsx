@@ -2,15 +2,15 @@
 
 import { Startup } from "@/types/startup";
 import { useCallback, useState } from "react";
-import { updateIndustries, updateStartup } from "@/app/(dashboard)/menu/(startup-section)/actions";
+import { updateStartupIndustries, updateStartup } from "@/app/(dashboard)/menu/actions";
 import { Building2, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import StartupGeneralInfo from "@/components/custom/menu-sheets/startup-general-info";
-import StartupOverview from "@/components/custom/menu-sheets/startup-overview";
-import StartupLogo from "@/components/custom/menu-sheets/startup-logo";
-import StartupManageTeam from "@/components/custom/menu-sheets/startup-manage-team";
-import Industries from "@/components/custom/menu-sheets/industries";
+import StartupGeneralInfo from "@/app/(dashboard)/menu/(components)/(startup)/startup-general-info";
+import StartupOverview from "@/app/(dashboard)/menu/(components)/(startup)/startup-overview";
+import StartupLogo from "@/app/(dashboard)/menu/(components)/(startup)/startup-logo";
+import StartupManageTeam from "@/app/(dashboard)/menu/(components)/(startup)/startup-manage-team";
+import Industries from "@/app/(dashboard)/menu/(components)/industries";
 
 interface StartupSectionProps {
   startup: Startup;
@@ -56,7 +56,7 @@ export default function StartupSection({ startup, industries }: StartupSectionPr
       async(industryData: string[]) => {
         try {
           // Call the server action to update the database
-          await updateIndustries(currentStartup.id, industryData)
+          await updateStartupIndustries(currentStartup.id, industryData)
   
           // Update the local state with the new data
           setCurrentIndustries(industryData);

@@ -5,8 +5,8 @@ import { ChevronRight, DollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { FundPool } from "@/types/fund-pool";
-import FundingGoal from "@/components/custom/menu-sheets/funding-goal";
-import ManageRequests from "@/components/custom/menu-sheets/manage-requests";
+import FundingGoal from "@/app/(dashboard)/menu/(components)/(fund-pool)/funding-goal";
+import ManageRequests from "@/app/(dashboard)/menu/(components)/(fund-pool)/manage-requests";
 
 interface FundPoolSectionProps {
   fundPool: FundPool;

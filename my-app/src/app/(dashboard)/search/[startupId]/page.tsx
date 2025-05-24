@@ -38,18 +38,19 @@ export default async function StartupResult({ params }: StartupResultProps) {
       industries = industryRes.map(industry => industry.name);
     }
     
-    // Get the current user's session
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
     
     let favorite = null;
     // Fetch favorite data
-    if (session?.user) {
+    if (user) {
       // Check if the startup exists in the user's favorites
       const { data: favoriteRes, error: favoriteErr } = await supabase
         .from("favorites")
         .select("id")
         .eq("startup_id", startupId)
-        .eq("profile_id", session.user.id)
+        .eq("profile_id", user.id)
         .maybeSingle();
       
       if (favoriteErr) {

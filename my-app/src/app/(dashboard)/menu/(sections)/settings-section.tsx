@@ -1,8 +1,8 @@
 'use client'
 
 import { signOutAction } from "@/app/actions"
-import SettingsAccount from "@/components/custom/menu-sheets/settings-account"
-import SettingsNotifications from "@/components/custom/menu-sheets/settings-notifications"
+import SettingsAccount from "@/app/(dashboard)/menu/(components)/(settings)/settings-account"
+import SettingsNotifications from "@/app/(dashboard)/menu/(components)/(settings)/settings-notifications"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { ChevronRight, HelpCircle, LogOut, Settings, Sun } from "lucide-react"
 import { useState, useTransition } from "react"

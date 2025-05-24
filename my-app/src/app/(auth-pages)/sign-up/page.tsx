@@ -3,7 +3,7 @@ import { FormMessage, Message } from "@/components/auth/form-message";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import SearchDemo from "@/components/custom/search-demo";
+import SearchDemo from "@/components/app-shell/search-demo";
 import { TypeToggle } from "@/components/auth/type-toggle";
 import { SignupButton } from "@/components/auth/sign-up-button";
 

@@ -1,4 +1,4 @@
-import SearchDemo from "@/components/custom/search-demo";
+import SearchDemo from "@/components/app-shell/search-demo";
 import Link from "next/link";
 import { signInAction } from "@/app/actions";
 import { FormMessage, Message } from "@/components/auth/form-message";

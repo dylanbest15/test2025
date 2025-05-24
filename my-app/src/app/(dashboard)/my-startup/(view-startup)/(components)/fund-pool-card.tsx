@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { PlusCircle } from "lucide-react"
 import type { FundPool } from "@/types/fund-pool"
 import { useState } from "react"
-import { FundPoolCreate } from "@/app/(dashboard)/my-startup/(view-startup)/fund-pool-create"
+import { FundPoolCreate } from "@/app/(dashboard)/my-startup/(view-startup)/(components)/fund-pool-create"
 
 interface FundPoolProps {
   fundPool: FundPool | null;

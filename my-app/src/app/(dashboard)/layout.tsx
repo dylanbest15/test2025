@@ -1,6 +1,5 @@
-import { AppNavbar } from "@/components/custom/app-navbar";
-import { AppSidebar } from "@/components/custom/app-sidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { NavbarDesktop } from "@/components/app-shell/navbar-desktop";
+import { NavbarMobile } from "@/components/app-shell/navbar-mobile";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -21,13 +20,20 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex flex-col min-h-screen">
-      <AppNavbar type={user.user_metadata.type} />
+      {/* Mobile Navbar - Hidden on desktop */}
+      <div className="lg:hidden">
+        <NavbarMobile type={user.user_metadata.type} />
+      </div>
+      {/* Desktop Navbar - Hidden on mobile */}
+      <div className="hidden lg:block">
+        <NavbarDesktop />
+      </div>
       <div className="flex flex-1">
-        <SidebarProvider>
-          <AppSidebar />
+        {/* <SidebarProvider> */}
+          {/* <AppSidebar /> */}
           {children}
           {/* <StartupDashboard startup={startup}></StartupDashboard> */}
-        </SidebarProvider>
+        {/* </SidebarProvider> */}
       </div>
     </div>
   )

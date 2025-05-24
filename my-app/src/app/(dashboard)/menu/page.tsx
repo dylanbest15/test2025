@@ -1,9 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import ProfileSection from "./(profile-section)/profile-section";
-import StartupSection from "./(startup-section)/startup-section";
-import SettingsSection from "./(settings-section)/settings-section";
-import FundPoolSection from "./(fund-pool-section)/fund-pool-section";
+import ProfileSection from "@/app/(dashboard)/menu/(sections)/profile-section";
+import StartupSection from "@/app/(dashboard)/menu/(sections)/startup-section";
+import SettingsSection from "@/app/(dashboard)/menu/(sections)/settings-section";
+import FundPoolSection from "@/app/(dashboard)/menu/(sections)/fund-pool-section";
 
 export default async function Menu() {
   const supabase = await createClient();

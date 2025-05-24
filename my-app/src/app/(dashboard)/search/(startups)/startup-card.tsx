@@ -3,12 +3,12 @@
 import type React from "react"
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Building, Building2 } from "lucide-react"
+import { Building2 } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { Startup } from "@/types/startup"
-import ViewStartupResult from "@/app/(dashboard)/search/[startupId]/view-startup-result"
 import Link from "next/link"
+import StartupSheet from "./startup-sheet"
 
 interface StartupCardProps {
   startup: Startup
@@ -74,7 +74,7 @@ export function StartupCard({ startup }: StartupCardProps) {
             aria-describedby={undefined}
           >
             <SheetTitle className="sr-only">Startup Details</SheetTitle>
-            <ViewStartupResult startup={startup} onBack={() => setSheetOpen(false)} />
+            <StartupSheet startup={startup} onBack={() => setSheetOpen(false)} />
           </SheetContent>
         </Sheet>
       )}

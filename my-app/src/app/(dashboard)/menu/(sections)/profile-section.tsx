@@ -2,14 +2,14 @@
 
 import { displayName, getInitials, Profile } from "@/types/profile";
 import { useCallback, useState } from "react";
-import { updateIndustries, updateProfile } from "@/app/(dashboard)/menu/(profile-section)/actions";
+import { updateProfileIndustries, updateProfile } from "@/app/(dashboard)/menu/actions";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import ProfileNameAndBio from "@/components/custom/menu-sheets/profile-name-and-bio";
-import ProfilePicture from "@/components/custom/menu-sheets/profile-picture";
+import ProfileNameAndBio from "@/app/(dashboard)/menu/(components)/(profile)/profile-name-and-bio";
+import ProfilePicture from "@/app/(dashboard)/menu/(components)/(profile)/profile-picture";
 import { ChevronRight, Pencil, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import Industries from "@/components/custom/menu-sheets/industries";
+import Industries from "@/app/(dashboard)/menu/(components)/industries";
 
 interface ProfileSectionProps {
   profile: Profile;
@@ -52,7 +52,7 @@ export default function ProfileSection({ profile, industries }: ProfileSectionPr
     async(industryData: string[]) => {
       try {
         // Call the server action to update the database
-        await updateIndustries(currentProfile.id, industryData)
+        await updateProfileIndustries(currentProfile.id, industryData)
 
         // Update the local state with the new data
         setCurrentIndustries(industryData);

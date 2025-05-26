@@ -1,22 +1,29 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Building2 } from "lucide-react"
+import { Building2, Heart } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { Startup } from "@/types/startup"
 import Link from "next/link"
 import StartupSheet from "./startup-sheet"
+import type { Favorite } from "@/types/favorite"
+import { toast } from "sonner"
+import { createFavorite, deleteFavorite } from "../../following/actions"
 
 interface StartupCardProps {
   startup: Startup
+  profileId: string
+  favorite: Favorite | null
 }
 
-export function StartupCard({ startup }: StartupCardProps) {
+export function StartupCard({ startup, profileId, favorite }: StartupCardProps) {
   const isMobile = useIsMobile()
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [currentFavorite, setCurrentFavorite] = useState<Favorite | null>(favorite || null)
+  const [following, setFollowing] = useState<boolean>(favorite ? true : false)
 
   // Function to truncate bio text
   const truncateOverview = (overview: string, maxLength = 150) => {
@@ -30,6 +37,46 @@ export function StartupCard({ startup }: StartupCardProps) {
       setSheetOpen(true)
     }
   }
+
+  const handleFollowClick = useCallback(
+    async (e: React.MouseEvent) => {
+      // Prevent the click from bubbling up to the parent Link
+      e.preventDefault()
+      e.stopPropagation()
+
+      try {
+        const favoriteData = {
+          startup_id: startup.id,
+          profile_id: profileId,
+        }
+
+        // Store the current following state before making changes
+        const wasFollowing = following
+
+        if (wasFollowing && currentFavorite) {
+          await deleteFavorite(currentFavorite.id)
+          setFollowing(false)
+          setCurrentFavorite(null)
+        } else {
+          const newFavorite = await createFavorite(favoriteData)
+          setFollowing(true)
+          setCurrentFavorite(newFavorite)
+        }
+
+        toast.success(`${wasFollowing ? "Unfollowed" : "Following"} ${startup.name}`, {
+          description: wasFollowing ? "Removed from your followed startups" : "Added to your followed startups",
+        })
+        return true
+      } catch (error) {
+        toast.error("Operation failed", {
+          description: "Failed to follow startup.",
+        })
+        console.error("Failed to follow startup:", error)
+        throw error
+      }
+    },
+    [following, currentFavorite, startup.id, startup.name, profileId],
+  )
 
   return (
     <>
@@ -61,6 +108,17 @@ export function StartupCard({ startup }: StartupCardProps) {
                   </p>
                   {/* <p className="text-sm text-gray-500 line-clamp-2">{truncateOverview(startup.overview)}</p> */}
                 </div>
+                <div className="relative">
+                  <button
+                    onClick={handleFollowClick}
+                    className="absolute right-0 top-0 p-2"
+                    aria-label={following ? "Unfollow startup" : "Follow startup"}
+                  >
+                    <Heart
+                      className={`h-6 w-6 stroke-gray-300 transition-colors ${following ? "fill-red-500" : "fill-white"}`}
+                    />
+                  </button>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -76,12 +134,10 @@ export function StartupCard({ startup }: StartupCardProps) {
             aria-describedby={undefined}
           >
             <SheetTitle className="sr-only">Startup Details</SheetTitle>
-            <StartupSheet startup={startup} onBack={() => setSheetOpen(false)} />
+            <StartupSheet startup={startup} following={following} onFollowClick={handleFollowClick} onBack={() => setSheetOpen(false)} />
           </SheetContent>
         </Sheet>
       )}
     </>
   )
 }
-
-

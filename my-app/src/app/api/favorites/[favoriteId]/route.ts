@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(req: NextRequest, { params }: { params: { favoriteId: string } }) {
   const supabase = await createClient();
-  const { favoriteId } = params;
+  const { favoriteId } = await params;
 
   if (!favoriteId) {
     return NextResponse.json({ error: "Favorite ID is required" }, { status: 400 });

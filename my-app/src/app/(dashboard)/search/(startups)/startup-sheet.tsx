@@ -11,28 +11,30 @@ import ViewFundPool from "@/app/(dashboard)/search/[startupId]/(components)/view
 import { createClient } from "@/utils/supabase/client"
 import { toast } from "sonner"
 import { redirect } from "next/navigation"
-import { createFavorite, deleteFavorite } from "@/app/(dashboard)/search/[startupId]/actions"
+import { createFavorite, deleteFavorite } from "@/app/(dashboard)/following/actions"
 import { Favorite } from "@/types/favorite"
 
 interface StartupSheetProps {
   startup: Startup
+  following: boolean
+  onFollowClick: (e: React.MouseEvent) => Promise<boolean>
   onBack: () => void
 }
 
 export default function StartupSheet({
   startup,
+  following,
+  onFollowClick,
   onBack,
 }: StartupSheetProps) {
   const [activeTab, setActiveTab] = useState("pitch-deck")
   const [profileId, setProfileId] = useState<string>("")
   const [industries, setIndustries] = useState<string[] | []>([])
   const [fundPool, setFundPool] = useState<FundPool | null>(null)
-  const [favorite, setFavorite] = useState<Partial<Favorite> | null>(null)
+  // const [favorite, setFavorite] = useState<Partial<Favorite> | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [following, setFollowing] = useState<boolean>(false)
+  // const [following, setFollowing] = useState<boolean>(false)
 
-  // Fetch user data for profile id
-  // Fetch industry and fund pool data if not provided through props
   useEffect(() => {
     async function loadData() {
       try {
@@ -61,20 +63,20 @@ export default function StartupSheet({
           setIndustries(industryData.map((industry) => industry.name))
         }
 
-        const { data: favoriteData, error: favoriteErr } = await supabase
-          .from("favorites")
-          .select("id")
-          .eq("startup_id", startup.id)
-          .eq("profile_id", user.id)
-          .maybeSingle();
+        // const { data: favoriteData, error: favoriteErr } = await supabase
+        //   .from("favorites")
+        //   .select("id")
+        //   .eq("startup_id", startup.id)
+        //   .eq("profile_id", user.id)
+        //   .maybeSingle();
 
-        if (favoriteErr) {
-          console.error("Error checking if startup is favorited:", favoriteErr);
-          // return notFound();
-        } else {
-          setFavorite(favoriteData)
-          setFollowing(!!favoriteData)
-        }
+        // if (favoriteErr) {
+        //   console.error("Error checking if startup is favorited:", favoriteErr);
+        //   // return notFound();
+        // } else {
+        //   setFavorite(favoriteData)
+        //   setFollowing(!!favoriteData)
+        // }
 
         const { data: fundPoolData, error: fundPoolErr } = await supabase
           .from("fund_pools")
@@ -99,36 +101,43 @@ export default function StartupSheet({
     loadData()
   }, [startup.id])
 
-  const handleFollowClick = useCallback(async () => {
-    try {
-      const favoriteData = {
-        startup_id: startup.id,
-        profile_id: profileId,
-      }
+  // const handleFollowClick = useCallback(async () => {
+  //   try {
+  //     const favoriteData = {
+  //       startup_id: startup.id,
+  //       profile_id: profileId,
+  //     }
 
-      if (!favorite) {
-        const newFavorite = await createFavorite(favoriteData)
-        setFavorite(newFavorite);
-      } else {
-        await deleteFavorite(favorite.id!)
-        setFavorite(null);
-      }
+  //     if (!favorite) {
+  //       const newFavorite = await createFavorite(favoriteData)
+  //       setFavorite(newFavorite);
+  //     } else {
+  //       await deleteFavorite(favorite.id!)
+  //       setFavorite(null);
+  //     }
 
-      // Toggle the following state
-      setFollowing((prev) => !prev)
+  //     // Toggle the following state
+  //     setFollowing((prev) => !prev)
 
-      toast.success(`${following ? "Unfollowed" : "Following"} ${startup.name}`, {
-        description: following ? "Removed from your followed startups" : "Added to your followed startups",
-      })
-      return true
-    } catch (error) {
-      toast.error("Operation failed", {
-        description: "Failed to follow startup.",
-      })
-      console.error("Failed to follow startup:", error)
-      throw error
-    }
-  }, [following, startup.id, startup.name, profileId])
+  //     toast.success(`${following ? "Unfollowed" : "Following"} ${startup.name}`, {
+  //       description: following ? "Removed from your followed startups" : "Added to your followed startups",
+  //     })
+  //     return true
+  //   } catch (error) {
+  //     toast.error("Operation failed", {
+  //       description: "Failed to follow startup.",
+  //     })
+  //     console.error("Failed to follow startup:", error)
+  //     throw error
+  //   }
+  // }, [following, startup.id, startup.name, profileId])
+
+  const handleFollowClick = useCallback(
+    async (e: React.MouseEvent) => {
+      return await onFollowClick(e)
+    },
+    [onFollowClick],
+  )
 
   const handleJoinFundPool = useCallback(
     async (amount: number) => {
@@ -186,9 +195,7 @@ export default function StartupSheet({
             className="absolute right-0 top-0 p-2"
             aria-label={following ? "Unfollow startup" : "Follow startup"}
           >
-            <Heart
-              className={`h-6 w-6 transition-colors ${following ? "fill-red-500 text-red-500" : "text-gray-400 hover:text-gray-600"}`}
-            />
+            <Heart className={`h-6 w-6 stroke-gray-300 transition-colors ${following ? "fill-red-500" : "fill-white"}`} />
           </button>
         </div>
         <div className="space-y-6">

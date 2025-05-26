@@ -16,7 +16,9 @@ export default async function Search() {
 
   if (user.user_metadata.type === 'investor') {
     return (
-      <StartupSearch />
+      <div className="w-full bg-[#f8f9fa]">
+        <StartupSearch />
+      </div>
     )
   } else if (user.user_metadata.type === 'founder') {
     return (

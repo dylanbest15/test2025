@@ -50,8 +50,7 @@ export default function StartupSearch() {
             />
           </div>
           {hasSearched && (
-            <div className="max-h-[400px] overflow-y-auto pr-2">
-              <div className="space-y-3 mb-4">
+            <div className="max-h-[400px] overflow-y-auto">
                 {loading ? (
                   <div className="flex justify-center items-center py-8">
                     <Loader className="h-8 w-8 text-gray-400 animate-spin" />
@@ -65,7 +64,6 @@ export default function StartupSearch() {
                 ) : (
                   <p className="text-gray-500 text-center py-4">No startups found matching your search.</p>
                 )}
-              </div>
             </div>
           )}
         </div>

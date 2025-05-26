@@ -87,7 +87,7 @@ export default async function Menu() {
   }
 
   return (
-    <div className="w-full mb-[100px]">
+    <div className="w-full mb-[100px] bg-[#f8f9fa]">
       <ProfileSection profile={profile} industries={industries} />
       {startup && profile.startup_role === "admin" && (
         <>

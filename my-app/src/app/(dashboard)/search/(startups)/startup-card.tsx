@@ -34,31 +34,33 @@ export function StartupCard({ startup }: StartupCardProps) {
   return (
     <>
       <Link href={`/search/${startup.id}`} onClick={handleCardClick}>
-        <Card className="overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer">
-          <CardContent className="ps-4">
-            <div className="flex items-start">
-              <div className="relative mr-4">
-                {startup.logo_url ? (
-                  <div className="h-10 w-10 border-2 border-border overflow-hidden rounded-md flex items-center justify-center">
-                    <img
-                      src={startup.logo_url || "/placeholder.svg"}
-                      alt={`${startup.name || "Company"} logo`}
-                      className="object-contain max-h-full max-w-full"
-                      style={{ objectPosition: "center" }}
-                    />
-                  </div>
-                ) : (
-                  <div className="h-10 w-10 bg-gray-10 flex items-center justify-center rounded-md border-2 border-border">
-                    <Building2 className="h-5 w-5 text-gray-400" />
-                  </div>
-                )}
-              </div>
-              <div>
-                <h3 className="font-medium text-base leading-tight">{startup.name}</h3>
-                <p className="text-sm text-gray-500 mt-1">
-                  {startup.city}, {startup.state}
-                </p>
-                <p className="text-sm text-gray-500 mt-1">{truncateOverview(startup.overview)}</p>
+        <Card className="w-full overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer border-0 border-b border-gray-200 bg-white rounded-none">
+          <CardContent className="px-6">
+            <div className="flex items-start justify-between">
+              <div className="flex items-start space-x-6 flex-1">
+                <div className="relative -mt-1 -ml-2">
+                  {startup.logo_url ? (
+                    <div className="h-16 w-16 border border-gray-200 overflow-hidden flex items-center justify-center bg-white">
+                      <img
+                        src={startup.logo_url || "/placeholder.svg"}
+                        alt={`${startup.name || "Company"} logo`}
+                        className="object-contain max-h-full max-w-full"
+                        style={{ objectPosition: "center" }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-16 w-16 bg-gray-100 flex items-center justify-center border border-gray-200">
+                      <Building2 className="h-8 w-8 text-gray-400" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0 pt-1">
+                  <h3 className="font-semibold text-lg text-gray-900 leading-tight mb-1">{startup.name}</h3>
+                  <p className="text-sm text-gray-600 mb-1">
+                    {startup.city}, {startup.state}
+                  </p>
+                  {/* <p className="text-sm text-gray-500 line-clamp-2">{truncateOverview(startup.overview)}</p> */}
+                </div>
               </div>
             </div>
           </CardContent>
@@ -81,3 +83,5 @@ export function StartupCard({ startup }: StartupCardProps) {
     </>
   )
 }
+
+

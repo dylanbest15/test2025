@@ -27,7 +27,7 @@ export default function FundPoolCard({ fundPool, onCreateFundPool }: FundPoolPro
 
   return (
     <>
-      <Card className="relative overflow-hidden border-2">
+      <Card className="relative overflow-hidden rounded-none border-0 shadow-none">
         {fundPool?.status === "open" && (
           <div className="absolute right-0 top-0">
             <Badge
@@ -39,9 +39,9 @@ export default function FundPoolCard({ fundPool, onCreateFundPool }: FundPoolPro
           </div>
         )}
 
-        <CardContent className="p-6">
+        <CardContent className="p-6 pt-0 pb-0">
           {fundPool ? (
-            <div className="space-y-5">
+            <div className="space-y-4">
               <div>
                 <p className="text-sm text-muted-foreground">Funding Goal</p>
                 <p className="text-2xl font-bold">{formatCurrency(fundPool.fund_goal)}</p>
@@ -50,13 +50,13 @@ export default function FundPoolCard({ fundPool, onCreateFundPool }: FundPoolPro
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="font-medium">Progress</span>
-                  <span>$0 of {formatCurrency(fundPool.fund_goal)}</span>
+                  <span>$0 of <span className="font-bold">{formatCurrency(fundPool.fund_goal)}</span></span>
                 </div>
                 <Progress value={0} className="h-2.5" />
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-2">
+            <div className="flex flex-col items-center justify-center">
               <p className="text-muted-foreground mb-6">No fund pool has been created yet.</p>
               <Button
                 className="w-full py-6 text-base font-semibold shadow-lg transition-all duration-200 

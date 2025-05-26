@@ -37,11 +37,11 @@ export default async function StartupResult({ params }: StartupResultProps) {
     if (industryRes) {
       industries = industryRes.map(industry => industry.name);
     }
-    
+
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    
+
     let favorite = null;
     // Fetch favorite data
     if (user) {
@@ -52,7 +52,7 @@ export default async function StartupResult({ params }: StartupResultProps) {
         .eq("startup_id", startupId)
         .eq("profile_id", user.id)
         .maybeSingle();
-      
+
       if (favoriteErr) {
         console.error("Error checking if startup is favorited:", favoriteErr);
       }
@@ -63,10 +63,10 @@ export default async function StartupResult({ params }: StartupResultProps) {
 
     // Fetch the fund pool
     let { data: fundPool, error: fundPoolErr } = await supabase
-    .from("fund_pools")
-    .select()
-    .eq("startup_id", startupId)
-    .single()
+      .from("fund_pools")
+      .select()
+      .eq("startup_id", startupId)
+      .single()
 
     // ignore PGRST116 error (no fund pool exists)
     if (fundPoolErr && fundPoolErr.code !== 'PGRST116') {

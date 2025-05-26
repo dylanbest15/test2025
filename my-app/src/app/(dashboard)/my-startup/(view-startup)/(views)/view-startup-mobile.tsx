@@ -18,13 +18,15 @@ interface ViewStartupMobileProps {
 
 export default function ViewStartupMobile({ startup, industries, fundPool, onCreateFundPool }: ViewStartupMobileProps) {
   const [activeTab, setActiveTab] = useState("pitch-deck")
+  const [isOverviewExpanded, setIsOverviewExpanded] = useState(false)
 
   return (
-    <div className="w-screen min-h-screen px-6 py-8">
+    <div className="w-screen min-h-screen  px-4 py-6 mb-20 bg-[#f8f9fa]">
       <div className="w-full max-w-5xl mx-auto">
-        <div className="space-y-6">
+        <div className="space-y-2">
+
           {/* Header Section with Logo and Name */}
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-4 bg-white p-4">
             <div className="relative">
               {startup.logo_url ? (
                 <div className="h-20 w-20 border-2 border-border overflow-hidden rounded-md flex items-center justify-center">
@@ -73,17 +75,41 @@ export default function ViewStartupMobile({ startup, industries, fundPool, onCre
             </div>
           </div>
 
-          <p className="text-sm leading-relaxed">{startup.overview}</p>
+          {/* Overview section with See More */}
+          <div className="bg-white p-4">
+            <div className="overflow-hidden transition-all duration-300 ease-in-out">
+              <p className="text-sm leading-relaxed">
+                {isOverviewExpanded
+                  ? startup.overview
+                  : startup.overview && startup.overview.length > 75
+                    ? startup.overview.substring(0, 75)
+                    : startup.overview}
+                {startup.overview && startup.overview.length > 75 && (
+                  <>
+                    {!isOverviewExpanded && "..."}
+                    <button
+                      onClick={() => setIsOverviewExpanded(!isOverviewExpanded)}
+                      className="ml-1 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors inline"
+                    >
+                      {isOverviewExpanded ? " See Less" : " See More"}
+                    </button>
+                  </>
+                )}
+              </p>
+            </div>
+          </div>
+
+          {/* Fund Pool Card */}
+          <FundPoolCard fundPool={fundPool} onCreateFundPool={onCreateFundPool} />
 
           {/* Tabs Section */}
-          <Tabs defaultValue="pitch-deck" className="w-full" onValueChange={setActiveTab}>
+          <Tabs defaultValue="pitch-deck" className="w-full mt-4" onValueChange={setActiveTab}>
             <TabsList className="grid grid-cols-2 w-full max-w-md">
               <TabsTrigger value="pitch-deck">Pitch Deck</TabsTrigger>
               <TabsTrigger value="ask-founders">Ask The Founders</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="pitch-deck" className="mt-4 space-y-4">
-              <FundPoolCard fundPool={fundPool} onCreateFundPool={onCreateFundPool} />
+            <TabsContent value="pitch-deck" className="mt-2">
 
               {/* Pitch Deck Card */}
               <Card>
@@ -100,7 +126,7 @@ export default function ViewStartupMobile({ startup, industries, fundPool, onCre
               </Card>
             </TabsContent>
 
-            <TabsContent value="ask-founders" className="mt-4">
+            <TabsContent value="ask-founders" className="mt-2">
               <Card>
                 <CardHeader>
                   <CardTitle>Ask The Founders</CardTitle>

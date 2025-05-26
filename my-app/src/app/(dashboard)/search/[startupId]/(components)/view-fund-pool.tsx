@@ -27,8 +27,8 @@ export default function ViewFundPoolCard({ fundPool, onJoinFundPool }: ViewFundP
 
   return (
     <>
-      <Card className="relative overflow-hidden border-2">
-        {fundPool?.status === "open" && (
+      <Card className="relative overflow-hidden rounded-none border-0 shadow-none">
+        {/* {fundPool?.status === "open" && (
           <div className="absolute right-0 top-0">
             <Badge
               variant="outline"
@@ -37,20 +37,20 @@ export default function ViewFundPoolCard({ fundPool, onJoinFundPool }: ViewFundP
               Open for funding
             </Badge>
           </div>
-        )}
+        )} */}
 
-        <CardContent className="p-6">
+        <CardContent className="p-6 pt-0 pb-0">
           {fundPool ? (
-            <div className="space-y-5">
-              <div>
-                <p className="text-sm text-muted-foreground">Funding Goal</p>
-                <p className="text-2xl font-bold">{formatCurrency(fundPool.fund_goal)}</p>
-              </div>
+            <div className="space-y-4">
+              {/* <div>
+                <p className="text-xs text-muted-foreground">Funding Goal</p>
+                <p className="text-xl font-bold">{formatCurrency(fundPool.fund_goal)}</p>
+              </div> */}
 
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="font-medium">Progress</span>
-                  <span>$0 of {formatCurrency(fundPool.fund_goal)}</span>
+                  <span>$0 of <span className="font-bold">{formatCurrency(fundPool.fund_goal)}</span></span>
                 </div>
                 <Progress value={0} className="h-2.5" />
               </div>

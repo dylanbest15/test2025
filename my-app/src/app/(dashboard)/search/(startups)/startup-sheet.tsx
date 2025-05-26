@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { ArrowLeft, Building2, Calendar, FileText, Heart, Loader, MailIcon, MapPinIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,8 +13,6 @@ import ViewFundPool from "@/app/(dashboard)/search/[startupId]/(components)/view
 import { createClient } from "@/utils/supabase/client"
 import { toast } from "sonner"
 import { redirect } from "next/navigation"
-import { createFavorite, deleteFavorite } from "@/app/(dashboard)/following/actions"
-import { Favorite } from "@/types/favorite"
 
 interface StartupSheetProps {
   startup: Startup
@@ -21,19 +21,13 @@ interface StartupSheetProps {
   onBack: () => void
 }
 
-export default function StartupSheet({
-  startup,
-  following,
-  onFollowClick,
-  onBack,
-}: StartupSheetProps) {
+export default function StartupSheet({ startup, following, onFollowClick, onBack }: StartupSheetProps) {
   const [activeTab, setActiveTab] = useState("pitch-deck")
   const [profileId, setProfileId] = useState<string>("")
   const [industries, setIndustries] = useState<string[] | []>([])
   const [fundPool, setFundPool] = useState<FundPool | null>(null)
-  // const [favorite, setFavorite] = useState<Partial<Favorite> | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  // const [following, setFollowing] = useState<boolean>(false)
+  const [isOverviewExpanded, setIsOverviewExpanded] = useState(false)
 
   useEffect(() => {
     async function loadData() {
@@ -63,21 +57,6 @@ export default function StartupSheet({
           setIndustries(industryData.map((industry) => industry.name))
         }
 
-        // const { data: favoriteData, error: favoriteErr } = await supabase
-        //   .from("favorites")
-        //   .select("id")
-        //   .eq("startup_id", startup.id)
-        //   .eq("profile_id", user.id)
-        //   .maybeSingle();
-
-        // if (favoriteErr) {
-        //   console.error("Error checking if startup is favorited:", favoriteErr);
-        //   // return notFound();
-        // } else {
-        //   setFavorite(favoriteData)
-        //   setFollowing(!!favoriteData)
-        // }
-
         const { data: fundPoolData, error: fundPoolErr } = await supabase
           .from("fund_pools")
           .select()
@@ -100,37 +79,6 @@ export default function StartupSheet({
 
     loadData()
   }, [startup.id])
-
-  // const handleFollowClick = useCallback(async () => {
-  //   try {
-  //     const favoriteData = {
-  //       startup_id: startup.id,
-  //       profile_id: profileId,
-  //     }
-
-  //     if (!favorite) {
-  //       const newFavorite = await createFavorite(favoriteData)
-  //       setFavorite(newFavorite);
-  //     } else {
-  //       await deleteFavorite(favorite.id!)
-  //       setFavorite(null);
-  //     }
-
-  //     // Toggle the following state
-  //     setFollowing((prev) => !prev)
-
-  //     toast.success(`${following ? "Unfollowed" : "Following"} ${startup.name}`, {
-  //       description: following ? "Removed from your followed startups" : "Added to your followed startups",
-  //     })
-  //     return true
-  //   } catch (error) {
-  //     toast.error("Operation failed", {
-  //       description: "Failed to follow startup.",
-  //     })
-  //     console.error("Failed to follow startup:", error)
-  //     throw error
-  //   }
-  // }, [following, startup.id, startup.name, profileId])
 
   const handleFollowClick = useCallback(
     async (e: React.MouseEvent) => {
@@ -175,9 +123,9 @@ export default function StartupSheet({
   }
 
   return (
-    <div className="h-full overflow-auto">
+    <div className="h-full overflow-auto bg-[#f8f9fa]">
       {onBack && (
-        <div className="top-0 z-10 pt-4 pl-4 bg-background">
+        <div className="top-0 z-10 pt-4 pl-4">
           <button
             onClick={onBack}
             className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
@@ -187,7 +135,7 @@ export default function StartupSheet({
           </button>
         </div>
       )}
-      <div className="container mx-auto py-8 px-6">
+      <div className="container mx-auto py-4 px-4">
         {/* TODO: only show button to investors */}
         <div className="relative">
           <button
@@ -195,12 +143,14 @@ export default function StartupSheet({
             className="absolute right-0 top-0 p-2"
             aria-label={following ? "Unfollow startup" : "Follow startup"}
           >
-            <Heart className={`h-6 w-6 stroke-gray-300 transition-colors ${following ? "fill-red-500" : "fill-white"}`} />
+            <Heart
+              className={`h-6 w-6 stroke-gray-300 transition-colors ${following ? "fill-red-500" : "fill-white"}`}
+            />
           </button>
         </div>
-        <div className="space-y-6">
+        <div className="space-y-2">
           {/* Header Section with Logo and Name */}
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-4 bg-white p-4">
             <div className="relative">
               {startup.logo_url ? (
                 <div className="h-20 w-20 border-2 border-border overflow-hidden rounded-md flex items-center justify-center">
@@ -248,18 +198,42 @@ export default function StartupSheet({
               )}
             </div>
           </div>
-          <p className="text-sm leading-relaxed">{startup.overview}</p>
+
+          {/* Overview section with See More */}
+          <div className="bg-white p-4">
+            <div className="overflow-hidden transition-all duration-300 ease-in-out">
+              <p className="text-sm leading-relaxed">
+                {isOverviewExpanded
+                  ? startup.overview
+                  : startup.overview && startup.overview.length > 75
+                    ? startup.overview.substring(0, 75)
+                    : startup.overview}
+                {startup.overview && startup.overview.length > 75 && (
+                  <>
+                    {!isOverviewExpanded && "..."}
+                    <button
+                      onClick={() => setIsOverviewExpanded(!isOverviewExpanded)}
+                      className="ml-1 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors inline"
+                    >
+                      {isOverviewExpanded ? " See Less" : " See More"}
+                    </button>
+                  </>
+                )}
+              </p>
+            </div>
+          </div>
+
+          {/* Fund Pool Card */}
+          <ViewFundPool fundPool={fundPool} onJoinFundPool={handleJoinFundPool} />
 
           {/* Tabs Section */}
-          <Tabs defaultValue="pitch-deck" className="w-full" onValueChange={setActiveTab}>
+          <Tabs defaultValue="pitch-deck" className="w-full mt-4" onValueChange={setActiveTab}>
             <TabsList className="grid grid-cols-2 w-full max-w-md">
               <TabsTrigger value="pitch-deck">Pitch Deck</TabsTrigger>
               <TabsTrigger value="ask-founders">Ask The Founders</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="pitch-deck" className="mt-4 space-y-4">
-              <ViewFundPool fundPool={fundPool} onJoinFundPool={handleJoinFundPool} />
-
+            <TabsContent value="pitch-deck" className="mt-1">
               {/* Pitch Deck Card */}
               <Card>
                 <CardHeader>
@@ -275,7 +249,7 @@ export default function StartupSheet({
               </Card>
             </TabsContent>
 
-            <TabsContent value="ask-founders" className="mt-4">
+            <TabsContent value="ask-founders" className="mt-1">
               <Card>
                 <CardHeader>
                   <CardTitle>Ask The Founders</CardTitle>

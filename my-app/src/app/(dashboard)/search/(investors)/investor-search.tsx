@@ -36,39 +36,37 @@ export default function InvestorSearch() {
 
   return (
     <div className="w-full p-4 flex-shrink-0 overflow-hidden h-full">
-        <div className="max-w-xl h-full flex flex-col">
-          <div className="relative mb-6">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <Search className="h-4 w-4 text-gray-400" />
-            </div>
-            <Input
-              type="search"
-              placeholder="Search by investor name..."
-              className="pl-10 bg-white"
-              value={searchQuery}
-              onChange={handleSearch}
-            />
+      <div className="max-w-xl h-full flex flex-col">
+        <div className="relative mb-6">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <Search className="h-4 w-4 text-gray-400" />
           </div>
-          {hasSearched && (
-            <div className="max-h-[400px] overflow-y-auto pr-2">
-              <div className="space-y-3 mb-4">
-                {loading ? (
-                  <div className="flex justify-center items-center py-8">
-                    <Loader className="h-8 w-8 text-gray-400 animate-spin" />
-                  </div>
-                ) : results.length > 0 ? (
-                  results.map((investor) => (
-                    <div key={investor.id}>
-                      <InvestorCard investor={investor}></InvestorCard>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-500 text-center py-4">No investors found matching your search.</p>
-                )}
-              </div>
-            </div>
-          )}
+          <Input
+            type="search"
+            placeholder="Search by investor name..."
+            className="pl-10 bg-white"
+            value={searchQuery}
+            onChange={handleSearch}
+          />
         </div>
+        {hasSearched && (
+          <div className="max-h-[400px] overflow-y-auto">
+            {loading ? (
+              <div className="flex justify-center items-center py-8">
+                <Loader className="h-8 w-8 text-gray-400 animate-spin" />
+              </div>
+            ) : results.length > 0 ? (
+              results.map((investor) => (
+                <div key={investor.id}>
+                  <InvestorCard investor={investor}></InvestorCard>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 text-center py-4">No investors found matching your search.</p>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

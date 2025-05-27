@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { ArrowLeft, Building2, Calendar, FileText, Heart, Loader, MailIcon, MapPinIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"

@@ -56,7 +56,7 @@ export function NavbarMobile({
             <div className="relative">
               <Bell className="h-5 w-5" />
               {notificationCount > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+                <span className={`absolute ${notificationCount > 9 ? '-right-3' : '-right-1'} -top-1 flex pl-1 pr-1 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-primary-foreground`}>
                   {notificationCount > 9 ? "9+" : notificationCount}
                 </span>
               )}

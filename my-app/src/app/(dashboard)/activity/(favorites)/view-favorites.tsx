@@ -3,7 +3,7 @@
 import { useState } from "react"
 import type { Favorite } from "@/types/favorite"
 import type { Startup } from "@/types/startup"
-import { FollowingCard } from "./following-card"
+import { FavoriteCard } from "@/app/(dashboard)/activity/(favorites)/favorite-card"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
@@ -11,11 +11,11 @@ interface JoinedFavorite extends Favorite {
   startup: Startup
 }
 
-interface ViewFollowingProps {
+interface ViewFavoritesProps {
   favorites: JoinedFavorite[] | null
 }
 
-export default function ViewFollowing({ favorites }: ViewFollowingProps) {
+export default function ViewFavorites({ favorites }: ViewFavoritesProps) {
   const [searchTerm, setSearchTerm] = useState("")
 
   if (!favorites || favorites.length === 0) {
@@ -23,7 +23,7 @@ export default function ViewFollowing({ favorites }: ViewFollowingProps) {
       <div className="w-full p-4 flex-shrink-0 overflow-hidden h-full">
         <div className="max-w-xl h-full flex flex-col">
           <div className="max-h-[400px] overflow-y-auto">
-            <p className="text-gray-500 text-center py-8">You're not following any startups yet.</p>
+            <p className="text-gray-500 text-center py-8">You don't have any favorite startups yet.</p>
           </div>
         </div>
       </div>
@@ -53,12 +53,12 @@ export default function ViewFollowing({ favorites }: ViewFollowingProps) {
         <div className="max-h-[400px] overflow-y-auto">
           {filteredFavorites.length === 0 ? (
             <p className="text-gray-500 text-center py-8">
-              {searchTerm ? "No startups found matching your search." : "You're not following any startups yet."}
+              {searchTerm ? "No startups found matching your search." : "You don't have any favorite startups yet."}
             </p>
           ) : (
             filteredFavorites.map((favorite) => (
               <div key={favorite.id}>
-                <FollowingCard favorite={favorite} />
+                <FavoriteCard favorite={favorite} />
               </div>
             ))
           )}

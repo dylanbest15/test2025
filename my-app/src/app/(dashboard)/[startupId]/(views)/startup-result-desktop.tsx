@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import type { FundPool } from "@/types/fund-pool"
 import type { Startup } from "@/types/startup"
-import ViewFundPool from "@/app/(dashboard)/search/[startupId]/(components)/view-fund-pool"
+import ViewFundPool from "@/app/(dashboard)/[startupId]/(components)/view-fund-pool"
 import { Investment } from "@/types/investment"
 
 interface StartupResultDesktopProps {

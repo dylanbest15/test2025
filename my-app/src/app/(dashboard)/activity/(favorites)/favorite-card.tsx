@@ -1,29 +1,31 @@
 "use client"
 
 import type React from "react"
-import { useCallback, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Building2, Heart } from "lucide-react"
-import { useIsMobile } from "@/hooks/use-mobile"
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { Startup } from "@/types/startup"
-import Link from "next/link"
-import StartupSheet from "./startup-sheet"
 import type { Favorite } from "@/types/favorite"
+import { useCallback, useState } from "react"
 import { toast } from "sonner"
-import { createFavorite, deleteFavorite } from "../../following/actions"
+import { createFavorite, deleteFavorite } from "@/app/(dashboard)/activity/actions"
+import Link from "next/link"
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
+import StartupSheet from "@/app/(dashboard)/search/(components)/startup-sheet"
+import { useIsMobile } from "@/hooks/use-mobile"
 
-interface StartupCardProps {
+interface JoinedFavorite extends Favorite {
   startup: Startup
-  profileId: string
-  favorite: Favorite | null
 }
 
-export function StartupCard({ startup, profileId, favorite }: StartupCardProps) {
+interface FavoriteCardProps {
+  favorite: JoinedFavorite
+}
+
+export function FavoriteCard({ favorite }: FavoriteCardProps) {
   const isMobile = useIsMobile()
   const [sheetOpen, setSheetOpen] = useState(false)
-  const [currentFavorite, setCurrentFavorite] = useState<Favorite | null>(favorite || null)
-  const [following, setFollowing] = useState<boolean>(favorite ? true : false)
+  const [following, setFollowing] = useState<boolean>(true)
+  const [currentFavorite, setCurrentFavorite] = useState<JoinedFavorite>(favorite)
 
   // Function to truncate bio text
   const truncateOverview = (overview: string, maxLength = 150) => {
@@ -46,25 +48,24 @@ export function StartupCard({ startup, profileId, favorite }: StartupCardProps) 
 
       try {
         const favoriteData = {
-          startup_id: startup.id,
-          profile_id: profileId,
+          startup_id: currentFavorite.startup_id,
+          profile_id: currentFavorite.profile_id,
         }
 
         // Store the current following state before making changes
         const wasFollowing = following
 
-        if (wasFollowing && currentFavorite) {
+        if (wasFollowing) {
           await deleteFavorite(currentFavorite.id)
           setFollowing(false)
-          setCurrentFavorite(null)
         } else {
           const newFavorite = await createFavorite(favoriteData)
           setFollowing(true)
-          setCurrentFavorite(newFavorite)
+          setCurrentFavorite({ ...currentFavorite, id: newFavorite.id })
         }
 
-        toast.success(`${wasFollowing ? "Unfollowed" : "Following"} ${startup.name}`, {
-          description: wasFollowing ? "Removed from your followed startups" : "Added to your followed startups",
+        toast.success(`${wasFollowing ? "Unfavorited" : "Favorited"} ${currentFavorite.startup.name}`, {
+          description: wasFollowing ? "Removed from your favorite startups" : "Added to your favorite startups",
         })
         return true
       } catch (error) {
@@ -75,22 +76,22 @@ export function StartupCard({ startup, profileId, favorite }: StartupCardProps) 
         throw error
       }
     },
-    [following, currentFavorite, startup.id, startup.name, profileId],
+    [following, currentFavorite.id, currentFavorite.startup_id, currentFavorite.profile_id, currentFavorite.startup.name],
   )
 
   return (
     <>
-      <Link href={`/search/${startup.id}`} onClick={handleCardClick}>
+      <Link href={`/search/${currentFavorite.startup.id}`} onClick={handleCardClick}>
         <Card className="w-full overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer border-0 border-b border-gray-200 bg-white rounded-none">
           <CardContent className="px-6">
             <div className="flex items-start justify-between">
               <div className="flex items-start space-x-6 flex-1">
                 <div className="relative -mt-1 -ml-2">
-                  {startup.logo_url ? (
+                  {currentFavorite.startup.logo_url ? (
                     <div className="h-16 w-16 border border-gray-200 overflow-hidden flex items-center justify-center bg-white">
                       <img
-                        src={startup.logo_url || "/placeholder.svg"}
-                        alt={`${startup.name || "Company"} logo`}
+                        src={currentFavorite.startup.logo_url || "/placeholder.svg"}
+                        alt={`${currentFavorite.startup.name || "Company"} logo`}
                         className="object-contain max-h-full max-w-full"
                         style={{ objectPosition: "center" }}
                       />
@@ -102,9 +103,9 @@ export function StartupCard({ startup, profileId, favorite }: StartupCardProps) 
                   )}
                 </div>
                 <div className="flex-1 min-w-0 pt-1">
-                  <h3 className="font-semibold text-lg text-gray-900 leading-tight mb-1">{startup.name}</h3>
+                  <h3 className="font-semibold text-lg text-gray-900 leading-tight mb-1">{currentFavorite.startup.name}</h3>
                   <p className="text-sm text-gray-600 mb-1">
-                    {startup.city}, {startup.state}
+                    {currentFavorite.startup.city}, {currentFavorite.startup.state}
                   </p>
                   {/* <p className="text-sm text-gray-500 line-clamp-2">{truncateOverview(startup.overview)}</p> */}
                 </div>
@@ -112,7 +113,7 @@ export function StartupCard({ startup, profileId, favorite }: StartupCardProps) 
                   <button
                     onClick={handleFollowClick}
                     className="absolute right-0 top-0 p-2"
-                    aria-label={following ? "Unfollow startup" : "Follow startup"}
+                    aria-label={following ? "Unfavorite startup" : "Favorite startup"}
                   >
                     <Heart
                       className={`h-6 w-6 stroke-gray-300 transition-colors ${following ? "fill-red-500" : "fill-white"}`}
@@ -134,7 +135,7 @@ export function StartupCard({ startup, profileId, favorite }: StartupCardProps) 
             aria-describedby={undefined}
           >
             <SheetTitle className="sr-only">Startup Details</SheetTitle>
-            <StartupSheet startup={startup} following={following} onFollowClick={handleFollowClick} onBack={() => setSheetOpen(false)} />
+            <StartupSheet startup={favorite.startup} following={following} onFollowClick={handleFollowClick} onBack={() => setSheetOpen(false)} />
           </SheetContent>
         </Sheet>
       )}

@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import ViewStartupResult from "./view-startup-result";
+import ViewStartupResult from "@/app/(dashboard)/[startupId]/view-startup-result";
 
 interface StartupResultProps {
   params: Promise<{ startupId: string }>

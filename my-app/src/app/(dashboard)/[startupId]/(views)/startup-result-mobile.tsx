@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { FundPool } from "@/types/fund-pool"
 import type { Startup } from "@/types/startup"
-import ViewFundPool from "@/app/(dashboard)/search/[startupId]/(components)/view-fund-pool"
+import ViewFundPool from "@/app/(dashboard)/[startupId]/(components)/view-fund-pool"
 import { Investment } from "@/types/investment"
 
 interface StartupResultMobileProps {

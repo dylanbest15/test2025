@@ -8,11 +8,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { FundPool } from "@/types/fund-pool"
 import type { Startup } from "@/types/startup"
 import { useCallback, useEffect, useState } from "react"
-import ViewFundPool from "@/app/(dashboard)/search/[startupId]/(components)/view-fund-pool"
+import ViewFundPool from "@/app/(dashboard)/[startupId]/(components)/view-fund-pool"
 import { createClient } from "@/utils/supabase/client"
 import { toast } from "sonner"
 import { redirect } from "next/navigation"
-import { createInvestment } from "../actions"
+import { createInvestment } from "@/app/(dashboard)/search/actions"
 import { Investment } from "@/types/investment"
 
 interface StartupSheetProps {

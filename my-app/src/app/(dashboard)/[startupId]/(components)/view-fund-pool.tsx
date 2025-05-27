@@ -1,13 +1,12 @@
 "use client"
 
 import { formatCurrency } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Check, PlusCircle } from "lucide-react"
 import type { FundPool } from "@/types/fund-pool"
-import { JoinFundPool } from "@/app/(dashboard)/search/[startupId]/(components)/join-fund-pool"
+import { JoinFundPool } from "@/app/(dashboard)/[startupId]/(components)/join-fund-pool"
 import { useState } from "react"
 import { Investment } from "@/types/investment"
 

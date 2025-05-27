@@ -13,6 +13,8 @@ import ViewFundPool from "@/app/(dashboard)/search/[startupId]/(components)/view
 import { createClient } from "@/utils/supabase/client"
 import { toast } from "sonner"
 import { redirect } from "next/navigation"
+import { createInvestment } from "../actions"
+import { Investment } from "@/types/investment"
 
 interface StartupSheetProps {
   startup: Startup
@@ -26,6 +28,7 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
   const [profileId, setProfileId] = useState<string>("")
   const [industries, setIndustries] = useState<string[] | []>([])
   const [fundPool, setFundPool] = useState<FundPool | null>(null)
+  const [existingInvestment, setExistingInvestment] = useState<Investment | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isOverviewExpanded, setIsOverviewExpanded] = useState(false)
 
@@ -68,6 +71,23 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
           console.error("Error fetching fund pool:", fundPoolErr)
         } else {
           setFundPool(fundPoolData)
+
+          // If fund pool exists, check for existing pending investment
+          if (fundPoolData && user) {
+            const { data: investmentData, error: investmentErr } = await supabase
+              .from("investments")
+              .select()
+              .eq("status", "pending")
+              .eq("fund_pool_id", fundPoolData.id)
+              .eq("profile_id", user.id)
+              .maybeSingle()
+
+            if (investmentErr) {
+              console.error("Error fetching investment:", investmentErr)
+            } else {
+              setExistingInvestment(investmentData)
+            }
+          }
         }
       } catch (error) {
         console.error("Failed to fetch fund pool:", error)
@@ -90,14 +110,23 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
   const handleJoinFundPool = useCallback(
     async (amount: number) => {
       try {
+        if (!fundPool) {
+          toast.error("Operation failed", {
+            description: "Fund pool not available.",
+          })
+          return false;
+        }
+
         const investmentData = {
+          amount,
+          fund_pool_id: fundPool.id,
           startup_id: startup.id,
-          investment: amount,
+          profile_id: profileId
         }
 
         // TODO: make sure this is an investor only action
-        // TODO: create investment, email, and notification
-        console.log(investmentData)
+        const newInvestment = await createInvestment(investmentData);
+        setExistingInvestment(newInvestment);
 
         toast.success("Success!", {
           description: "You have requested to join a fund pool!",
@@ -111,7 +140,7 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
         throw error
       }
     },
-    [startup.id],
+    [startup.id, fundPool, profileId],
   )
 
   if (isLoading) {
@@ -224,7 +253,7 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
           </div>
 
           {/* Fund Pool Card */}
-          <ViewFundPool fundPool={fundPool} onJoinFundPool={handleJoinFundPool} />
+          <ViewFundPool fundPool={fundPool} investment={existingInvestment} onJoinFundPool={handleJoinFundPool} />
 
           {/* Tabs Section */}
           <Tabs defaultValue="pitch-deck" className="w-full mt-4" onValueChange={setActiveTab}>

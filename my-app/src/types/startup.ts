@@ -78,6 +78,7 @@ export const statesAndProvinces = [
   { value: "YT", label: "Yukon" },
 ]
 
+// TODO: remove this
 // Mock data for startups
 export type mockStartup = {
   id: number;

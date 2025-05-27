@@ -1,3 +1,4 @@
+import { Investment } from "@/types/investment";
 import { Profile } from "@/types/profile";
 import { Startup } from "@/types/startup";
 
@@ -15,4 +16,17 @@ export async function getInvestors(query: string): Promise<Profile[]> {
   });
   if (!res.ok) throw new Error('Failed to fetch profiles');
   return res.json();
+}
+
+export async function createInvestment(body: Partial<Investment>): Promise<Investment> {
+  const res = await fetch('/api/investments', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const result = await res.json();
+  if (!res.ok) {
+    throw new Error(JSON.stringify(result.error));
+  }
+  return result;
 }

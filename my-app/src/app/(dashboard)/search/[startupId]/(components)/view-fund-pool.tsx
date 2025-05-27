@@ -5,17 +5,19 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
-import { PlusCircle } from "lucide-react"
+import { Check, PlusCircle } from "lucide-react"
 import type { FundPool } from "@/types/fund-pool"
 import { JoinFundPool } from "@/app/(dashboard)/search/[startupId]/(components)/join-fund-pool"
 import { useState } from "react"
+import { Investment } from "@/types/investment"
 
 interface ViewFundPoolProps {
   fundPool?: FundPool | null
+  investment?: Investment | null;
   onJoinFundPool: (amount: number) => void
 }
 
-export default function ViewFundPoolCard({ fundPool, onJoinFundPool }: ViewFundPoolProps) {
+export default function ViewFundPoolCard({ fundPool, investment, onJoinFundPool }: ViewFundPoolProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
 
   const handleJoinFundPool = (amount: number) => {
@@ -62,11 +64,12 @@ export default function ViewFundPoolCard({ fundPool, onJoinFundPool }: ViewFundP
                   bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700
                   border-0 relative overflow-hidden group"
                   onClick={() => setDialogOpen(true)}
+                  disabled={!!investment}
                 >
                   <div className="absolute inset-0 w-3 bg-white/20 skew-x-[-20deg] group-hover:animate-shimmer" />
                   <div className="flex items-center justify-center gap-2">
-                    <PlusCircle className="h-5 w-5" />
-                    <span>Join Fund Pool</span>
+                    {investment ? <Check className="h-5 w-5" /> : <PlusCircle className="h-5 w-5" />}
+                    <span>{investment ? "Request Pending" : "Join Fund Pool"}</span>
                   </div>
                 </Button>
               </div>

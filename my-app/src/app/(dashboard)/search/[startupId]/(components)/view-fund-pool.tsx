@@ -12,8 +12,8 @@ import { useState } from "react"
 import { Investment } from "@/types/investment"
 
 interface ViewFundPoolProps {
-  fundPool?: FundPool | null
-  investment?: Investment | null;
+  fundPool: FundPool | null
+  investment: Investment | null
   onJoinFundPool: (amount: number) => void
 }
 

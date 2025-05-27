@@ -8,11 +8,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { FundPool } from "@/types/fund-pool"
 import type { Startup } from "@/types/startup"
 import ViewFundPool from "@/app/(dashboard)/search/[startupId]/(components)/view-fund-pool"
+import { Investment } from "@/types/investment"
 
 interface StartupResultMobileProps {
   startup: Startup
   industries: string[]
-  fundPool: FundPool
+  fundPool: FundPool | null
+  existingInvestment: Investment | null
   following: boolean
   onFollowClick: () => Promise<boolean>
   onJoinFundPool: (amount: number) => Promise<boolean>
@@ -22,6 +24,7 @@ export default function StartupResultMobile({
   startup,
   industries,
   fundPool,
+  existingInvestment,
   following,
   onFollowClick,
   onJoinFundPool,
@@ -121,7 +124,7 @@ export default function StartupResultMobile({
           </div>
 
           {/* Fund Pool Card */}
-          <ViewFundPool fundPool={fundPool} onJoinFundPool={onJoinFundPool} />
+          <ViewFundPool fundPool={fundPool} investment={existingInvestment} onJoinFundPool={onJoinFundPool} />
 
           {/* Tabs Section */}
           <Tabs defaultValue="pitch-deck" className="w-full mt-4" onValueChange={setActiveTab}>

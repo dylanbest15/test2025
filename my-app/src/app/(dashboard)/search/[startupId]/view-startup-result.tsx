@@ -9,24 +9,29 @@ import { createFavorite, deleteFavorite } from "@/app/(dashboard)/following/acti
 import type { Favorite } from "@/types/favorite"
 import StartupResultMobile from "@/app/(dashboard)/search/[startupId]/(views)/startup-result-mobile"
 import StartupResultDesktop from "@/app/(dashboard)/search/[startupId]/(views)/startup-result-desktop"
+import { createInvestment } from "../actions"
+import { Investment } from "@/types/investment"
 
 interface ViewStartupResultProps {
   startup: Startup
   industries: string[]
+  fundPool: FundPool | null
+  investment: Investment | null
   favorite: Partial<Favorite> | null
-  fundPool: FundPool
 }
 
 export default function ViewStartupResult({
   startup,
   industries: industriesProp,
   fundPool: fundPoolProp,
+  investment: investmentProp,
   favorite: favoriteProp,
 }: ViewStartupResultProps) {
   const [profileId, setProfileId] = useState<string>("")
   const [industries, setIndustries] = useState<string[]>(industriesProp)
-  const [fundPool, setFundPool] = useState<FundPool>(fundPoolProp)
+  const [fundPool, setFundPool] = useState<FundPool | null>(fundPoolProp)
   const [favorite, setFavorite] = useState<Partial<Favorite> | null>(favoriteProp)
+  const [existingInvestment, setExistingInvestment] = useState<Investment | null>(investmentProp)
   const [isLoading, setIsLoading] = useState(true)
   const [following, setFollowing] = useState(favoriteProp ? true : false)
 
@@ -90,14 +95,23 @@ export default function ViewStartupResult({
   const handleJoinFundPool = useCallback(
     async (amount: number) => {
       try {
+        if (!fundPool) {
+          toast.error("Operation failed", {
+            description: "Fund pool not available.",
+          })
+          return false;
+        }
+
         const investmentData = {
+          amount,
+          fund_pool_id: fundPool.id,
           startup_id: startup.id,
-          investment: amount,
+          profile_id: profileId
         }
 
         // TODO: make sure this is an investor only action
-        // TODO: create investment, email, and notification
-        console.log(investmentData)
+        const newInvestment = await createInvestment(investmentData);
+        setExistingInvestment(newInvestment);
 
         toast.success("Success!", {
           description: "You have requested to join a fund pool!",
@@ -111,13 +125,14 @@ export default function ViewStartupResult({
         throw error
       }
     },
-    [startup.id],
+    [startup.id, fundPool, profileId],
   )
 
   const viewProps = {
     startup,
     industries,
     fundPool,
+    existingInvestment,
     following,
     onFollowClick: handleFollowClick,
     onJoinFundPool: handleJoinFundPool,

@@ -8,11 +8,13 @@ import { Label } from "@/components/ui/label"
 import type { FundPool } from "@/types/fund-pool"
 import type { Startup } from "@/types/startup"
 import ViewFundPool from "@/app/(dashboard)/search/[startupId]/(components)/view-fund-pool"
+import { Investment } from "@/types/investment"
 
 interface StartupResultDesktopProps {
   startup: Startup
   industries: string[]
-  fundPool: FundPool
+  fundPool: FundPool | null
+  existingInvestment: Investment | null
   following: boolean
   onFollowClick: () => Promise<boolean>
   onJoinFundPool: (amount: number) => Promise<boolean>
@@ -22,6 +24,7 @@ export default function StartupResultDesktop({
   startup,
   industries,
   fundPool,
+  existingInvestment,
   following,
   onFollowClick,
   onJoinFundPool,
@@ -125,7 +128,7 @@ export default function StartupResultDesktop({
           </div>
 
           {/* Fund Pool */}
-          <ViewFundPool fundPool={fundPool} onJoinFundPool={onJoinFundPool} />
+          <ViewFundPool fundPool={fundPool} investment={existingInvestment} onJoinFundPool={onJoinFundPool} />
 
           {/* Two Column Content */}
           <div className="grid grid-cols-3 gap-6">

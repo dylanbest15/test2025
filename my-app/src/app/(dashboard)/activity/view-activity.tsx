@@ -2,10 +2,19 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState } from "react"
-import InvestorSearch from "@/app/(dashboard)/activity/(search)/investor-search"
+import InvestorSearch from "@/app/(dashboard)/activity/(investors)/investor-search"
 import type { Favorite } from "@/types/favorite"
 import type { Startup } from "@/types/startup"
 import ViewFavorites from "@/app/(dashboard)/activity/(favorites)/view-favorites"
+import ViewDashboard from "@/app/(dashboard)/activity/(dashboard)/view-dashboard"
+import { Investment } from "@/types/investment"
+import { FundPool } from "@/types/fund-pool"
+import { Profile } from "@/types/profile"
+
+interface JoinedInvestment extends Investment {
+  fund_pool: FundPool;
+  profile: Profile;
+}
 
 interface JoinedFavorite extends Favorite {
   startup: Startup
@@ -13,10 +22,11 @@ interface JoinedFavorite extends Favorite {
 
 interface ViewActivityProps {
   profileType: string
+  investments: JoinedInvestment[] | null
   favorites: JoinedFavorite[] | null
 }
 
-export default function ViewActivity({ profileType, favorites }: ViewActivityProps) {
+export default function ViewActivity({ profileType, investments, favorites }: ViewActivityProps) {
   const [activeTab, setActiveTab] = useState("dashboard")
 
   return (
@@ -26,14 +36,14 @@ export default function ViewActivity({ profileType, favorites }: ViewActivityPro
           <Tabs defaultValue="dashboard" className="w-full mt-4" onValueChange={setActiveTab}>
             <TabsList className="grid grid-cols-2 w-full max-w-md">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-              <TabsTrigger value="search">{profileType === "founder" ? "Search" : "Favorites"}</TabsTrigger>
+              <TabsTrigger value="investors">{profileType === "founder" ? "Investors" : "Favorites"}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="dashboard">
-              <div>Dashboard content</div>
+              <ViewDashboard investments={investments} />
             </TabsContent>
 
-            <TabsContent value="search">
+            <TabsContent value="investors">
               {profileType === "founder" ? <InvestorSearch /> : <ViewFavorites favorites={favorites} />}
             </TabsContent>
           </Tabs>

@@ -40,6 +40,12 @@ export const updateSession = async (request: NextRequest) => {
     const user = await supabase.auth.getUser();
 
     // protected routes
+    if (request.nextUrl.pathname.startsWith("/dashboard") && user.error) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+    if (request.nextUrl.pathname.startsWith("/favorites") && user.error) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
     if (request.nextUrl.pathname.startsWith("/menu") && user.error) {
       return NextResponse.redirect(new URL("/", request.url));
     }
@@ -49,14 +55,15 @@ export const updateSession = async (request: NextRequest) => {
     if (request.nextUrl.pathname.startsWith("/notifications") && user.error) {
       return NextResponse.redirect(new URL("/", request.url));
     }
-    if (request.nextUrl.pathname.startsWith("/search") && user.error) {
+    if (request.nextUrl.pathname.startsWith("/search-investors") && user.error) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+    if (request.nextUrl.pathname.startsWith("/search-startups") && user.error) {
       return NextResponse.redirect(new URL("/", request.url));
     }
 
-    // TODO: add all routes to middleware
-
     if (request.nextUrl.pathname === "/" && !user.error) {
-      return NextResponse.redirect(new URL("/search", request.url));
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
 
     return response;

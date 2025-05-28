@@ -12,7 +12,7 @@ import ViewFundPool from "@/app/(dashboard)/[startupId]/(components)/view-fund-p
 import { createClient } from "@/utils/supabase/client"
 import { toast } from "sonner"
 import { redirect } from "next/navigation"
-import { createInvestment } from "@/app/(dashboard)/search/actions"
+import { createInvestment } from "@/app/(dashboard)/search-startups/actions"
 import { Investment } from "@/types/investment"
 
 interface StartupSheetProps {

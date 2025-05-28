@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { getStartups } from "@/app/(dashboard)/search/actions";
+import { getStartups } from "@/app/(dashboard)/search-startups/actions";
 import { SearchCard } from "@/components/app-shell/search-card";
 
 export default function SearchDemo() {

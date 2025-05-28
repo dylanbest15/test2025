@@ -7,10 +7,10 @@ import type { Startup } from "@/types/startup"
 import type { Favorite } from "@/types/favorite"
 import { useCallback, useState } from "react"
 import { toast } from "sonner"
-import { createFavorite, deleteFavorite } from "@/app/(dashboard)/activity/actions"
+import { createFavorite, deleteFavorite } from "@/app/(dashboard)/favorites/actions"
 import Link from "next/link"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
-import StartupSheet from "@/app/(dashboard)/search/(components)/startup-sheet"
+import StartupSheet from "@/app/(dashboard)/search-startups/(components)/startup-sheet"
 import { useIsMobile } from "@/hooks/use-mobile"
 
 interface JoinedFavorite extends Favorite {

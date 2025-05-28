@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { Loader, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { getInvestors } from "@/app/(dashboard)/activity/actions";
+import { getInvestors } from "@/app/(dashboard)/search-investors/actions";
 import { Profile } from "@/types/profile";
-import { InvestorCard } from "@/app/(dashboard)/activity/(investors)/investor-card";
+import { InvestorCard } from "@/app/(dashboard)/search-investors/(components)/investor-card";
 
 export default function InvestorSearch() {
   const [searchQuery, setSearchQuery] = useState("")

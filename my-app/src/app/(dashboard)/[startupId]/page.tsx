@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import ViewStartupResult from "@/app/(dashboard)/[startupId]/view-startup-result";
+import { notFound } from "next/navigation";
 
 interface StartupResultProps {
   params: Promise<{ startupId: string }>
@@ -21,7 +22,8 @@ export default async function StartupResult({ params }: StartupResultProps) {
 
     if (error) {
       console.error("Error fetching startup:", error)
-      // return notFound();
+      // TODO: design not found page
+      return notFound();
     }
 
     let industries = [];

@@ -1,8 +1,8 @@
-import StartupSearch from "@/app/(dashboard)/search/startup-search";
+import StartupSearch from "@/app/(dashboard)/search-startups/startup-search";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
-export default async function Search() {
+export default async function SearchStartups() {
   const supabase = await createClient()
 
   const {

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import type { Favorite } from "@/types/favorite"
 import type { Startup } from "@/types/startup"
-import { FavoriteCard } from "@/app/(dashboard)/activity/(favorites)/favorite-card"
+import { FavoriteCard } from "@/app/(dashboard)/favorites/(components)/favorite-card"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 

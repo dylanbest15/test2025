@@ -5,11 +5,11 @@ import { useCallback, useEffect, useState } from "react"
 import { createClient } from "@/utils/supabase/client"
 import { toast } from "sonner"
 import { redirect } from "next/navigation"
-import { createFavorite, deleteFavorite } from "@/app/(dashboard)/activity/actions"
+import { createFavorite, deleteFavorite } from "@/app/(dashboard)/favorites/actions"
 import type { Favorite } from "@/types/favorite"
 import StartupResultMobile from "@/app/(dashboard)/[startupId]/(views)/startup-result-mobile"
 import StartupResultDesktop from "@/app/(dashboard)/[startupId]/(views)/startup-result-desktop"
-import { createInvestment } from "@/app/(dashboard)/search/actions"
+import { createInvestment } from "@/app/(dashboard)/search-startups/actions"
 import { Investment } from "@/types/investment"
 
 interface ViewStartupResultProps {

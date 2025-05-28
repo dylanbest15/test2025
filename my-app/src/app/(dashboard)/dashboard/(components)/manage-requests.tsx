@@ -20,7 +20,7 @@ import { ChevronDown, ChevronUp, DollarSign, Check, X } from "lucide-react"
 import { useState } from "react"
 import { formatCurrency } from "@/lib/utils"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
-import PreviousInvestors from "./previous-investors"
+import PreviousInvestors from "@/app/(dashboard)/dashboard/(components)/previous-investors"
 
 interface JoinedInvestment extends Investment {
   fund_pool: FundPool

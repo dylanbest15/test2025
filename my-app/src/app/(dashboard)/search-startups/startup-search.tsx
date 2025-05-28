@@ -5,8 +5,8 @@ import type { Startup } from "@/types/startup"
 import { useState, useMemo } from "react"
 import { Loader, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { getStartups } from "@/app/(dashboard)/search/actions"
-import { StartupCard } from "@/app/(dashboard)/search/(components)/startup-card"
+import { getStartups } from "@/app/(dashboard)/search-startups/actions"
+import { StartupCard } from "@/app/(dashboard)/search-startups/(components)/startup-card"
 import type { Favorite } from "@/types/favorite"
 
 interface StartupSearchProps {

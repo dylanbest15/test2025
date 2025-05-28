@@ -17,28 +17,44 @@ export function NavbarMobile({
 
   return (
     <div className="fixed bottom-0 left-0 z-50 w-full h-16 border-t bg-white">
-      <div className="grid h-full grid-cols-4">
+      <div className="grid h-full grid-cols-5">
         {type === "founder" && (
+          <>
+            <NavItem
+              href="/search-investors"
+              icon={<Search className="h-5 w-5" />}
+              label="Explore"
+              isActive={pathname === "/search-investors"}
+            />
             <NavItem
               href="/my-startup"
               icon={<Building className="h-5 w-5" />}
               label="My Startup"
               isActive={pathname === "/my-startup"}
             />
+          </>
         )}
         {type === "investor" && (
+          <>
             <NavItem
-              href="/search"
+              href="/search-startups"
               icon={<Search className="h-5 w-5" />}
               label="Startups"
-              isActive={pathname === "/search"}
+              isActive={pathname === "/search-startups"}
             />
+            <NavItem
+              href="/favorites"
+              icon={<Building className="h-5 w-5" />}
+              label="Favorites"
+              isActive={pathname === "/favorites"}
+            />
+          </>
         )}
         <NavItem
-          href="/activity"
+          href="/dashboard"
           icon={<Monitor className="h-5 w-5" />}
-          label="Activity"
-          isActive={pathname === "/activity"}
+          label="Dashboard"
+          isActive={pathname === "/dashboard"}
         />
         <NavItem
           href="/notifications"

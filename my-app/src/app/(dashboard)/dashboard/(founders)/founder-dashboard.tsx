@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { TrendingUp, ChevronDown, ChevronUp } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -9,6 +9,8 @@ import { Investment } from "@/types/investment"
 import { FundPool } from "@/types/fund-pool"
 import { Profile } from "@/types/profile"
 import { Startup } from "@/types/startup"
+import { updateInvestment } from "../actions"
+import { toast } from "sonner"
 
 interface JoinedInvestment extends Investment {
   fund_pool: FundPool;
@@ -22,10 +24,47 @@ interface FounderDashboardProps {
 
 export default function FounderDashboard({ investments }: FounderDashboardProps) {
   const [expandedCard, setExpandedCard] = useState<string | null>(null)
+  const [currentInvestments, setCurrentInvestments] = useState<JoinedInvestment[] | null>(investments);
 
   const toggleCard = (cardId: string) => {
     setExpandedCard(expandedCard === cardId ? null : cardId)
   }
+
+  const handleAcceptInvestment = async (investmentId: string) => {
+    try {
+      const updateData: Partial<Investment> = {
+        status: 'pending'
+      }
+
+      const updatedInvestment = await updateInvestment(investmentId, updateData);
+
+      // Replace the updated fields in the investments array
+      setCurrentInvestments(currentInvestments =>
+        currentInvestments?.map(investment =>
+          investment.id === investmentId
+            ? {
+              ...investment,
+              status: updatedInvestment.status,
+              updated_at: updatedInvestment.updated_at
+            }
+            : investment
+        ) || null
+      )
+      toast.success("Success!", {
+        description: "You have accepted an investment request!",
+      })
+    } catch (error) {
+      toast.error("Operation failed", {
+        description: "Failed to accept investment request.",
+      })
+      console.error("Failed to update investment:", error)
+      throw error
+    }
+  }
+
+  useEffect(() => {
+    setCurrentInvestments(investments);
+  }, [investments]);
 
   return (
     <div className="w-full">
@@ -99,7 +138,7 @@ export default function FounderDashboard({ investments }: FounderDashboardProps)
           </Card> */}
 
             {/* Manage Requests Card - Right */}
-            <ManageRequests investments={investments} />
+            <ManageRequests investments={currentInvestments} onAcceptInvestment={handleAcceptInvestment} />
           </div>
 
           {/* Bottom row - Analytics taking full width */}

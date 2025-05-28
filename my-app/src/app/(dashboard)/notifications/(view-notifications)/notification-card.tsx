@@ -1,4 +1,4 @@
-import type { Notification } from "@/types/notification"
+import { generateNotificationMessage, generateNotificationTitle, type Notification } from "@/types/notification"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Bell, DollarSign, Users, AlertCircle } from "lucide-react"
@@ -47,7 +47,7 @@ export default function NotificationCard({ notification }: NotificationCardProps
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between gap-2 mb-1">
-              <h3 className="font-semibold text-sm text-gray-900 truncate">{notification.title}</h3>
+              <h3 className="font-semibold text-sm text-gray-900 truncate">{generateNotificationTitle()}</h3>
               <div className="flex items-center gap-2 flex-shrink-0">
                 {!notification.seen && <div className="w-2 h-2 bg-blue-500 rounded-full" />}
                 <Badge variant="secondary" className="text-xs">
@@ -56,7 +56,7 @@ export default function NotificationCard({ notification }: NotificationCardProps
               </div>
             </div>
 
-            <p className="text-sm text-gray-600 mb-2 leading-relaxed">{notification.message}</p>
+            <p className="text-sm text-gray-600 mb-2 leading-relaxed">{generateNotificationMessage()}</p>
 
             <p className="text-xs text-gray-500">{timeAgo}</p>
           </div>

@@ -1,22 +1,28 @@
-import { InvestmentCreateSchema } from "@/lib/validation/investments";
+import { InvestmentUpdateSchema } from "@/lib/validation/investments";
 import { Notification } from "@/types/notification";
 import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function PUT(req: NextRequest, { params }: { params: { investmentId: string } }) {
   const supabase = await createClient();
+  const { investmentId } = await params;
   const body = await req.json();
+  const updateData = {
+    ...body,
+    updated_at: new Date().toISOString(),
+  }
 
-  const parseResult = InvestmentCreateSchema.safeParse(body);
+  const parseResult = InvestmentUpdateSchema.safeParse(updateData);
   if (!parseResult.success) {
     return NextResponse.json({ error: parseResult.error.format() }, { status: 400 });
   }
 
   try {
-    // create investment
+    // update investment
     const { data: investmentData, error: investmentErr } = await supabase
       .from('investments')
-      .insert(parseResult.data)
+      .update(parseResult.data)
+      .eq('id', investmentId)
       .select()
       .single();
 
@@ -26,8 +32,8 @@ export async function POST(req: NextRequest) {
 
     // create notification
     const notification: Partial<Notification> = {
-      type: 'investment_created',
-      recipient_id: investmentData.startup_id,
+      type: 'investment_accepted',
+      recipient_id: investmentData.profile_id,
     }
 
     const { error: notificationError } = await supabase.from('notifications').insert(notification)
@@ -39,8 +45,7 @@ export async function POST(req: NextRequest) {
     // TODO: SEND EMAIL
     return NextResponse.json(investmentData, { status: 201 });
   } catch (error) {
-    console.error('Investment creation failed:', error);
-    return NextResponse.json({ error: 'Failed to create investment' }, { status: 500 });
+    console.error('Investment update failed:', error);
+    return NextResponse.json({ error: 'Failed to update investment' }, { status: 500 });
   }
-
 }

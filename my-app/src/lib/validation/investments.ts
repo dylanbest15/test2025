@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// const InvestmentStatusSchema = z.enum(["needs action", "pending", "confirmed", "declined", "withdrawn"])
+const InvestmentStatusSchema = z.enum(["needs action", "pending", "confirmed", "declined", "withdrawn"])
 
 // API Create Schema
 export const InvestmentCreateSchema = z.object({
@@ -8,4 +8,11 @@ export const InvestmentCreateSchema = z.object({
   fund_pool_id: z.string().uuid(),
   startup_id: z.string().uuid(),
   profile_id: z.string().uuid(),
+})
+
+// API Update Schema (everything optional except updated_at)
+export const InvestmentUpdateSchema = z.object({
+  amount: z.number().int().optional(),
+  status: InvestmentStatusSchema.optional(),
+  updated_at: z.string().datetime()
 })

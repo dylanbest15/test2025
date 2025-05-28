@@ -46,9 +46,13 @@ export default function ManageRequests({
   const [selectedInvestment, setSelectedInvestment] = useState<JoinedInvestment | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
 
-  // Get pending requests from actual data
-  const pendingInvestments = investments?.filter((investment) => investment.status === "needs action") || []
-  const pendingRequests = pendingInvestments.length
+  // Filter requests by status and sort by newest
+  const needsActionInvestments = investments?.filter((investment) => investment.status === "needs action")
+    .sort((a, b) => b.created_at.localeCompare(a.created_at)) || []
+  const pendingInvestments = investments?.filter((investment) => investment.status === "pending")
+    .sort((a, b) => b.updated_at!.localeCompare(a.updated_at!)) || []
+    
+  const displayRequests = needsActionInvestments.length || pendingInvestments.length
 
   const toggleCard = () => {
     setExpandedCard(!expandedCard)
@@ -66,7 +70,7 @@ export default function ManageRequests({
     setShowDeclineModal(true)
   }
 
-  const handleConfirmApproval = () => {
+  const handleConfirmAccept = () => {
     if (selectedInvestment && onAcceptInvestment) {
       onAcceptInvestment(selectedInvestment.id)
     }
@@ -74,7 +78,7 @@ export default function ManageRequests({
     setSelectedInvestment(null)
   }
 
-  const handleCancelApproval = () => {
+  const handleCancelAccept = () => {
     setShowAcceptModal(false)
     setSelectedInvestment(null)
   }
@@ -113,9 +117,9 @@ export default function ManageRequests({
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              {!expandedCard && pendingRequests > 0 && (
+              {!expandedCard && displayRequests > 0 && (
                 <Badge variant="default" className="text-xs bg-blue-500">
-                  {pendingRequests}
+                  {displayRequests}
                 </Badge>
               )}
               {expandedCard ? (
@@ -125,15 +129,17 @@ export default function ManageRequests({
               )}
             </div>
           </div>
-          <CardDescription>Review and manage pending investment requests</CardDescription>
+          <CardDescription>Review and manage investment requests</CardDescription>
         </CardHeader>
 
         {expandedCard && (
           <CardContent className="pt-0">
             <div className="animate-in slide-in-from-top-2 duration-300 space-y-4">
-              {pendingInvestments.length > 0 ? (
+
+              {/* Needs Action Requests */}
+              {needsActionInvestments.length > 0 ? (
                 <div className="space-y-3">
-                  {pendingInvestments.map((investment) => (
+                  {needsActionInvestments.map((investment) => (
                     <div key={investment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex flex-col">
                         <span className="text-sm font-medium">
@@ -169,9 +175,53 @@ export default function ManageRequests({
                 </div>
               ) : (
                 <div className="text-center py-4">
-                  <p className="text-sm text-gray-500">No pending investment requests</p>
+                  <p className="text-sm text-gray-500">No current investment requests</p>
                 </div>
               )}
+
+              {/* Pending Requests */}
+              {pendingInvestments.length > 0 ? (
+                <div className="space-y-3">
+                  {pendingInvestments.map((investment) => (
+                    <div key={investment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium">
+                          {investment.profile.first_name} {investment.profile.last_name}
+                        </span>
+                        <span className="text-sm text-gray-500">{formatCurrency(investment.amount)}</span>
+                        <Badge className="text-xs bg-yellow-100 text-yellow-800 w-fit mt-1">Pending Investor Confirmation</Badge>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="flex flex-col space-y-1">
+                          {/* <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 px-3 text-xs bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
+                            onClick={(e) => handleAcceptClick(investment, e)}
+                          >
+                            <Check className="w-3 h-3 mr-1" />
+                            Accept
+                          </Button> */}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 px-3 text-xs bg-red-50 border-red-200 text-red-700 hover:bg-red-100"
+                            onClick={(e) => handleDeclineClick(investment, e)}
+                          >
+                            <X className="w-3 h-3 mr-1" />
+                            Decline
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-sm text-gray-500">No current investment requests</p>
+                </div>
+              )}
+
               <Button className="w-full" onClick={showPreviousInvestors} disabled={!investments}>
                 {investments ? "View Previous Investors" : "No Previous Investors"}
               </Button>
@@ -212,10 +262,10 @@ export default function ManageRequests({
           )}
 
           <DialogFooter className="flex space-x-2">
-            <Button variant="outline" onClick={handleCancelApproval}>
+            <Button variant="outline" onClick={handleCancelAccept}>
               Cancel
             </Button>
-            <Button onClick={handleConfirmApproval} className="bg-green-600 hover:bg-green-700">
+            <Button onClick={handleConfirmAccept} className="bg-green-600 hover:bg-green-700">
               <Check className="w-4 h-4 mr-2" />
               Accept Investment
             </Button>

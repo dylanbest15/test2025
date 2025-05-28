@@ -1,3 +1,4 @@
+import { getNotificationConfigForInvestment } from "@/lib/helpers/investment-notification";
 import { InvestmentCreateSchema } from "@/lib/validation/investments";
 import { Notification } from "@/types/notification";
 import { createClient } from "@/utils/supabase/server";
@@ -25,15 +26,14 @@ export async function POST(req: NextRequest) {
     }
 
     // create notification
-    const notification: Partial<Notification> = {
-      type: 'investment_created',
-      recipient_id: investmentData.startup_id,
-    }
+    const notificationConfig = getNotificationConfigForInvestment(investmentData)
 
-    const { error: notificationError } = await supabase.from('notifications').insert(notification)
+    if (notificationConfig) {
+      const { error: notificationError } = await supabase.from("notifications").insert(notificationConfig)
 
-    if (notificationError) {
-      console.error('Failed to create notification:', notificationError);
+      if (notificationError) {
+        console.error("Failed to create notification:", notificationError)
+      }
     }
 
     // TODO: SEND EMAIL

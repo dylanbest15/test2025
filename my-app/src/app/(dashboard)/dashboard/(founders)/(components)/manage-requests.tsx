@@ -47,7 +47,7 @@ export default function ManageRequests({
   const [sheetOpen, setSheetOpen] = useState(false)
 
   // Filter requests by status and sort by newest
-  const needsActionInvestments = investments?.filter((investment) => investment.status === "needs action")
+  const needsActionInvestments = investments?.filter((investment) => investment.status === "needs_action")
     .sort((a, b) => b.created_at.localeCompare(a.created_at)) || []
   const pendingInvestments = investments?.filter((investment) => investment.status === "pending")
     .sort((a, b) => b.updated_at!.localeCompare(a.updated_at!)) || []

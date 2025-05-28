@@ -14,6 +14,8 @@ const getNotificationIcon = (notification: Notification) => {
       return <DollarSign className="h-5 w-5 text-green-600" />
     case "investment_accepted":
       return <CheckCircle className="h-5 w-5 text-blue-600" />
+    case "investment_confirmed":
+      return <CheckCircle className="h-5 w-5 text-blue-600" />
     default:
       return <Bell className="h-5 w-5 text-gray-600" />
   }

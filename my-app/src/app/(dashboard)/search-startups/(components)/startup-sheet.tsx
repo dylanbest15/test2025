@@ -76,7 +76,7 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
             const { data: investmentData, error: investmentErr } = await supabase
               .from("investments")
               .select("*")
-              .in("status", ["needs action", "pending", "confirmed"])
+              .in("status", ["needs_action", "pending", "confirmed"])
               .eq("fund_pool_id", fundPoolData.id)
               .eq("profile_id", user.id)
               .maybeSingle()

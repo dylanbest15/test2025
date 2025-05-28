@@ -33,7 +33,7 @@ export default function ViewNotifications({ notifications }: ViewNotificationsPr
             <div className="w-full max-w-2xl mx-auto">
               <div className="flex flex-col items-center justify-center py-36">
                 <Bell className="h-12 w-12 text-gray-400 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No notifications</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No notifications yet.</h3>
               </div>
             </div>
           ) : (

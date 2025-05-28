@@ -50,7 +50,7 @@ export default function InvestorSearch() {
           />
         </div>
         {hasSearched && (
-          <div className="max-h-[400px] overflow-y-auto">
+          <div>
             {loading ? (
               <div className="flex justify-center items-center py-8">
                 <Loader className="h-8 w-8 text-gray-400 animate-spin" />

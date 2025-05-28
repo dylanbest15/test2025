@@ -41,6 +41,7 @@ export default async function Activity() {
       .from("investments")
       .select(`
         id,
+        amount,
         status,
         created_at,
         updated_at,

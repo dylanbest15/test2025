@@ -4,7 +4,7 @@ import { useState } from "react"
 import { TrendingUp, ChevronDown, ChevronUp } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import ManageRequestsCard from "./(components)/manage-requests-card"
+import ManageRequests from "@/app/(dashboard)/activity/(dashboard)/(components)/manage-requests"
 import { Investment } from "@/types/investment"
 import { FundPool } from "@/types/fund-pool"
 import { Profile } from "@/types/profile"
@@ -26,8 +26,8 @@ export default function ViewDashboard({ investments }: ViewDashboardProps) {
   }
 
   return (
-    <div className="pt-4 space-y-6">
-      <div className="space-y-6">
+    <div className="pt-2 space-y-4">
+      <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           {/* My Fund Pool Card - Left */}
@@ -88,7 +88,7 @@ export default function ViewDashboard({ investments }: ViewDashboardProps) {
           </Card> */}
 
           {/* Manage Requests Card - Right */}
-          <ManageRequestsCard investments={investments} />
+          <ManageRequests investments={investments} />
         </div>
 
         {/* Bottom row - Analytics taking full width */}

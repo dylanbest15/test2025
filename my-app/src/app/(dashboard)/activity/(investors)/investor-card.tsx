@@ -14,7 +14,7 @@ export function InvestorCard({ investor }: InvestorCardProps) {
   const [isBioExpanded, setIsBioExpanded] = useState(false)
 
   return (
-    <Card className="w-full overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer border-0 border-b border-gray-200 bg-white rounded-none">
+    <Card className="w-full overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer border-0 border-t-1 border-b-2 border-gray-200 bg-white rounded-none min-h-[175px]">
       <CardContent className="px-6">
         <div className="flex items-start justify-between">
           <div className="flex items-start space-x-6 flex-1">

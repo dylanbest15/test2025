@@ -102,7 +102,7 @@ export default function ProfileSection({ profile, industries }: ProfileSectionPr
               <div className="relative mr-4">
                 <Avatar className="h-20 w-20 cursor-pointer" onClick={() => setActiveSheet("profile-picture")}>
                   <AvatarImage src={currentProfile.avatar_url || "/placeholder.svg"} alt={displayName(currentProfile)} className="object-cover" />
-                  <AvatarFallback className="text-lg">{getInitials(profile)}</AvatarFallback>
+                  <AvatarFallback className="text-lg">{getInitials(currentProfile)}</AvatarFallback>
                 </Avatar>
                 <div
                   className="absolute -top-1 -right-1 bg-background rounded-full p-1 border shadow-sm cursor-pointer"
@@ -111,7 +111,7 @@ export default function ProfileSection({ profile, industries }: ProfileSectionPr
                   <Pencil size={14} />
                 </div>
               </div>
-              <p className="font-medium">{displayName(profile)}</p>
+              <p className="font-medium">{displayName(currentProfile)}</p>
             </div>
             <div className="mt-4">
 

@@ -87,7 +87,7 @@ export default async function Menu() {
   }
 
   return (
-    <div className="w-full mb-[100px] bg-[#f8f9fa]">
+    <div className="w-full bg-[#f8f9fa]">
       <ProfileSection profile={profile} industries={industries} />
       {startup && profile.startup_role === "admin" && (
         <>
@@ -98,7 +98,7 @@ export default async function Menu() {
         </>
       )}
       <SettingsSection />
-      <div className="flex flex-col items-center space-y-1 text-xs text-sidebar-foreground/70">
+      <div className="flex flex-col items-center space-y-1 text-xs text-sidebar-foreground/70 mb-[100px]">
         <div className="font-semibold">© 2025 The Fund Pool, Inc.</div>
         <div>All rights reserved.</div>
       </div>

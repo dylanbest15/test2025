@@ -1,13 +1,13 @@
 // Investment Status Notes
-// investment is created -> pending
-// startup reviews and recieves investment -> accepted or declined
-// if accepted, investor confirms that payment was sent -> confirmed
-// if investor withdraws at any point before confirmation -> withdrawn 
+// investment is created -> needs action
+// startup accepts request -> pending
+// investor confirms request -> confirmed
+// at any point, startup can decline request -> declined OR investor can withdraw request -> withdrawn
 
 export type Investment = {
   id: string;
   amount: number;
-  status: 'pending' | 'accepted' | 'confirmed' | 'declined' | 'withdrawn';
+  status: 'needs action' | 'pending' | 'confirmed' | 'declined' | 'withdrawn';
   fund_pool_id: string;
   startup_id: string;
   profile_id: string;

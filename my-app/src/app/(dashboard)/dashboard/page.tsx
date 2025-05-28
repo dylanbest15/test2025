@@ -5,10 +5,12 @@ import { Profile } from "@/types/profile";
 import { Investment } from "@/types/investment";
 import FounderDashboard from "./(founders)/founder-dashboard";
 import InvestorDashboard from "./(investors)/investor-dashboard";
+import { Startup } from "@/types/startup";
 
 interface JoinedInvestment extends Investment {
   fund_pool: FundPool;
   profile: Profile;
+  startup: Startup;
 }
 
 export default async function Dashboard() {
@@ -44,7 +46,9 @@ export default async function Dashboard() {
         created_at,
         updated_at,
         fund_pool:fund_pools!inner(*),
-        profile:profiles!inner(*)
+        profile:profiles!inner(*),
+        startup:startups!inner(*)
+
         `)
         .eq("startup_id", profile.startup_id)
 
@@ -64,9 +68,32 @@ export default async function Dashboard() {
   } else {
     // Render Investor Dashboard
 
+    // Fetch investments
+    let investments = null;
+    const { data: investmentData, error: investmentErr } = await supabase
+      .from("investments")
+      .select(`
+        id,
+        amount,
+        status,
+        created_at,
+        updated_at,
+        fund_pool:fund_pools!inner(*),
+        profile:profiles!inner(*),
+        startup:startups!inner(*)
+        `)
+      .eq("profile_id", user.id)
+
+    investments = investmentData as JoinedInvestment[] | null
+
+    if (investmentErr) {
+      console.error("Error fetching investments:", investmentErr)
+      // return notFound();
+    }
+
     return (
       <div className="w-full bg-[#f8f9fa] mb-20">
-        <InvestorDashboard />
+        <InvestorDashboard investments={investments} />
       </div>
     )
   }

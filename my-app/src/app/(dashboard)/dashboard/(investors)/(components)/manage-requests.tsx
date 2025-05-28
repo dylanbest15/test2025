@@ -1,27 +1,19 @@
 "use client"
 
 import type React from "react"
-
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import type { FundPool } from "@/types/fund-pool"
 import type { Investment } from "@/types/investment"
 import type { Profile } from "@/types/profile"
-import { ChevronDown, ChevronUp, DollarSign, Check, X } from "lucide-react"
+import { ChevronDown, ChevronUp, DollarSign, X } from "lucide-react"
 import { useState } from "react"
 import { formatCurrency } from "@/lib/utils"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
-import PreviousInvestors from "@/app/(dashboard)/dashboard/(founders)/(components)/previous-investors"
 import { Startup } from "@/types/startup"
+import PreviousInvestments from "@/app/(dashboard)/dashboard/(investors)/(components)/previous-investments"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 interface JoinedInvestment extends Investment {
   fund_pool: FundPool
@@ -31,20 +23,17 @@ interface JoinedInvestment extends Investment {
 
 interface ManageRequestsProps {
   investments: JoinedInvestment[] | null
-  onAcceptInvestment?: (investmentId: string) => void
-  onDeclineInvestment?: (investmentId: string) => void
+  onWithdrawInvestment?: (investmentId: string) => void
 }
 
 export default function ManageRequests({
   investments,
-  onAcceptInvestment,
-  onDeclineInvestment,
+  onWithdrawInvestment,
 }: ManageRequestsProps) {
   const [expandedCard, setExpandedCard] = useState<boolean>(false)
-  const [showAcceptModal, setShowAcceptModal] = useState<boolean>(false)
-  const [showDeclineModal, setShowDeclineModal] = useState<boolean>(false)
-  const [selectedInvestment, setSelectedInvestment] = useState<JoinedInvestment | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [showWithdrawModal, setShowWithdrawModal] = useState<boolean>(false)
+  const [selectedInvestment, setSelectedInvestment] = useState<JoinedInvestment | null>(null)
 
   // Get pending requests from actual data
   const pendingInvestments = investments?.filter((investment) => investment.status === "needs action") || []
@@ -54,45 +43,26 @@ export default function ManageRequests({
     setExpandedCard(!expandedCard)
   }
 
-  const handleAcceptClick = (investment: JoinedInvestment, event: React.MouseEvent) => {
+  const handleWithdrawClick = (investment: JoinedInvestment, event: React.MouseEvent) => {
     event.stopPropagation() // Prevent card from collapsing
     setSelectedInvestment(investment)
-    setShowAcceptModal(true)
+    setShowWithdrawModal(true)
   }
 
-  const handleDeclineClick = (investment: JoinedInvestment, event: React.MouseEvent) => {
-    event.stopPropagation() // Prevent card from collapsing
-    setSelectedInvestment(investment)
-    setShowDeclineModal(true)
-  }
-
-  const handleConfirmApproval = () => {
-    if (selectedInvestment && onAcceptInvestment) {
-      onAcceptInvestment(selectedInvestment.id)
+  const handleConfirmWithdraw = () => {
+    if (selectedInvestment && onWithdrawInvestment) {
+      onWithdrawInvestment(selectedInvestment.id)
     }
-    setShowAcceptModal(false)
+    setShowWithdrawModal(false)
     setSelectedInvestment(null)
   }
 
-  const handleCancelApproval = () => {
-    setShowAcceptModal(false)
+  const handleCancelWithdraw = () => {
+    setShowWithdrawModal(false)
     setSelectedInvestment(null)
   }
 
-  const handleConfirmDecline = () => {
-    if (selectedInvestment && onDeclineInvestment) {
-      onDeclineInvestment(selectedInvestment.id)
-    }
-    setShowDeclineModal(false)
-    setSelectedInvestment(null)
-  }
-
-  const handleCancelDecline = () => {
-    setShowDeclineModal(false)
-    setSelectedInvestment(null)
-  }
-
-  const showPreviousInvestors = (e: React.MouseEvent) => {
+  const showPreviousInvestments = (e: React.MouseEvent) => {
     // Prevent the click from bubbling up to the parent Link
     e.preventDefault()
     e.stopPropagation()
@@ -140,11 +110,11 @@ export default function ManageRequests({
                           {investment.profile.first_name} {investment.profile.last_name}
                         </span>
                         <span className="text-sm text-gray-500">{formatCurrency(investment.amount)}</span>
-                        <Badge className="text-xs bg-yellow-100 text-yellow-800 w-fit mt-1">Needs Action</Badge>
+                        <Badge className="text-xs bg-yellow-100 text-yellow-800 w-fit mt-1">Awaiting Startup Action</Badge>
                       </div>
                       <div className="flex items-center">
                         <div className="flex flex-col space-y-1">
-                          <Button
+                          {/* <Button
                             size="sm"
                             variant="outline"
                             className="h-8 px-3 text-xs bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
@@ -152,15 +122,15 @@ export default function ManageRequests({
                           >
                             <Check className="w-3 h-3 mr-1" />
                             Accept
-                          </Button>
+                          </Button> */}
                           <Button
                             size="sm"
                             variant="outline"
                             className="h-8 px-3 text-xs bg-red-50 border-red-200 text-red-700 hover:bg-red-100"
-                            onClick={(e) => handleDeclineClick(investment, e)}
+                            onClick={(e) => handleWithdrawClick(investment, e)}
                           >
                             <X className="w-3 h-3 mr-1" />
-                            Decline
+                            Withdraw
                           </Button>
                         </div>
                       </div>
@@ -172,7 +142,7 @@ export default function ManageRequests({
                   <p className="text-sm text-gray-500">No pending investment requests</p>
                 </div>
               )}
-              <Button className="w-full" onClick={showPreviousInvestors} disabled={!investments}>
+              <Button className="w-full" onClick={showPreviousInvestments} disabled={!investments}>
                 {investments ? "View Previous Investors" : "No Previous Investors"}
               </Button>
             </div>
@@ -180,56 +150,13 @@ export default function ManageRequests({
         )}
       </Card>
 
-      {/* Accept Confirmation Modal */}
-      <Dialog open={showAcceptModal} onOpenChange={setShowAcceptModal}>
+      {/* Withdraw Confirmation Modal */}
+      <Dialog open={showWithdrawModal} onOpenChange={setShowWithdrawModal}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Accept Investment Request</DialogTitle>
-            <DialogDescription>Are you sure you want to accept this investment request?</DialogDescription>
-          </DialogHeader>
-
-          {selectedInvestment && (
-            <div className="py-4">
-              <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Investor:</span>
-                  <span className="text-sm font-medium">
-                    {selectedInvestment.profile.first_name} {selectedInvestment.profile.last_name}
-                  </span>
-                </div>
-                {/* <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Email:</span>
-                  <span className="text-sm">{selectedInvestment.profile.email}</span>
-                </div> */}
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Investment Amount:</span>
-                  <span className="text-sm font-medium text-green-600">
-                    {formatCurrency(selectedInvestment.amount)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <DialogFooter className="flex space-x-2">
-            <Button variant="outline" onClick={handleCancelApproval}>
-              Cancel
-            </Button>
-            <Button onClick={handleConfirmApproval} className="bg-green-600 hover:bg-green-700">
-              <Check className="w-4 h-4 mr-2" />
-              Accept Investment
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Decline Confirmation Modal */}
-      <Dialog open={showDeclineModal} onOpenChange={setShowDeclineModal}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Decline Investment Request</DialogTitle>
+            <DialogTitle>Withdraw Investment Request</DialogTitle>
             <DialogDescription>
-              Are you sure you want to decline this investment request?
+              Are you sure you want to withdraw this investment request?
             </DialogDescription>
           </DialogHeader>
 
@@ -255,12 +182,12 @@ export default function ManageRequests({
           )} */}
 
           <DialogFooter className="flex space-x-2">
-            <Button variant="outline" onClick={handleCancelDecline}>
+            <Button variant="outline" onClick={handleCancelWithdraw}>
               Cancel
             </Button>
-            <Button onClick={handleConfirmDecline} variant="destructive" className="bg-red-600 hover:bg-red-700">
+            <Button onClick={handleConfirmWithdraw} variant="destructive" className="bg-red-600 hover:bg-red-700">
               <X className="w-4 h-4 mr-2" />
-              Decline Request
+              Withdraw Request
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -273,7 +200,7 @@ export default function ManageRequests({
           aria-describedby={undefined}
         >
           <SheetTitle className="sr-only"></SheetTitle>
-          <PreviousInvestors investments={investments} onClose={() => setSheetOpen(false)} />
+          <PreviousInvestments investments={investments} onClose={() => setSheetOpen(false)} />
         </SheetContent>
       </Sheet>
     </>

@@ -8,10 +8,12 @@ import ManageRequests from "@/app/(dashboard)/dashboard/(founders)/(components)/
 import { Investment } from "@/types/investment"
 import { FundPool } from "@/types/fund-pool"
 import { Profile } from "@/types/profile"
+import { Startup } from "@/types/startup"
 
 interface JoinedInvestment extends Investment {
   fund_pool: FundPool;
   profile: Profile;
+  startup: Startup;
 }
 
 interface FounderDashboardProps {

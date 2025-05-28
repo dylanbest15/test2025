@@ -11,12 +11,12 @@ interface JoinedInvestment extends Investment {
   startup: Startup
 }
 
-interface PreviousInvestorsProps {
+interface PreviousInvestmentsProps {
   investments: JoinedInvestment[] | null
   onClose: () => void
 }
 
-export default function PreviousInvestors({ investments, onClose }: PreviousInvestorsProps) {
+export default function PreviousInvestments({ investments, onClose }: PreviousInvestmentsProps) {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}

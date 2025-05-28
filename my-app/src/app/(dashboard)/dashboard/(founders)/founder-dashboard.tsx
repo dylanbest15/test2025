@@ -4,7 +4,7 @@ import { useState } from "react"
 import { TrendingUp, ChevronDown, ChevronUp } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import ManageRequests from "@/app/(dashboard)/dashboard/(components)/manage-requests"
+import ManageRequests from "@/app/(dashboard)/dashboard/(founders)/(components)/manage-requests"
 import { Investment } from "@/types/investment"
 import { FundPool } from "@/types/fund-pool"
 import { Profile } from "@/types/profile"
@@ -14,11 +14,11 @@ interface JoinedInvestment extends Investment {
   profile: Profile;
 }
 
-interface ViewDashboardProps {
+interface FounderDashboardProps {
   investments: JoinedInvestment[] | null
 }
 
-export default function ViewDashboard({ investments }: ViewDashboardProps) {
+export default function FounderDashboard({ investments }: FounderDashboardProps) {
   const [expandedCard, setExpandedCard] = useState<string | null>(null)
 
   const toggleCard = (cardId: string) => {

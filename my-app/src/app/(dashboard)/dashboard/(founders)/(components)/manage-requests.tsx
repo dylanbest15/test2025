@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -32,6 +31,7 @@ interface JoinedInvestment extends Investment {
 interface ManageRequestsProps {
   investments: JoinedInvestment[] | null
   onAcceptInvestment?: (investmentId: string) => void
+  // TODO: decline investment
   onDeclineInvestment?: (investmentId: string) => void
 }
 
@@ -51,8 +51,8 @@ export default function ManageRequests({
     .sort((a, b) => b.created_at.localeCompare(a.created_at)) || []
   const pendingInvestments = investments?.filter((investment) => investment.status === "pending")
     .sort((a, b) => b.updated_at!.localeCompare(a.updated_at!)) || []
-    
-  const displayRequests = needsActionInvestments.length || pendingInvestments.length
+
+  const displayRequests = needsActionInvestments.length + pendingInvestments.length
 
   const toggleCard = () => {
     setExpandedCard(!expandedCard)
@@ -135,10 +135,10 @@ export default function ManageRequests({
         {expandedCard && (
           <CardContent className="pt-0">
             <div className="animate-in slide-in-from-top-2 duration-300 space-y-4">
-
-              {/* Needs Action Requests */}
-              {needsActionInvestments.length > 0 ? (
+              {displayRequests ? (
                 <div className="space-y-3">
+
+                  {/* Needs Action Requests */}
                   {needsActionInvestments.map((investment) => (
                     <div key={investment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex flex-col">
@@ -172,16 +172,8 @@ export default function ManageRequests({
                       </div>
                     </div>
                   ))}
-                </div>
-              ) : (
-                <div className="text-center py-4">
-                  <p className="text-sm text-gray-500">No current investment requests</p>
-                </div>
-              )}
 
-              {/* Pending Requests */}
-              {pendingInvestments.length > 0 ? (
-                <div className="space-y-3">
+                  {/* Pending Requests */}
                   {pendingInvestments.map((investment) => (
                     <div key={investment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex flex-col">

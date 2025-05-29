@@ -19,7 +19,7 @@ import { ChevronDown, ChevronUp, DollarSign, Check, X } from "lucide-react"
 import { useState } from "react"
 import { formatCurrency } from "@/lib/utils"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
-import PreviousInvestors from "@/app/(dashboard)/dashboard/(founders)/(components)/previous-investors"
+import PreviousInvestors from "@/app/(dashboard)/dashboard/(founders)/(components)/investment-details"
 import { Startup } from "@/types/startup"
 
 interface JoinedInvestment extends Investment {

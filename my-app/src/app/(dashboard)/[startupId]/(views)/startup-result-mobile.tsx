@@ -103,6 +103,7 @@ export default function StartupResultMobile({
 
           {/* Overview section with See More */}
           <div className="bg-white p-4">
+            <h2 className="font-semibold text-gray-900 pb-1">Overview</h2>
             <div className="overflow-hidden transition-all duration-300 ease-in-out">
               <p className="text-sm leading-relaxed">
                 {isOverviewExpanded

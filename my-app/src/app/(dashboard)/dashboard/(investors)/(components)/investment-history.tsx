@@ -28,13 +28,13 @@ interface JoinedInvestment extends Investment {
   startup: Startup
 }
 
-interface InvestorPoolProps {
+interface InvestmentHistoryProps {
   investments: JoinedInvestment[] | null
 }
 
-export default function InvestorPool({
+export default function InvestmentHistory({
   investments,
-}: InvestorPoolProps) {
+}: InvestmentHistoryProps) {
   const [expandedCard, setExpandedCard] = useState<boolean>(false)
   const [selectedInvestment, setSelectedInvestment] = useState<JoinedInvestment | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -66,7 +66,7 @@ export default function InvestorPool({
                 <DollarSign className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <CardTitle className="text-lg">Investor Pool</CardTitle>
+                <CardTitle className="text-lg">Investment History</CardTitle>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -96,7 +96,7 @@ export default function InvestorPool({
                     <div key={investment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex flex-col">
                         <span className="text-sm font-medium">
-                          {investment.profile.first_name} {investment.profile.last_name}
+                          {investment.startup.name}
                         </span>
                         <span className="text-sm text-gray-500">{formatCurrency(investment.amount)}</span>
                         <Badge className="text-xs bg-yellow-100 text-yellow-800 w-fit mt-1">Confirmed</Badge>

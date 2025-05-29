@@ -8,6 +8,7 @@ import ManageRequests from "@/app/(dashboard)/dashboard/(investors)/(components)
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { updateInvestment } from "@/app/(dashboard)/dashboard/actions";
+import InvestmentHistory from "@/app/(dashboard)/dashboard/(investors)/(components)/investment-history";
 
 interface JoinedInvestment extends Investment {
   fund_pool: FundPool;
@@ -72,8 +73,11 @@ export default function InvestorDashboard({ investments }: InvestorDashboardProp
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            {/* Manage Requests Card - Right */}
+            {/* Manage Requests Card - Left */}
             <ManageRequests investments={currentInvestments} onConfirmInvestment={handleConfirmInvestment} />
+
+            {/* Investor History Card - Right */}
+            <InvestmentHistory investments={currentInvestments} />
           </div>
         </div>
       </div>

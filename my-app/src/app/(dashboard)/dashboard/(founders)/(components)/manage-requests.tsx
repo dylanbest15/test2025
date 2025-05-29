@@ -32,17 +32,13 @@ export default function ManageRequests({ investments, onAcceptInvestment, onDecl
   const [selectedInvestment, setSelectedInvestment] = useState<JoinedInvestment | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
 
-  // Filter requests by status and sort by newest
-  const needsActionInvestments =
+  // Filter requests by status and sort by name
+  const filteredInvestments =
     investments
-      ?.filter((investment) => investment.status === "needs_action")
-      .sort((a, b) => b.created_at.localeCompare(a.created_at)) || []
-  const pendingInvestments =
-    investments
-      ?.filter((investment) => investment.status === "pending")
-      .sort((a, b) => b.updated_at!.localeCompare(a.updated_at!)) || []
+      ?.filter((investment) => investment.status === "needs_action" || investment.status === "pending")
+      .sort((a, b) => a.profile.first_name.localeCompare(b.profile.first_name)) || []
 
-  const displayRequests = needsActionInvestments.length + pendingInvestments.length
+  const displayRequests = filteredInvestments.length
 
   const toggleCard = () => {
     setExpandedCard(!expandedCard)
@@ -54,8 +50,8 @@ export default function ManageRequests({ investments, onAcceptInvestment, onDecl
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2 rounded-lg bg-yellow-100">
-                <AlertCircle className="w-5 h-5 text-yellow-600" />
+              <div className="p-2 rounded-lg bg-green-100">
+                <AlertCircle className="w-5 h-5 text-green-600" />
               </div>
               <div>
                 <CardTitle className="text-lg">Active Requests</CardTitle>
@@ -83,7 +79,7 @@ export default function ManageRequests({ investments, onAcceptInvestment, onDecl
               {displayRequests ? (
                 <div className="space-y-3">
                   {/* Needs Action Requests */}
-                  {needsActionInvestments.map((investment) => (
+                  {filteredInvestments.map((investment) => (
                     <div
                       key={investment.id}
                       className="relative flex items-start p-2 pt-0 pb-4 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
@@ -115,51 +111,19 @@ export default function ManageRequests({ investments, onAcceptInvestment, onDecl
                               {formatCurrency(investment.amount)}
                             </span>
                           </div>
-                          
+
                         </div>
                       </div>
                       <div className="absolute right-4 flex flex-col items-end">
-                        <Badge className="text-xs bg-yellow-100 text-yellow-800 w-fit">Needs Action</Badge>
+                        <Badge className={`text-xs w-fit ${investment.status === "needs_action"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-blue-100 text-blue-800"
+                          }`}>
+                          {investment.status === "needs_action" ? "Needs Action" : "Pending"}
+                        </Badge>
                         <div className="flex items-center space-x-1 mt-1">
                           <span className="text-xs text-gray-500">View details</span>
                           <ArrowRight className="w-3 h-3 text-gray-400" />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-
-                  {/* Pending Requests */}
-                  {pendingInvestments.map((investment) => (
-                    <div key={investment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium">
-                          {investment.profile.first_name} {investment.profile.last_name}
-                        </span>
-                        <span className="text-sm text-gray-500">{formatCurrency(investment.amount)}</span>
-                        <Badge className="text-xs bg-yellow-100 text-yellow-800 w-fit mt-1">
-                          Pending Investor Confirmation
-                        </Badge>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="flex flex-col space-y-1">
-                          {/* <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-8 px-3 text-xs bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
-                            onClick={(e) => handleAcceptClick(investment, e)}
-                          >
-                            <Check className="w-3 h-3 mr-1" />
-                            Accept
-                          </Button> */}
-                          {/* <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-8 px-3 text-xs bg-red-50 border-red-200 text-red-700 hover:bg-red-100"
-                            onClick={(e) => handleDeclineClick(investment, e)}
-                          >
-                            <X className="w-3 h-3 mr-1" />
-                            Decline
-                          </Button> */}
                         </div>
                       </div>
                     </div>
@@ -183,10 +147,10 @@ export default function ManageRequests({ investments, onAcceptInvestment, onDecl
         >
           <SheetTitle className="sr-only"></SheetTitle>
           {selectedInvestment && (
-            <InvestmentDetails 
-              investment={selectedInvestment} 
-              onConfirmAccept={onAcceptInvestment} 
-              onConfirmDecline={onDeclineInvestment} 
+            <InvestmentDetails
+              investment={selectedInvestment}
+              onConfirmAccept={onAcceptInvestment}
+              onConfirmDecline={onDeclineInvestment}
               onBack={() => setSheetOpen(false)} />
           )}
         </SheetContent>

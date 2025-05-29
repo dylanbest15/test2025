@@ -42,11 +42,11 @@ export default function InvestmentDetails({
   const [showAcceptModal, setShowAcceptModal] = useState<boolean>(false)
   const [showDeclineModal, setShowDeclineModal] = useState<boolean>(false)
 
-  const handleAcceptClick = (investment: JoinedInvestment) => {
+  const handleAcceptClick = () => {
     setShowAcceptModal(true)
   }
 
-  const handleDeclineClick = (investment: JoinedInvestment) => {
+  const handleDeclineClick = () => {
     setShowDeclineModal(true)
   }
 
@@ -185,7 +185,7 @@ export default function InvestmentDetails({
                       {investment.status === "needs_action"
                         ? "Needs Action"
                         : investment.status === "pending"
-                          ? "Accepted - Waiting Investor Confirmation"
+                          ? "Accepted - Pending Investor Confirmation"
                           : investment.status === "confirmed"
                             ? "Confirmed"
                             : investment.status}
@@ -225,7 +225,7 @@ export default function InvestmentDetails({
                       size="lg"
                       variant="outline"
                       className="h-8 px-3 text-xs bg-red-50 border-red-200 text-red-700 hover:bg-red-100"
-                      onClick={() => handleDeclineClick(investment)}
+                      onClick={() => handleDeclineClick()}
                     >
                       <X className="w-3 h-3 mr-1" />
                       Decline
@@ -237,7 +237,7 @@ export default function InvestmentDetails({
                         size="lg"
                         variant="outline"
                         className="h-8 px-3 text-xs bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
-                        onClick={() => handleAcceptClick(investment)}
+                        onClick={() => handleAcceptClick()}
                       >
                         <Check className="w-3 h-3 mr-1" />
                         Accept

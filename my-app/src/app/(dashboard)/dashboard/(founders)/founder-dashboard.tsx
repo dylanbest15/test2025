@@ -11,6 +11,7 @@ import { Profile } from "@/types/profile"
 import { Startup } from "@/types/startup"
 import { updateInvestment } from "../actions"
 import { toast } from "sonner"
+import InvestorPool from "./(components)/investor-pool"
 
 interface JoinedInvestment extends Investment {
   fund_pool: FundPool;
@@ -78,67 +79,12 @@ export default function FounderDashboard({ investments }: FounderDashboardProps)
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            {/* My Fund Pool Card - Left */}
-            {/* <Card
-            className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105"
-            onClick={() => toggleCard("fund-pool")}
-          >
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 rounded-lg bg-blue-100">
-                    <Wallet className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">My Fund Pool</CardTitle>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  {expandedCard === "fund-pool" ? (
-                    <ChevronUp className="w-5 h-5 text-gray-400" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-400" />
-                  )}
-                </div>
-              </div>
-              <CardDescription>Monitor and manage your fund allocation</CardDescription>
-            </CardHeader>
-
-            {expandedCard === "fund-pool" && (
-              <CardContent className="pt-0">
-                <div className="animate-in slide-in-from-top-2 duration-300 space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">$45,230</div>
-                      <div className="text-sm text-blue-800">Available Balance</div>
-                    </div>
-                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">$12,770</div>
-                      <div className="text-sm text-green-800">Allocated This Month</div>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Monthly Budget Usage</span>
-                      <span>68%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-blue-600 h-2 rounded-full" style={{ width: "68%" }}></div>
-                    </div>
-                  </div>
-                  <Button className="w-full" variant="outline">
-                    <Settings className="w-4 h-4 mr-2" />
-                    Manage Fund Pool
-                  </Button>
-                </div>
-              </CardContent>
-            )}
-          </Card> */}
-
-            {/* Manage Requests Card - Right */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+            {/* Manage Requests Card - Left */}
             <ManageRequests investments={currentInvestments} onAcceptInvestment={handleAcceptInvestment} />
+
+            {/* My Fund Pool Card - Right */}
+            <InvestorPool investments={currentInvestments} />
           </div>
 
           {/* Bottom row - Analytics taking full width */}

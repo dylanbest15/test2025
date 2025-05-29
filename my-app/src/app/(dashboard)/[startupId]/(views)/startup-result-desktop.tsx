@@ -14,6 +14,7 @@ interface StartupResultDesktopProps {
   startup: Startup
   industries: string[]
   fundPool: FundPool | null
+  investments: Investment[] | []
   existingInvestment: Investment | null
   following: boolean
   onFollowClick: () => Promise<boolean>
@@ -24,6 +25,7 @@ export default function StartupResultDesktop({
   startup,
   industries,
   fundPool,
+  investments,
   existingInvestment,
   following,
   onFollowClick,
@@ -128,7 +130,7 @@ export default function StartupResultDesktop({
           </div>
 
           {/* Fund Pool */}
-          <ViewFundPool fundPool={fundPool} investment={existingInvestment} onJoinFundPool={onJoinFundPool} />
+          <ViewFundPool fundPool={fundPool} investments={investments} existingInvestment={existingInvestment} onJoinFundPool={onJoinFundPool} />
 
           {/* Two Column Content */}
           <div className="grid grid-cols-3 gap-6">

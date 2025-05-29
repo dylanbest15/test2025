@@ -8,15 +8,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import FundPoolCard from "@/app/(dashboard)/my-startup/(view-startup)/(components)/fund-pool-card"
+import { Investment } from "@/types/investment"
 
 interface ViewStartupMobileProps {
   startup: Startup
   industries: string[]
   fundPool: FundPool | null
+  investments: Investment[] | []
   onCreateFundPool: (amount: number) => Promise<boolean>
 }
 
-export default function ViewStartupMobile({ startup, industries, fundPool, onCreateFundPool }: ViewStartupMobileProps) {
+export default function ViewStartupMobile({ startup, industries, fundPool, investments, onCreateFundPool }: ViewStartupMobileProps) {
   const [activeTab, setActiveTab] = useState("pitch-deck")
   const [isOverviewExpanded, setIsOverviewExpanded] = useState(false)
 
@@ -100,7 +102,7 @@ export default function ViewStartupMobile({ startup, industries, fundPool, onCre
           </div>
 
           {/* Fund Pool Card */}
-          <FundPoolCard fundPool={fundPool} onCreateFundPool={onCreateFundPool} />
+          <FundPoolCard fundPool={fundPool} investments={investments} onCreateFundPool={onCreateFundPool} />
 
           {/* Tabs Section */}
           <Tabs defaultValue="pitch-deck" className="w-full mt-4" onValueChange={setActiveTab}>

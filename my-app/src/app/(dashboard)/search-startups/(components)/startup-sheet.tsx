@@ -27,6 +27,7 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
   const [profileId, setProfileId] = useState<string>("")
   const [industries, setIndustries] = useState<string[] | []>([])
   const [fundPool, setFundPool] = useState<FundPool | null>(null)
+  const [investments, setInvestments] = useState<Investment[] | []>([])
   const [existingInvestment, setExistingInvestment] = useState<Investment | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isOverviewExpanded, setIsOverviewExpanded] = useState(false)
@@ -49,7 +50,7 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
 
         const { data: industryData, error: industryErr } = await supabase
           .from("industries")
-          .select()
+          .select("*")
           .eq("startup_id", startup.id)
 
         if (industryErr) {
@@ -61,7 +62,7 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
 
         const { data: fundPoolData, error: fundPoolErr } = await supabase
           .from("fund_pools")
-          .select()
+          .select("*")
           .eq("startup_id", startup.id)
           .single()
 
@@ -71,20 +72,23 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
         } else {
           setFundPool(fundPoolData)
 
-          // If fund pool exists, check for existing pending investment
+          // If fund pool exists, get investments and check for existing investment
           if (fundPoolData && user) {
-            const { data: investmentData, error: investmentErr } = await supabase
+            const { data: investmentData, error: investmentsErr } = await supabase
               .from("investments")
               .select("*")
-              .in("status", ["needs_action", "pending", "confirmed"])
               .eq("fund_pool_id", fundPoolData.id)
-              .eq("profile_id", user.id)
-              .maybeSingle()
+              .in("status", ["needs_action", "pending", "confirmed"])
 
-            if (investmentErr) {
-              console.error("Error fetching investment:", investmentErr)
+            if (investmentsErr) {
+              console.error("Error fetching investments:", investmentsErr)
             } else {
-              setExistingInvestment(investmentData)
+              // Find the existing investment
+              const userInvestment = investmentData.find(inv => inv.profile_id === user.id)
+              setExistingInvestment(userInvestment || null)
+
+              // Store all investments for display/calculations
+              setInvestments(investmentData)
             }
           }
         }
@@ -252,7 +256,7 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
           </div>
 
           {/* Fund Pool Card */}
-          <ViewFundPool fundPool={fundPool} investment={existingInvestment} onJoinFundPool={handleJoinFundPool} />
+          <ViewFundPool fundPool={fundPool} investments={investments} investment={existingInvestment} onJoinFundPool={handleJoinFundPool} />
 
           {/* Tabs Section */}
           <Tabs defaultValue="pitch-deck" className="w-full mt-4" onValueChange={setActiveTab}>

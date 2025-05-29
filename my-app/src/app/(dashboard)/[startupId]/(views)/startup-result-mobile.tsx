@@ -14,6 +14,7 @@ interface StartupResultMobileProps {
   startup: Startup
   industries: string[]
   fundPool: FundPool | null
+  investments: Investment[] | []
   existingInvestment: Investment | null
   following: boolean
   onFollowClick: () => Promise<boolean>
@@ -24,6 +25,7 @@ export default function StartupResultMobile({
   startup,
   industries,
   fundPool,
+  investments,
   existingInvestment,
   following,
   onFollowClick,
@@ -124,7 +126,7 @@ export default function StartupResultMobile({
           </div>
 
           {/* Fund Pool Card */}
-          <ViewFundPool fundPool={fundPool} investment={existingInvestment} onJoinFundPool={onJoinFundPool} />
+          <ViewFundPool fundPool={fundPool} investments={investments} existingInvestment={existingInvestment} onJoinFundPool={onJoinFundPool} />
 
           {/* Tabs Section */}
           <Tabs defaultValue="pitch-deck" className="w-full mt-4" onValueChange={setActiveTab}>

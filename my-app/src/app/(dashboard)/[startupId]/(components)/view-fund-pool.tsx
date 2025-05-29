@@ -7,17 +7,31 @@ import { Button } from "@/components/ui/button"
 import { Check, PlusCircle } from "lucide-react"
 import type { FundPool } from "@/types/fund-pool"
 import { JoinFundPool } from "@/app/(dashboard)/[startupId]/(components)/join-fund-pool"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Investment } from "@/types/investment"
 
 interface ViewFundPoolProps {
   fundPool: FundPool | null
-  investment: Investment | null
+  investments: Investment[] | []
+  existingInvestment: Investment | null
   onJoinFundPool: (amount: number) => void
 }
 
-export default function ViewFundPoolCard({ fundPool, investment, onJoinFundPool }: ViewFundPoolProps) {
+export default function ViewFundPoolCard({ fundPool, investments, existingInvestment, onJoinFundPool }: ViewFundPoolProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
+
+  // Calculate total confirmed investments
+  const totalConfirmedInvestments = useMemo(() => {
+    return investments
+      .filter((investment) => investment.status === "confirmed")
+      .reduce((total, investment) => total + investment.amount, 0)
+  }, [investments])
+
+  // Calculate progress percentage
+  const progressPercentage = useMemo(() => {
+    if (!fundPool?.fund_goal || fundPool.fund_goal === 0) return 0
+    return Math.min((totalConfirmedInvestments / fundPool.fund_goal) * 100, 100)
+  }, [totalConfirmedInvestments, fundPool?.fund_goal])
 
   const handleJoinFundPool = (amount: number) => {
     if (onJoinFundPool) {
@@ -51,10 +65,21 @@ export default function ViewFundPoolCard({ fundPool, investment, onJoinFundPool 
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="font-medium">Progress</span>
-                  <span>$0 of <span className="font-bold">{formatCurrency(fundPool.fund_goal)}</span></span>
+                  <span>
+                    {formatCurrency(totalConfirmedInvestments)} of{" "}
+                    <span className="font-bold">{formatCurrency(fundPool.fund_goal)}</span>
+                  </span>
                 </div>
-                <Progress value={0} className="h-2.5" />
-              </div>
+                <Progress value={progressPercentage} className="h-2.5 [&>div]:bg-green-500" />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>{progressPercentage.toFixed(1)}% funded</span>
+                  <span>
+                    {(() => {
+                      const confirmedCount = investments.filter((inv) => inv.status === "confirmed").length
+                      return `${confirmedCount} ${confirmedCount === 1 ? "investor" : "investors"}`
+                    })()}
+                  </span>
+                </div>              </div>
 
               {/* TODO: only show button to investors */}
               <div className="pt-2">
@@ -63,12 +88,12 @@ export default function ViewFundPoolCard({ fundPool, investment, onJoinFundPool 
                   bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700
                   border-0 relative overflow-hidden group"
                   onClick={() => setDialogOpen(true)}
-                  disabled={!!investment}
+                  disabled={!!existingInvestment}
                 >
                   <div className="absolute inset-0 w-3 bg-white/20 skew-x-[-20deg] group-hover:animate-shimmer" />
                   <div className="flex items-center justify-center gap-2">
-                    {investment ? <Check className="h-5 w-5" /> : <PlusCircle className="h-5 w-5" />}
-                    <span>{investment ? "Request Pending" : "Join Fund Pool"}</span>
+                    {existingInvestment ? <Check className="h-5 w-5" /> : <PlusCircle className="h-5 w-5" />}
+                    <span>{existingInvestment ? "Request Pending" : "Join Fund Pool"}</span>
                   </div>
                 </Button>
               </div>

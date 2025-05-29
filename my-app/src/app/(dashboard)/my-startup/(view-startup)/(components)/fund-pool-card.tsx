@@ -7,16 +7,31 @@ import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { PlusCircle } from "lucide-react"
 import type { FundPool } from "@/types/fund-pool"
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { FundPoolCreate } from "@/app/(dashboard)/my-startup/(view-startup)/(components)/fund-pool-create"
+import type { Investment } from "@/types/investment"
 
 interface FundPoolProps {
-  fundPool: FundPool | null;
+  fundPool: FundPool | null
+  investments: Investment[] | []
   onCreateFundPool: (amount: number) => void
 }
 
-export default function FundPoolCard({ fundPool, onCreateFundPool }: FundPoolProps) {
+export default function FundPoolCard({ fundPool, investments, onCreateFundPool }: FundPoolProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
+
+  // Calculate total confirmed investments
+  const totalConfirmedInvestments = useMemo(() => {
+    return investments
+      .filter((investment) => investment.status === "confirmed")
+      .reduce((total, investment) => total + investment.amount, 0)
+  }, [investments])
+
+  // Calculate progress percentage
+  const progressPercentage = useMemo(() => {
+    if (!fundPool?.fund_goal || fundPool.fund_goal === 0) return 0
+    return Math.min((totalConfirmedInvestments / fundPool.fund_goal) * 100, 100)
+  }, [totalConfirmedInvestments, fundPool?.fund_goal])
 
   const handleCreateFundPool = (amount: number) => {
     if (onCreateFundPool) {
@@ -50,9 +65,21 @@ export default function FundPoolCard({ fundPool, onCreateFundPool }: FundPoolPro
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="font-medium">Progress</span>
-                  <span>$0 of <span className="font-bold">{formatCurrency(fundPool.fund_goal)}</span></span>
+                  <span>
+                    {formatCurrency(totalConfirmedInvestments)} of{" "}
+                    <span className="font-bold">{formatCurrency(fundPool.fund_goal)}</span>
+                  </span>
                 </div>
-                <Progress value={0} className="h-2.5" />
+                <Progress value={progressPercentage} className="h-2.5 [&>div]:bg-green-500" />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>{progressPercentage.toFixed(1)}% funded</span>
+                  <span>
+                    {(() => {
+                      const confirmedCount = investments.filter((inv) => inv.status === "confirmed").length
+                      return `${confirmedCount} ${confirmedCount === 1 ? "investor" : "investors"}`
+                    })()}
+                  </span>
+                </div>
               </div>
             </div>
           ) : (

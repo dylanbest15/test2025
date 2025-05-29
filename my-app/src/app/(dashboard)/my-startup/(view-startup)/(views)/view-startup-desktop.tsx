@@ -8,15 +8,17 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import FundPoolCard from "@/app/(dashboard)/my-startup/(view-startup)/(components)/fund-pool-card"
+import { Investment } from "@/types/investment"
 
 interface ViewStartupDesktopProps {
   startup: Startup
   industries: string[]
   fundPool: FundPool | null
+  investments: Investment[] | []
   onCreateFundPool: (amount: number) => Promise<boolean>
 }
 
-export default function ViewStartupDesktop({ startup, industries, fundPool, onCreateFundPool }: ViewStartupDesktopProps) {
+export default function ViewStartupDesktop({ startup, industries, fundPool, investments, onCreateFundPool }: ViewStartupDesktopProps) {
   return (
     <div className="min-h-screen bg-background flex">
 
@@ -102,7 +104,7 @@ export default function ViewStartupDesktop({ startup, industries, fundPool, onCr
           </div>
 
           {/* Funding Goal */}
-          <FundPoolCard fundPool={fundPool} onCreateFundPool={onCreateFundPool} />
+          <FundPoolCard fundPool={fundPool} investments={investments} onCreateFundPool={onCreateFundPool} />
 
           {/* Two Column Content */}
           <div className="grid grid-cols-3 gap-6">

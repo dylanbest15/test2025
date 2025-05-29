@@ -14,7 +14,7 @@ export default async function MyStartup() {
     return redirect("/")
   }
 
-  const { data: profile, error } = await supabase.from("profiles").select().eq("id", user.id).single()
+  const { data: profile, error } = await supabase.from("profiles").select("*").eq("id", user.id).single()
 
   if (error) {
     console.error("Error fetching profile:", error)
@@ -30,7 +30,7 @@ export default async function MyStartup() {
   if (profile.startup_id) {
     const { data: startup, error: startupErr } = await supabase
       .from("startups")
-      .select()
+      .select("*")
       .eq("id", profile.startup_id)
       .single()
 
@@ -42,7 +42,7 @@ export default async function MyStartup() {
     let industries = [];
     // Fetch startup industries
     const { data: industryRes, error: industryErr } = await supabase.from('industries')
-      .select()
+      .select("*")
       .eq('startup_id', startup.id)
 
     if (industryErr) {
@@ -54,9 +54,9 @@ export default async function MyStartup() {
     }
 
     // Fetch the fund pool
-    let { data: fundPool, error: fundPoolErr } = await supabase
+    const { data: fundPool, error: fundPoolErr } = await supabase
       .from("fund_pools")
-      .select()
+      .select("*")
       .eq("startup_id", profile.startup_id)
       .single()
 
@@ -66,8 +66,26 @@ export default async function MyStartup() {
       // return notFound();
     }
 
+    let investments = [];
+    // if fund pool exists, fetch investments
+    if (fundPool) {
+      const { data: investmentRes, error: investmentErr } = await supabase
+      .from("investments")
+      .select("*")
+      .in("status", ["needs_action", "pending", "confirmed"])
+      .eq("fund_pool_id", fundPool.id)
+
+      if (investmentErr) {
+        console.error("Error fetching industries:", industryErr);
+        // return notFound();
+      }
+      if (investmentRes) {
+        investments = investmentRes;
+      }
+    }
+
     if (startup) {
-      return <ViewStartup startup={startup} industries={industries} fundPool={fundPool} />
+      return <ViewStartup startup={startup} industries={industries} fundPool={fundPool} investments={investments} />
     }
   }
 }

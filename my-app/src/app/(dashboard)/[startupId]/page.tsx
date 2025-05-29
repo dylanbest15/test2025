@@ -77,26 +77,36 @@ export default async function StartupResult({ params }: StartupResultProps) {
     }
 
     let existingInvestment = null;
+    let investments = [];
     // If fund pool exists, check for existing pending investment
     if (fundPool && user) {
-      const { data: investmentData, error: investmentErr } = await supabase
+      const { data: investmentData, error: investmentsErr } = await supabase
         .from("investments")
         .select("*")
-        .in("status", ["needs_action", "pending", "confirmed"])
         .eq("fund_pool_id", fundPool.id)
-        .eq("profile_id", user.id)
-        .maybeSingle()
+        .in("status", ["needs_action", "pending", "confirmed"])
 
-      if (investmentErr) {
-        console.error("Error fetching investment:", investmentErr)
+      if (investmentsErr) {
+        console.error("Error fetching investments:", investmentsErr)
       } else {
-        existingInvestment = investmentData
+        // Find the existing investment
+        const userInvestment = investmentData.find(inv => inv.profile_id === user.id)
+        existingInvestment = userInvestment || null
+
+        investments = investmentData
       }
     }
 
     if (startup) {
       return (
-        <ViewStartupResult startup={startup} industries={industries} favorite={favorite} fundPool={fundPool} investment={existingInvestment} />
+        <ViewStartupResult
+          startup={startup}
+          industries={industries}
+          favorite={favorite}
+          fundPool={fundPool}
+          investments={investments}
+          existingInvestment={existingInvestment}
+        />
       )
     }
   }

@@ -16,7 +16,8 @@ interface ViewStartupResultProps {
   startup: Startup
   industries: string[]
   fundPool: FundPool | null
-  investment: Investment | null
+  investments: Investment[] | []
+  existingInvestment: Investment | null
   favorite: Partial<Favorite> | null
 }
 
@@ -24,14 +25,16 @@ export default function ViewStartupResult({
   startup,
   industries: industriesProp,
   fundPool: fundPoolProp,
-  investment: investmentProp,
+  investments: investmentsProp,
+  existingInvestment: existingInvestmentProp,
   favorite: favoriteProp,
 }: ViewStartupResultProps) {
   const [profileId, setProfileId] = useState<string>("")
   const [industries, setIndustries] = useState<string[]>(industriesProp)
   const [fundPool, setFundPool] = useState<FundPool | null>(fundPoolProp)
   const [favorite, setFavorite] = useState<Partial<Favorite> | null>(favoriteProp)
-  const [existingInvestment, setExistingInvestment] = useState<Investment | null>(investmentProp)
+  const [investments, setInvestments] = useState<Investment[] | []>(investmentsProp)
+  const [existingInvestment, setExistingInvestment] = useState<Investment | null>(existingInvestmentProp)
   const [isLoading, setIsLoading] = useState(true)
   const [following, setFollowing] = useState(favoriteProp ? true : false)
 
@@ -132,6 +135,7 @@ export default function ViewStartupResult({
     startup,
     industries,
     fundPool,
+    investments,
     existingInvestment,
     following,
     onFollowClick: handleFollowClick,

@@ -3,7 +3,7 @@
 import type React from "react"
 import { statesAndProvinces, type Startup } from "@/types/startup"
 import { useState, useMemo, useRef, useCallback } from "react"
-import { Loader, Search, Building, Briefcase, Filter, ChevronDown, ChevronUp } from "lucide-react"
+import { Loader, Search, Briefcase, Filter, MapPin } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
@@ -12,6 +12,7 @@ import { StartupCard } from "@/app/(dashboard)/search-startups/(components)/star
 import type { Favorite } from "@/types/favorite"
 import { INDUSTRIES } from "@/types/industries"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { cn } from "@/lib/utils"
 
 interface StartupSearchProps {
   profileId: string
@@ -192,11 +193,32 @@ export default function StartupSearch({ profileId, favorites }: StartupSearchPro
               onChange={handleSearchChange}
               onKeyDown={handleKeyDown}
             />
+            {/* filter icon button ?? */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "absolute inset-y-0 right-0 top-0.5 px-3 hover:bg-transparent",
+                showAdvancedFilters || hasActiveAdvancedFilters
+                  ? "text-blue-600 hover:text-blue-700"
+                  : "text-gray-400 hover:text-gray-600",
+              )}
+              onClick={toggleAdvancedFilters}
+              aria-label="Toggle advanced filters"
+            >
+              <Filter className="h-4 w-4" />
+              {hasActiveAdvancedFilters && (
+                <span className="absolute -top-1 -right-1 h-2 w-2 bg-blue-600 rounded-full" />
+              )}
+            </Button>
           </div>
 
           {/* Advanced Filters Toggle */}
           <Collapsible open={showAdvancedFilters} onOpenChange={setShowAdvancedFilters}>
-            <CollapsibleTrigger asChild>
+
+              {/* filter bar button ?? */}
+
+            {/* <CollapsibleTrigger asChild>
               <Button variant="outline" className="w-full justify-between" onClick={toggleAdvancedFilters}>
                 <div className="flex items-center">
                   <Filter className="h-4 w-4 mr-2" />
@@ -207,7 +229,7 @@ export default function StartupSearch({ profileId, favorites }: StartupSearchPro
                 </div>
                 {showAdvancedFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </Button>
-            </CollapsibleTrigger>
+            </CollapsibleTrigger> */}
 
             <CollapsibleContent className="space-y-4 mt-4">
               <form onSubmit={handleAdvancedSubmit} className="space-y-4">
@@ -216,7 +238,7 @@ export default function StartupSearch({ profileId, favorites }: StartupSearchPro
                   {/* City filter */}
                   <div className="relative flex-1">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">
-                      <Building className="h-4 w-4 text-gray-400" />
+                      <MapPin className="h-4 w-4 text-gray-400" />
                     </div>
                     <Input
                       type="text"
@@ -302,7 +324,7 @@ export default function StartupSearch({ profileId, favorites }: StartupSearchPro
                   const favorite = favoritesMap.get(startup.id) || null
 
                   return (
-                    <div key={startup.id} className="mb-4">
+                    <div key={startup.id}>
                       <StartupCard startup={startup} profileId={profileId} favorite={favorite} />
                     </div>
                   )

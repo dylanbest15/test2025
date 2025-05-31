@@ -78,7 +78,6 @@ export default function ManageRequests({ investments, onAcceptInvestment, onDecl
             <div className="animate-in slide-in-from-top-2 duration-300 space-y-4">
               {displayRequests ? (
                 <div className="space-y-3">
-                  {/* Needs Action Requests */}
                   {filteredInvestments.map((investment) => (
                     <div
                       key={investment.id}

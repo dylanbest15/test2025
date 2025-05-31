@@ -200,21 +200,32 @@ export default function InvestmentDetails({
 
                     {/* Date Information */}
                     <div className="text-center">
-                      <span className="text-sm text-gray-600">
-                        Requested on {new Date(investment.created_at).toLocaleDateString()}
-                      </span>
+                      <div className="text-sm text-gray-600">
+                        {investment.status === "needs_action" && (
+                          <span>Requested on {new Date(investment.created_at).toLocaleDateString()}</span>
+                        )}
+                        {investment.status === "pending" && (
+                          <div>
+                            <div>Requested on {new Date(investment.created_at).toLocaleDateString()}</div>
+                            {investment.updated_at && <div>Accepted on {new Date(investment.updated_at).toLocaleDateString()}</div>}
+                          </div>
+                        )}
+                        {investment.status === "confirmed" && investment.updated_at && (
+                          <span>Finalized on {new Date(investment.updated_at).toLocaleDateString()}</span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
                   {/* Explanation Section */}
                   <p className="text-sm text-gray-600 leading-relaxed">
                     {investment.status === "needs_action"
-                    ? "Upon accepting this request, the investor will receive a notification to confirm the deal. If you choose to decline, the investor will be notified and can submit a new request."
-                    : investment.status === "pending"
-                      ? "You have accepted this request and are awaiting investor confirmation. When they confirm, the investment will be finalized and the amount will be added to your fund pool."
-                      : investment.status === "confirmed"
-                      ? "This investment has been finalized."
-                      : ""
+                      ? "Upon accepting this request, the investor will receive a notification to confirm the deal. If you choose to decline, the investor will be notified and can submit a new request."
+                      : investment.status === "pending"
+                        ? "You have accepted this request and are awaiting investor confirmation. When they confirm, the investment will be finalized and the amount will be added to your fund pool."
+                        : investment.status === "confirmed"
+                          ? "This investment has been finalized and the amount was added to your fund pool."
+                          : ""
                     }
                   </p>
 

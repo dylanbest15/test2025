@@ -7,10 +7,33 @@ export async function GET(req: NextRequest) {
   const query = searchParams.get("query")
   const city = searchParams.get("city")
   const state = searchParams.get("state")
+  const industry = searchParams.get("industry")
 
   const supabase = await createClient()
 
-  let queryBuilder = supabase.from("startups").select()
+  let queryBuilder = supabase.from("startups").select("*")
+
+  // If industry filter is provided, we need to join with the startup_industries table
+  if (industry && industry.trim() !== "") {
+    // Use a subquery to find startups that have the selected industry
+    const { data: startupIds, error: industryError } = await supabase
+      .from("industries")
+      .select("startup_id")
+      .eq("name", industry)
+
+    if (industryError) {
+      console.error("Industry filter error:", industryError)
+      return NextResponse.json({ error: industryError.message }, { status: 500 })
+    }
+
+    if (startupIds && startupIds.length > 0) {
+      const uniqueStartupIds = [...new Set(startupIds.map((item) => item.startup_id))]
+      queryBuilder = queryBuilder.in("id", uniqueStartupIds)
+    } else {
+      // No startups found with selected industry
+      return NextResponse.json([])
+    }
+  }
 
   // Apply name filter if provided
   if (query && query.trim() !== "") {
@@ -23,12 +46,14 @@ export async function GET(req: NextRequest) {
   }
 
   // Apply state filter if provided
-  if (state && state.trim() !== "") {
+  if (state && state.trim() === "all") {
+    // Do nothing, include all states
+  } else if (state && state.trim() !== "") {
     queryBuilder = queryBuilder.ilike("state", `%${state}%`)
   }
 
   // If no filters are provided, return empty array
-  if (!query && !city && !state) {
+  if (!query && !city && !state && !industry) {
     return NextResponse.json([])
   }
 

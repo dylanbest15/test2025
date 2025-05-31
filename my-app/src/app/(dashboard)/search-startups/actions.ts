@@ -4,7 +4,8 @@ import { Startup } from "@/types/startup";
 export async function getStartups(
   query: string, 
   city?: string, 
-  state?: string
+  state?: string,
+  industry?: string
 ): Promise<Startup[]> {
   const params = new URLSearchParams()
 
@@ -16,6 +17,9 @@ export async function getStartups(
   }
   if (state) {
     params.append("state", state)
+  }
+  if (industry && industry !== "all") {
+    params.append("industry", industry)
   }
 
   const res = await fetch(`/api/startups/?${params.toString()}`, {

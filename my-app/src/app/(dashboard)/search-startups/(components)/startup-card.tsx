@@ -25,12 +25,6 @@ export function StartupCard({ startup, profileId, favorite }: StartupCardProps) 
   const [currentFavorite, setCurrentFavorite] = useState<Favorite | null>(favorite || null)
   const [following, setFollowing] = useState<boolean>(favorite ? true : false)
 
-  // Function to truncate bio text
-  const truncateOverview = (overview: string, maxLength = 150) => {
-    if (!overview) return ""
-    return overview.length > maxLength ? `${overview.substring(0, maxLength)}...` : overview
-  }
-
   const handleCardClick = (e: React.MouseEvent) => {
     if (isMobile) {
       e.preventDefault()

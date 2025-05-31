@@ -134,6 +134,7 @@ export default function StartupSearch({ profileId, favorites }: StartupSearchPro
     setSelectedIndustry("")
     setResults([])
     setHasSearched(false)
+    setShowAdvancedFilters(false)
   }
 
   // Toggle advanced filters
@@ -167,11 +168,11 @@ export default function StartupSearch({ profileId, favorites }: StartupSearchPro
     const selectedState = statesAndProvinces.find((state) => state.value === stateFilter)
 
     if (cityFilter && selectedState) {
-      return `in ${cityFilter}, ${selectedState.label}`
+      return ` in ${cityFilter}, ${selectedState.label}`
     } else if (cityFilter) {
-      return `in ${cityFilter}`
+      return ` in ${cityFilter}`
     } else if (selectedState) {
-      return `in ${selectedState.label}`
+      return ` in ${selectedState.label}`
     }
     return ""
   }
@@ -180,57 +181,41 @@ export default function StartupSearch({ profileId, favorites }: StartupSearchPro
     <div className="w-full p-4 flex-shrink-0 overflow-hidden h-full">
       <div className="max-w-xl h-full flex flex-col">
         <div className="space-y-4 mb-6">
-          {/* Name search input - always visible */}
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <Search className="h-4 w-4 text-gray-400" />
+        <div className="flex gap-2">
+            <div className="relative flex-1">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <Search className="h-4 w-4 text-gray-400" />
+              </div>
+              <Input
+                type="search"
+                placeholder="Search by startup name..."
+                className="pl-10 bg-white"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onKeyDown={handleKeyDown}
+              />
             </div>
-            <Input
-              type="search"
-              placeholder="Search by startup name..."
-              className="pl-10 bg-white"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              onKeyDown={handleKeyDown}
-            />
-            {/* filter icon button ?? */}
             <Button
-              variant="ghost"
-              size="sm"
+              variant={showAdvancedFilters ? "default" : "outline"}
+              size="icon"
               className={cn(
-                "absolute inset-y-0 right-0 top-0.5 px-3 hover:bg-transparent",
+                "relative",
                 showAdvancedFilters || hasActiveAdvancedFilters
-                  ? "text-blue-600 hover:text-blue-700"
-                  : "text-gray-400 hover:text-gray-600",
+                  ? "bg-blue-600 hover:bg-blue-700 text-white"
+                  : "border-gray-300 hover:bg-gray-50",
               )}
               onClick={toggleAdvancedFilters}
               aria-label="Toggle advanced filters"
             >
               <Filter className="h-4 w-4" />
-              {hasActiveAdvancedFilters && (
-                <span className="absolute -top-1 -right-1 h-2 w-2 bg-blue-600 rounded-full" />
+              {hasActiveAdvancedFilters && !showAdvancedFilters && (
+                <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full" />
               )}
             </Button>
           </div>
 
           {/* Advanced Filters Toggle */}
           <Collapsible open={showAdvancedFilters} onOpenChange={setShowAdvancedFilters}>
-
-              {/* filter bar button ?? */}
-
-            {/* <CollapsibleTrigger asChild>
-              <Button variant="outline" className="w-full justify-between" onClick={toggleAdvancedFilters}>
-                <div className="flex items-center">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Advanced Filters
-                  {hasActiveAdvancedFilters && (
-                    <span className="ml-2 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Active</span>
-                  )}
-                </div>
-                {showAdvancedFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-              </Button>
-            </CollapsibleTrigger> */}
-
             <CollapsibleContent className="space-y-4 mt-4">
               <form onSubmit={handleAdvancedSubmit} className="space-y-4">
                 {/* Location filters */}

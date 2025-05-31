@@ -39,19 +39,16 @@ export async function GET(req: NextRequest) {
   if (query && query.trim() !== "") {
     queryBuilder = queryBuilder.ilike("name", `%${query}%`)
   }
-
   // Apply city filter if provided
   if (city && city.trim() !== "") {
     queryBuilder = queryBuilder.ilike("city", `%${city}%`)
   }
-
   // Apply state filter if provided
   if (state && state.trim() === "all") {
     // Do nothing, include all states
   } else if (state && state.trim() !== "") {
     queryBuilder = queryBuilder.ilike("state", `%${state}%`)
   }
-
   // If no filters are provided, return empty array
   if (!query && !city && !state && !industry) {
     return NextResponse.json([])

@@ -22,7 +22,7 @@ interface JoinedInvestment extends Investment {
 
 interface ManageRequestsProps {
   investments: JoinedInvestment[] | null
-  onAcceptInvestment?: (investmentId: string) => void
+  onAcceptInvestment: (investmentId: string) => void
   // TODO: decline investment
   onDeclineInvestment?: (investmentId: string) => void
 }

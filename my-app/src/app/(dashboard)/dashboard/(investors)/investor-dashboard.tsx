@@ -9,6 +9,9 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { updateInvestment } from "@/app/(dashboard)/dashboard/actions";
 import InvestmentHistory from "@/app/(dashboard)/dashboard/(investors)/(components)/investment-history";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChevronDown, ChevronUp, TrendingUp } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface JoinedInvestment extends Investment {
   fund_pool: FundPool;
@@ -21,7 +24,12 @@ interface InvestorDashboardProps {
 }
 
 export default function InvestorDashboard({ investments }: InvestorDashboardProps) {
+  const [expandedCard, setExpandedCard] = useState<string | null>(null)
   const [currentInvestments, setCurrentInvestments] = useState<JoinedInvestment[] | null>(investments);
+
+  const toggleCard = (cardId: string) => {
+    setExpandedCard(expandedCard === cardId ? null : cardId)
+  }
 
   const handleConfirmInvestment = async (investmentId: string) => {
     try {
@@ -78,6 +86,53 @@ export default function InvestorDashboard({ investments }: InvestorDashboardProp
 
             {/* Investor History Card - Right */}
             <InvestmentHistory investments={currentInvestments} />
+
+            {/* Bottom row - Analytics taking full width */}
+          <Card
+            className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105"
+            onClick={() => toggleCard("analytics")}
+          >
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 rounded-lg bg-gray-100">
+                    <TrendingUp className="w-5 h-5 text-gray-500" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Analytics</CardTitle>
+                    <Badge variant="secondary" className="mt-1 text-xs">
+                      Coming Soon
+                    </Badge>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {expandedCard === "analytics" ? (
+                    <ChevronUp className="w-5 h-5 text-gray-400" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-gray-400" />
+                  )}
+                </div>
+              </div>
+              {!expandedCard && <CardDescription>View detailed insights and reports</CardDescription>}
+            </CardHeader>
+
+            {expandedCard === "analytics" && (
+              <CardContent className="pt-0">
+                <div className="animate-in slide-in-from-top-2 duration-300 space-y-4 text-center">
+                  <div className="p-8 bg-gray-50 rounded-lg">
+                    <TrendingUp className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-600 mb-2">Analytics Dashboard</h3>
+                    <p className="text-gray-500 mb-4">
+                      Advanced analytics and reporting features are currently in development.
+                    </p>
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                      Coming Soon
+                    </Badge>
+                  </div>
+                </div>
+              </CardContent>
+            )}
+          </Card>
           </div>
         </div>
       </div>

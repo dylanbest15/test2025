@@ -113,7 +113,7 @@ export default function FounderDashboard({ investments }: FounderDashboardProps)
                   )}
                 </div>
               </div>
-              <CardDescription>View detailed insights and reports</CardDescription>
+              {!expandedCard && <CardDescription>View detailed insights and reports</CardDescription>}
             </CardHeader>
 
             {expandedCard === "analytics" && (

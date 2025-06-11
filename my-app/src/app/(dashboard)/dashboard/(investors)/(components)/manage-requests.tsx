@@ -2,18 +2,16 @@
 
 import type React from "react"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { FundPool } from "@/types/fund-pool"
 import type { Investment } from "@/types/investment"
 import type { Profile } from "@/types/profile"
-import { Check, ChevronDown, ChevronUp, DollarSign, X } from "lucide-react"
+import { AlertCircle, ArrowRight, Building2, ChevronDown, ChevronUp } from "lucide-react"
 import { useState } from "react"
 import { formatCurrency } from "@/lib/utils"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { Startup } from "@/types/startup"
-import PreviousInvestments from "@/app/(dashboard)/dashboard/(investors)/(components)/previous-investments"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import InvestmentDetails from "@/app/(dashboard)/dashboard/(investors)/(components)/investment-details"
 
 interface JoinedInvestment extends Investment {
   fund_pool: FundPool
@@ -23,7 +21,7 @@ interface JoinedInvestment extends Investment {
 
 interface ManageRequestsProps {
   investments: JoinedInvestment[] | null
-  onConfirmInvestment?: (investmentId: string) => void
+  onConfirmInvestment: (investmentId: string) => void
   // TODO: withdraw investment
   onWithdrawInvestment?: (investmentId: string) => void
 }
@@ -35,65 +33,18 @@ export default function ManageRequests({
 }: ManageRequestsProps) {
   const [expandedCard, setExpandedCard] = useState<boolean>(false)
   const [sheetOpen, setSheetOpen] = useState(false)
-  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false)
-  const [showWithdrawModal, setShowWithdrawModal] = useState<boolean>(false)
   const [selectedInvestment, setSelectedInvestment] = useState<JoinedInvestment | null>(null)
 
   // Filter requests by status and sort by newest
-  const needsActionInvestments = investments?.filter((investment) => investment.status === "needs_action")
-    .sort((a, b) => b.created_at.localeCompare(a.created_at)) || []
-  const pendingInvestments = investments?.filter((investment) => investment.status === "pending")
-    .sort((a, b) => b.updated_at!.localeCompare(a.updated_at!)) || []
+  const filteredInvestments =
+    investments
+      ?.filter((investment) => investment.status === "needs_action" || investment.status === "pending")
+      .sort((a, b) => a.startup.name.localeCompare(b.startup.name)) || []
 
-  const displayRequests = needsActionInvestments.length + pendingInvestments.length
+  const displayRequests = filteredInvestments.length
 
   const toggleCard = () => {
     setExpandedCard(!expandedCard)
-  }
-
-  const handleConfirmClick = (investment: JoinedInvestment, event: React.MouseEvent) => {
-    event.stopPropagation() // Prevent card from collapsing
-    setSelectedInvestment(investment)
-    setShowConfirmModal(true)
-  }
-
-  const handleWithdrawClick = (investment: JoinedInvestment, event: React.MouseEvent) => {
-    event.stopPropagation() // Prevent card from collapsing
-    setSelectedInvestment(investment)
-    setShowWithdrawModal(true)
-  }
-
-  const handleConfirmConfirm = () => {
-    if (selectedInvestment && onConfirmInvestment) {
-      onConfirmInvestment(selectedInvestment.id)
-    }
-    setShowConfirmModal(false)
-    setSelectedInvestment(null)
-  }
-
-  const handleCancelConfirm = () => {
-    setShowConfirmModal(false)
-    setSelectedInvestment(null)
-  }
-
-  const handleConfirmWithdraw = () => {
-    if (selectedInvestment && onWithdrawInvestment) {
-      onWithdrawInvestment(selectedInvestment.id)
-    }
-    setShowWithdrawModal(false)
-    setSelectedInvestment(null)
-  }
-
-  const handleCancelWithdraw = () => {
-    setShowWithdrawModal(false)
-    setSelectedInvestment(null)
-  }
-
-  const showPreviousInvestments = (e: React.MouseEvent) => {
-    // Prevent the click from bubbling up to the parent Link
-    e.preventDefault()
-    e.stopPropagation()
-    setSheetOpen(true)
   }
 
   return (
@@ -103,14 +54,14 @@ export default function ManageRequests({
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center space-x-3">
               <div className="p-2 rounded-lg bg-green-100">
-                <DollarSign className="w-5 h-5 text-green-600" />
+                <AlertCircle className="w-5 h-5 text-green-600" />
               </div>
               <div>
                 <CardTitle className="text-lg">Manage Requests</CardTitle>
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              {!expandedCard && displayRequests > 0 && (
+              {displayRequests > 0 && (
                 <Badge variant="default" className="text-xs bg-blue-500">
                   {displayRequests}
                 </Badge>
@@ -122,7 +73,7 @@ export default function ManageRequests({
               )}
             </div>
           </div>
-          <CardDescription>Review and manage investment requests</CardDescription>
+          {!expandedCard && <CardDescription>Review and manage fund pool requests</CardDescription>}
         </CardHeader>
 
         {expandedCard && (
@@ -130,72 +81,55 @@ export default function ManageRequests({
             <div className="animate-in slide-in-from-top-2 duration-300 space-y-4">
               {displayRequests ? (
                 <div className="space-y-3">
-
-                  {/* Needs Action Requests */}
-                  {needsActionInvestments.map((investment) => (
-                    <div key={investment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  {filteredInvestments.map((investment) => (
+                    <div
+                      key={investment.id}
+                      className="relative flex items-start p-2 pt-0 pb-4 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setSelectedInvestment(investment)
+                        setSheetOpen(true)
+                      }}
+                    >
                       <div className="flex flex-col">
-                        <span className="text-sm font-medium">
-                          {investment.startup.name}
-                        </span>
-                        <span className="text-sm text-gray-500">{formatCurrency(investment.amount)}</span>
-                        <Badge className="text-xs bg-yellow-100 text-yellow-800 w-fit mt-1">Awaiting Startup Action</Badge>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="flex flex-col space-y-1">
-                          {/* <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-8 px-3 text-xs bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
-                            onClick={(e) => handleAcceptClick(investment, e)}
-                          >
-                            <Check className="w-3 h-3 mr-1" />
-                            Accept
-                          </Button> */}
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-8 px-3 text-xs bg-red-50 border-red-200 text-red-700 hover:bg-red-100"
-                            onClick={(e) => handleWithdrawClick(investment, e)}
-                          >
-                            <X className="w-3 h-3 mr-1" />
-                            Withdraw
-                          </Button>
+                        <div className="flex items-start space-x-3 flex-1">
+                          <div className="relative -mt-1 -ml-2">
+                            {investment.startup.logo_url ? (
+                              <div className="h-12 w-12 border border-gray-200 overflow-hidden flex items-center justify-center bg-white">
+                                <img
+                                  src={investment.startup.logo_url || "/placeholder.svg"}
+                                  alt={`${investment.startup.name || "Company"} logo`}
+                                  className="object-contain max-h-full max-w-full"
+                                  style={{ objectPosition: "center" }}
+                                />
+                              </div>
+                            ) : (
+                              <div className="h-12 w-12 bg-gray-100 flex items-center justify-center border border-gray-200">
+                                <Building2 className="h-6 w-6 text-gray-400" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-">
+                            <h3 className="font-semibold text-md text-gray-900 leading-tight">
+                              {investment.startup.name}
+                            </h3>
+                            <span className="text-md font-medium text-green-600">
+                              {formatCurrency(investment.amount)}
+                            </span>
+                          </div>
+
                         </div>
                       </div>
-                    </div>
-                  ))}
-
-                  {/* Pending Requests */}
-                  {pendingInvestments.map((investment) => (
-                    <div key={investment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium">
-                          {investment.startup.name}
-                        </span>
-                        <span className="text-sm text-gray-500">{formatCurrency(investment.amount)}</span>
-                        <Badge className="text-xs bg-yellow-100 text-yellow-800 w-fit mt-1">Needs Action</Badge>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="flex flex-col space-y-1">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-8 px-3 text-xs bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
-                            onClick={(e) => handleConfirmClick(investment, e)}
-                          >
-                            <Check className="w-3 h-3 mr-1" />
-                            Confirm
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-8 px-3 text-xs bg-red-50 border-red-200 text-red-700 hover:bg-red-100"
-                            onClick={(e) => handleWithdrawClick(investment, e)}
-                          >
-                            <X className="w-3 h-3 mr-1" />
-                            Withdraw
-                          </Button>
+                      <div className="absolute right-4 flex flex-col items-end">
+                        <Badge className={`text-xs w-fit ${investment.status === "needs_action"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-yellow-100 text-yellow-800"
+                          }`}>
+                          {investment.status === "needs_action" ? "Pending" : "Needs Action"}
+                        </Badge>
+                        <div className="flex items-center space-x-1 mt-1">
+                          <span className="text-xs text-gray-500">View details</span>
+                          <ArrowRight className="w-3 h-3 text-gray-400" />
                         </div>
                       </div>
                     </div>
@@ -206,100 +140,10 @@ export default function ManageRequests({
                   <p className="text-sm text-gray-500">No current investment requests</p>
                 </div>
               )}
-
-              <Button className="w-full" onClick={showPreviousInvestments} disabled={!investments}>
-                {investments ? "View Previous Investors" : "No Previous Investors"}
-              </Button>
             </div>
           </CardContent>
         )}
       </Card>
-
-      {/* Confirm Confirmation Modal */}
-      <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Confirm Investment Request</DialogTitle>
-            <DialogDescription>Are you sure you want to confirm this investment request?</DialogDescription>
-          </DialogHeader>
-
-          {selectedInvestment && (
-            <div className="py-4">
-              <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Startup:</span>
-                  <span className="text-sm font-medium">
-                    {selectedInvestment.startup.name}
-                  </span>
-                </div>
-                {/* <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Email:</span>
-                        <span className="text-sm">{selectedInvestment.profile.email}</span>
-                      </div> */}
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Investment Amount:</span>
-                  <span className="text-sm font-medium text-green-600">
-                    {formatCurrency(selectedInvestment.amount)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <DialogFooter className="flex space-x-2">
-            <Button variant="outline" onClick={handleCancelConfirm}>
-              Cancel
-            </Button>
-            <Button onClick={handleConfirmConfirm} className="bg-green-600 hover:bg-green-700">
-              <Check className="w-4 h-4 mr-2" />
-              Confirm Investment
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Withdraw Confirmation Modal */}
-      <Dialog open={showWithdrawModal} onOpenChange={setShowWithdrawModal}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Withdraw Investment Request</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to withdraw this investment request?
-            </DialogDescription>
-          </DialogHeader>
-
-          {/* {selectedInvestment && (
-            <div className="py-4">
-              <div className="bg-red-50 rounded-lg p-4 space-y-2 border border-red-200">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Investor:</span>
-                  <span className="text-sm font-medium">
-                    {selectedInvestment.profile.first_name} {selectedInvestment.profile.last_name}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Email:</span>
-                  <span className="text-sm">{selectedInvestment.profile.email}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Investment Amount:</span>
-                  <span className="text-sm font-medium text-red-600">{formatCurrency(selectedInvestment.amount)}</span>
-                </div>
-              </div>
-            </div>
-          )} */}
-
-          <DialogFooter className="flex space-x-2">
-            <Button variant="outline" onClick={handleCancelWithdraw}>
-              Cancel
-            </Button>
-            <Button onClick={handleConfirmWithdraw} variant="destructive" className="bg-red-600 hover:bg-red-700">
-              <X className="w-4 h-4 mr-2" />
-              Withdraw Request
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent
@@ -308,7 +152,13 @@ export default function ManageRequests({
           aria-describedby={undefined}
         >
           <SheetTitle className="sr-only"></SheetTitle>
-          <PreviousInvestments investments={investments} onClose={() => setSheetOpen(false)} />
+          {selectedInvestment && (
+            <InvestmentDetails
+              investment={selectedInvestment}
+              onConfirmConfirm={onConfirmInvestment}
+              onConfirmWithdraw={onWithdrawInvestment}
+              onBack={() => setSheetOpen(false)} />
+          )}
         </SheetContent>
       </Sheet>
     </>

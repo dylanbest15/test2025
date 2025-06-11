@@ -43,13 +43,6 @@ export default function InvestorPool({
     setExpandedCard(!expandedCard)
   }
 
-  const showPreviousInvestors = (e: React.MouseEvent) => {
-    // Prevent the click from bubbling up to the parent Link
-    e.preventDefault()
-    e.stopPropagation()
-    setSheetOpen(true)
-  }
-
   return (
     <>
       <Card className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105" onClick={toggleCard}>

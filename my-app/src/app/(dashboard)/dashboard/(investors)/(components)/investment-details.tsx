@@ -42,6 +42,7 @@ export default function InvestmentDetails({ investment, onConfirmConfirm, onConf
       onConfirmConfirm(investment.id)
     }
     setShowConfirmModal(false)
+    onBack()
   }
 
   const handleCancelConfirm = () => {
@@ -53,6 +54,7 @@ export default function InvestmentDetails({ investment, onConfirmConfirm, onConf
       onConfirmWithdraw(investment.id)
     }
     setShowWithdrawModal(false)
+    onBack()
   }
 
   const handleCancelWithdraw = () => {

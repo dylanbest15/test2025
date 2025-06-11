@@ -19,6 +19,14 @@ export function getNotificationConfigForInvestment(investmentData: Investment): 
     confirmed: (data) => ({
       type: "investment_confirmed",
       recipient_id: data.startup_id,
+    }),
+    declined: (data) => ({
+      type: "investment_declined",
+      recipient_id: data.profile_id
+    }),
+    withdrawn: (data) => ({
+      type: "investment_withdrawn",
+      recipient_id: data.startup_id
     })
   }
 

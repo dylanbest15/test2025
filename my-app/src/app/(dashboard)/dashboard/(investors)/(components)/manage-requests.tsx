@@ -22,8 +22,7 @@ interface JoinedInvestment extends Investment {
 interface ManageRequestsProps {
   investments: JoinedInvestment[] | null
   onConfirmInvestment: (investmentId: string) => void
-  // TODO: withdraw investment
-  onWithdrawInvestment?: (investmentId: string) => void
+  onWithdrawInvestment: (investmentId: string) => void
 }
 
 export default function ManageRequests({

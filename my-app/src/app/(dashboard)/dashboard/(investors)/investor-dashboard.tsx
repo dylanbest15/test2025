@@ -63,6 +63,38 @@ export default function InvestorDashboard({ investments }: InvestorDashboardProp
     }
   }
 
+  const handleWithdrawInvestment = async (investmentId: string) => {
+    try {
+      const updateData: Partial<Investment> = {
+        status: 'withdrawn'
+      }
+
+      const updatedInvestment = await updateInvestment(investmentId, updateData);
+
+      // Replace the updated fields in the investments array
+      setCurrentInvestments(currentInvestments =>
+        currentInvestments?.map(investment =>
+          investment.id === investmentId
+            ? {
+              ...investment,
+              status: updatedInvestment.status,
+              updated_at: updatedInvestment.updated_at
+            }
+            : investment
+        ) || null
+      )
+      toast.success("Withdrawn.", {
+        description: "You have withdrawn an investment request.",
+      })
+    } catch (error) {
+      toast.error("Operation failed", {
+        description: "Failed to withdraw investment request.",
+      })
+      console.error("Failed to update investment:", error)
+      throw error
+    }
+  }
+
   useEffect(() => {
     setCurrentInvestments(investments);
   }, [investments]);
@@ -82,7 +114,11 @@ export default function InvestorDashboard({ investments }: InvestorDashboardProp
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 
             {/* Manage Requests Card - Left */}
-            <ManageRequests investments={currentInvestments} onConfirmInvestment={handleConfirmInvestment} />
+            <ManageRequests 
+              investments={currentInvestments} 
+              onConfirmInvestment={handleConfirmInvestment}
+              onWithdrawInvestment={handleWithdrawInvestment}
+            />
 
             {/* Investor History Card - Right */}
             <InvestmentHistory investments={currentInvestments} />

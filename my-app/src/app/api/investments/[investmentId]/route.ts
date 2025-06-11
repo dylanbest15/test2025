@@ -31,6 +31,8 @@ export async function PUT(req: NextRequest, { params }: { params: { investmentId
       return NextResponse.json({ error: investmentErr.message }, { status: 500 });
     }
 
+    console.log(investmentData);
+
     // create notification
     const notificationConfig = getNotificationConfigForInvestment(investmentData)
 

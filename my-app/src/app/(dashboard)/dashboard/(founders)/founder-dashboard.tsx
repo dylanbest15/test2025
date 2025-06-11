@@ -63,6 +63,38 @@ export default function FounderDashboard({ investments }: FounderDashboardProps)
     }
   }
 
+  const handleDeclineInvestment = async (investmentId: string) => {
+    try {
+      const updateData: Partial<Investment> = {
+        status: 'declined'
+      }
+
+      const updatedInvestment = await updateInvestment(investmentId, updateData);
+
+      // Replace the updated fields in the investments array
+      setCurrentInvestments(currentInvestments =>
+        currentInvestments?.map(investment =>
+          investment.id === investmentId
+            ? {
+              ...investment,
+              status: updatedInvestment.status,
+              updated_at: updatedInvestment.updated_at
+            }
+            : investment
+        ) || null
+      )
+      toast.success("Declined.", {
+        description: "You have declined an investment request.",
+      })
+    } catch (error) {
+      toast.error("Operation failed", {
+        description: "Failed to decline investment request.",
+      })
+      console.error("Failed to update investment:", error)
+      throw error
+    }
+  }
+
   useEffect(() => {
     setCurrentInvestments(investments);
   }, [investments]);
@@ -81,7 +113,11 @@ export default function FounderDashboard({ investments }: FounderDashboardProps)
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
             {/* Manage Requests Card - Left */}
-            <ManageRequests investments={currentInvestments} onAcceptInvestment={handleAcceptInvestment} />
+            <ManageRequests 
+              investments={currentInvestments} 
+              onAcceptInvestment={handleAcceptInvestment}
+              onDeclineInvestment={handleDeclineInvestment}
+            />
 
             {/* My Fund Pool Card - Right */}
             <InvestorPool investments={currentInvestments} />

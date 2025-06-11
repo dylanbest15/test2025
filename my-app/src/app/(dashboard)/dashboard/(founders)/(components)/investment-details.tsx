@@ -55,6 +55,7 @@ export default function InvestmentDetails({
       onConfirmAccept(investment.id)
     }
     setShowAcceptModal(false)
+    onBack()
   }
 
   const handleCancelAccept = () => {
@@ -66,6 +67,7 @@ export default function InvestmentDetails({
       onConfirmDecline(investment.id)
     }
     setShowDeclineModal(false)
+    onBack()
   }
 
   const handleCancelDecline = () => {

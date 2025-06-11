@@ -56,7 +56,7 @@ export default async function Notifications() {
     }
   
   return (
-    <div className="w-full bg-[#f8f9fa]">
+    <div className="w-full bg-[#f8f9fa] mb-20">
       <ViewNotifications notifications={notifications} />
     </div>
   )

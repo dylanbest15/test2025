@@ -101,18 +101,18 @@ export default function ManageRequests({ investments, onAcceptInvestment, onDecl
                               </AvatarFallback>
                             </Avatar>
                           </div>
-                          <div className="flex-1 min-w-">
-                            <h3 className="font-semibold text-md text-gray-900 leading-tight">
+                          <div className="flex-1 min-w-0 pr-20">
+                            <h3 className="font-semibold text-sm text-gray-900 leading-tight">
                               {displayName(investment.profile)}
                             </h3>
-                            <span className="text-md font-medium text-green-600">
+                            <span className="text-sm font-medium text-green-600">
                               {formatCurrency(investment.amount)}
                             </span>
                           </div>
 
                         </div>
                       </div>
-                      <div className="absolute right-4 flex flex-col items-end">
+                      <div className="absolute right-1 -top-1 flex flex-col items-end">
                         <Badge className={`text-xs w-fit ${investment.status === "needs_action"
                           ? "bg-yellow-100 text-yellow-800"
                           : "bg-blue-100 text-blue-800"

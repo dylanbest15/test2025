@@ -85,7 +85,7 @@ export function FavoriteCard({ favorite }: FavoriteCardProps) {
         <Card className="w-full overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer border-0 border-b border-gray-200 bg-white rounded-none">
           <CardContent className="px-6">
             <div className="flex items-start justify-between">
-              <div className="flex items-start space-x-6 flex-1">
+              <div className="flex items-start space-x-4 flex-1">
                 <div className="relative -mt-1 -ml-2">
                   {currentFavorite.startup.logo_url ? (
                     <div className="h-16 w-16 border border-gray-200 overflow-hidden flex items-center justify-center bg-white">
@@ -102,8 +102,8 @@ export function FavoriteCard({ favorite }: FavoriteCardProps) {
                     </div>
                   )}
                 </div>
-                <div className="flex-1 min-w-0 pt-1">
-                  <h3 className="font-semibold text-lg text-gray-900 leading-tight mb-1">{currentFavorite.startup.name}</h3>
+                <div className="flex-1 min-w-0 pt-1 pr-5">
+                  <h3 className="font-semibold text-md text-gray-900 leading-tight mb-1">{currentFavorite.startup.name}</h3>
                   <p className="text-sm text-gray-600 mb-1">
                     {currentFavorite.startup.city}, {currentFavorite.startup.state}
                   </p>
@@ -112,7 +112,7 @@ export function FavoriteCard({ favorite }: FavoriteCardProps) {
                 <div className="relative">
                   <button
                     onClick={handleFollowClick}
-                    className="absolute right-0 top-0 p-2"
+                    className="absolute -right-4 -top-2 p-2"
                     aria-label={following ? "Unfavorite startup" : "Favorite startup"}
                   >
                     <Heart

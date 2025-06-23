@@ -16,9 +16,11 @@ interface ViewStartupMobileProps {
   fundPool: FundPool | null
   investments: Investment[] | []
   onCreateFundPool: (amount: number) => Promise<boolean>
+  onIncreaseFundGoal: () => Promise<boolean>
+  onCloseFundPool: () => Promise<boolean>
 }
 
-export default function ViewStartupMobile({ startup, industries, fundPool, investments, onCreateFundPool }: ViewStartupMobileProps) {
+export default function ViewStartupMobile({ startup, industries, fundPool, investments, onCreateFundPool, onIncreaseFundGoal, onCloseFundPool }: ViewStartupMobileProps) {
   const [activeTab, setActiveTab] = useState("pitch-deck")
   const [isOverviewExpanded, setIsOverviewExpanded] = useState(false)
 
@@ -103,7 +105,13 @@ export default function ViewStartupMobile({ startup, industries, fundPool, inves
           </div>
 
           {/* Fund Pool Card */}
-          <FundPoolCard fundPool={fundPool} investments={investments} onCreateFundPool={onCreateFundPool} />
+          <FundPoolCard 
+            fundPool={fundPool} 
+            investments={investments} 
+            onCreateFundPool={onCreateFundPool} 
+            onIncreaseFundGoal={onIncreaseFundGoal}
+            onCloseFundPool={onCloseFundPool} 
+          />
 
           {/* Tabs Section */}
           <Tabs defaultValue="pitch-deck" className="w-full mt-4" onValueChange={setActiveTab}>

@@ -49,12 +49,78 @@ export default function ViewStartup({ startup, industries, fundPool, investments
     [startup.id],
   )
 
+  const handleInceaseFundGoal = useCallback(
+    async () => {
+      console.log('increase fund goal');
+      return true;
+      // try {
+      //   const fundPoolData = {
+      //     startup_id: startup.id,
+      //     fund_goal: amount,
+      //   }
+      //   const newFundPool = await createFundPool(fundPoolData)
+
+      //   // Update the local state with the new data
+      //   setCurrentFundPool((prev) => ({
+      //     ...prev,
+      //     ...newFundPool,
+      //   }))
+
+      //   toast.success("Success!", {
+      //     description: "Your fund pool has been created successfully.",
+      //   })
+      //   return true
+      // } catch (error) {
+      //   toast.error("Operation failed", {
+      //     description: "Failed to create fund pool.",
+      //   })
+      //   console.error("Failed to create fund pool:", error)
+      //   throw error
+      // }
+    },
+    [startup.id],
+  )
+
+  const handleCloseFundPool = useCallback(
+    async () => {
+      console.log('closing fund pool');
+      return true;
+      // try {
+      //   const fundPoolData = {
+      //     startup_id: startup.id,
+      //     fund_goal: amount,
+      //   }
+      //   const newFundPool = await createFundPool(fundPoolData)
+
+      //   // Update the local state with the new data
+      //   setCurrentFundPool((prev) => ({
+      //     ...prev,
+      //     ...newFundPool,
+      //   }))
+
+      //   toast.success("Success!", {
+      //     description: "Your fund pool has been created successfully.",
+      //   })
+      //   return true
+      // } catch (error) {
+      //   toast.error("Operation failed", {
+      //     description: "Failed to create fund pool.",
+      //   })
+      //   console.error("Failed to create fund pool:", error)
+      //   throw error
+      // }
+    },
+    [startup.id],
+  )
+
   const viewProps = {
     startup,
     industries,
     fundPool: currentFundPool,
     investments,
-    onCreateFundPool: handleCreateFundPool
+    onCreateFundPool: handleCreateFundPool,
+    onIncreaseFundGoal: handleInceaseFundGoal,
+    onCloseFundPool: handleCloseFundPool
   }
 
   return (

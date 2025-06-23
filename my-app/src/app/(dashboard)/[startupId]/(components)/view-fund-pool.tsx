@@ -8,7 +8,7 @@ import { Check, PlusCircle } from "lucide-react"
 import type { FundPool } from "@/types/fund-pool"
 import { JoinFundPool } from "@/app/(dashboard)/[startupId]/(components)/join-fund-pool"
 import { useMemo, useState } from "react"
-import { Investment } from "@/types/investment"
+import { getFormattedInvestmentStatus, Investment } from "@/types/investment"
 
 interface ViewFundPoolProps {
   fundPool: FundPool | null
@@ -19,6 +19,8 @@ interface ViewFundPoolProps {
 
 export default function ViewFundPoolCard({ fundPool, investments, existingInvestment, onJoinFundPool }: ViewFundPoolProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
+
+  console.log(existingInvestment);
 
   // Calculate total confirmed investments
   const totalConfirmedInvestments = useMemo(() => {
@@ -93,7 +95,7 @@ export default function ViewFundPoolCard({ fundPool, investments, existingInvest
                   <div className="absolute inset-0 w-3 bg-white/20 skew-x-[-20deg] group-hover:animate-shimmer" />
                   <div className="flex items-center justify-center gap-2">
                     {existingInvestment ? <Check className="h-5 w-5" /> : <PlusCircle className="h-5 w-5" />}
-                    <span>{existingInvestment ? "Request Pending" : "Join Fund Pool"}</span>
+                    <span>{existingInvestment ? `Request ${getFormattedInvestmentStatus(existingInvestment.status)}` : "Join Fund Pool"}</span>
                   </div>
                 </Button>
               </div>

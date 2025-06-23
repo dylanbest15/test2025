@@ -16,9 +16,11 @@ interface ViewStartupDesktopProps {
   fundPool: FundPool | null
   investments: Investment[] | []
   onCreateFundPool: (amount: number) => Promise<boolean>
+  onIncreaseFundGoal: () => Promise<boolean>
+  onCloseFundPool: () => Promise<boolean>
 }
 
-export default function ViewStartupDesktop({ startup, industries, fundPool, investments, onCreateFundPool }: ViewStartupDesktopProps) {
+export default function ViewStartupDesktop({ startup, industries, fundPool, investments, onCreateFundPool, onIncreaseFundGoal, onCloseFundPool }: ViewStartupDesktopProps) {
   return (
     <div className="min-h-screen bg-background flex">
 
@@ -103,8 +105,14 @@ export default function ViewStartupDesktop({ startup, industries, fundPool, inve
             </div>
           </div>
 
-          {/* Funding Goal */}
-          <FundPoolCard fundPool={fundPool} investments={investments} onCreateFundPool={onCreateFundPool} />
+          {/* Fund Pool Card */}
+          <FundPoolCard 
+            fundPool={fundPool} 
+            investments={investments} 
+            onCreateFundPool={onCreateFundPool} 
+            onIncreaseFundGoal={onIncreaseFundGoal} 
+            onCloseFundPool={onCloseFundPool} 
+          />
 
           {/* Two Column Content */}
           <div className="grid grid-cols-3 gap-6">

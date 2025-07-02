@@ -173,7 +173,7 @@ export default function CreateStartupForm({ profile, onStartupCreated }: CreateS
         <h2 className="mb-6 text-xl font-semibold">Create a new startup.</h2>
         <p className="mb-6 text-gray-500">
           If your startup hasn't been added yet then you can create it here. You will be the admin of your startup and
-          you can send invites your co-founders to join.
+          you can send invites to your co-founders to join.
         </p>
         <Button onClick={() => setOpen(true)}>Create a Startup</Button>
       </div>
@@ -248,7 +248,7 @@ export default function CreateStartupForm({ profile, onStartupCreated }: CreateS
                       className={cn("w-full", invalidFields.has("state") ? "border-destructive" : "")}
                       autoFocus
                     >
-                      <SelectValue placeholder="Select state" />
+                      <SelectValue placeholder="Select state or province" />
                     </SelectTrigger>
                     <SelectContent>
                       {statesAndProvinces.map((location) => (

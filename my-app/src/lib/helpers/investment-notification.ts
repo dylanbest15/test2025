@@ -27,6 +27,10 @@ export function getNotificationConfigForInvestment(investmentData: Investment): 
     withdrawn: (data) => ({
       type: "investment_withdrawn",
       recipient_id: data.startup_id
+    }),
+    inactive: (data) => ({
+      type: "investment_inactive",
+      recipient_id: data.profile_id
     })
   }
 

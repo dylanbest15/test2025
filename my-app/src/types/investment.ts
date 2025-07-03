@@ -7,7 +7,7 @@
 export type Investment = {
   id: string;
   amount: number;
-  status: 'needs_action' | 'pending' | 'confirmed' | 'declined' | 'withdrawn'
+  status: 'needs_action' | 'pending' | 'confirmed' | 'declined' | 'withdrawn' | 'inactive'
   fund_pool_id: string;
   startup_id: string;
   profile_id: string;

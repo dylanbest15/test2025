@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { formatCurrency } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
@@ -9,7 +8,7 @@ import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Check, PlusCircle, TrendingUp, DollarSign, ArrowLeft, AlertTriangle } from "lucide-react"
+import { Check, PlusCircle, TrendingUp, DollarSign, ArrowLeft, X, Trophy } from "lucide-react"
 import type { FundPool } from "@/types/fund-pool"
 import { useState, useMemo } from "react"
 import { FundPoolCreate } from "@/app/(dashboard)/my-startup/(view-startup)/(components)/fund-pool-create"
@@ -19,7 +18,7 @@ interface FundPoolProps {
   fundPool: FundPool | null
   investments: Investment[] | []
   onCreateFundPool: (amount: number) => void
-  onIncreaseFundGoal: () => void
+  onIncreaseFundGoal: (amount: number) => void
   onCloseFundPool: () => void
 }
 
@@ -36,6 +35,7 @@ export default function FundPoolCard({
   const [overlayView, setOverlayView] = useState<OverlayView>("goal-reached")
   const [newGoalAmount, setNewGoalAmount] = useState("")
   const [goalError, setGoalError] = useState("")
+  const [showOverlay, setShowOverlay] = useState(true) // New state for overlay visibility
 
   // Calculate total confirmed investments
   const totalConfirmedInvestments = useMemo(() => {
@@ -82,6 +82,20 @@ export default function FundPoolCard({
     setGoalError("")
   }
 
+  // New function to close the overlay
+  const handleCloseOverlay = () => {
+    setShowOverlay(false)
+    setOverlayView("goal-reached") // Reset to default view
+    setNewGoalAmount("")
+    setGoalError("")
+  }
+
+  // New function to show the overlay
+  const handleShowOverlay = () => {
+    setShowOverlay(true)
+    setOverlayView("goal-reached")
+  }
+
   // Format input as currency
   const handleGoalAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Remove all non-numeric characters
@@ -123,20 +137,17 @@ export default function FundPoolCard({
       return
     }
 
-    // Console log for now (replace with actual API call later)
-    console.log("New funding goal amount:", numericAmount)
-
     // Reset and close
     setNewGoalAmount("")
     setGoalError("")
-    // You would call onIncreaseFundGoal() here with the new amount
-    // For now, we'll just close the overlay
-    setOverlayView("goal-reached")
+    onIncreaseFundGoal(numericAmount)
+    handleCloseOverlay()
   }
 
   const handleConfirmClose = () => {
     console.log("Closing fund pool")
     onCloseFundPool()
+    handleCloseOverlay()
   }
 
   const renderOverlayContent = () => {
@@ -148,15 +159,17 @@ export default function FundPoolCard({
               <Button variant="ghost" size="sm" onClick={handleBackToGoalReached} className="p-1 h-8 w-8 mr-2">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
-              <h3 className="text-xl font-bold text-gray-900">Increase Funding Goal</h3>
+              <h3 className="text-xl font-bold text-gray-900 flex-1">Increase Funding Goal</h3>
+              <Button variant="ghost" size="sm" onClick={handleCloseOverlay} className="p-1 h-8 w-8">
+                <X className="w-4 h-4" />
+              </Button>
             </div>
 
             <div className="mb-6">
               <p className="text-sm text-gray-600 mb-2">
-                Current goal achieved:{" "}<span className="font-semibold text-green-600">{formatCurrency(fundPool?.fund_goal || 0)}</span>
-
+                Current goal achieved:{" "}
+                <span className="font-semibold text-green-600">{formatCurrency(fundPool?.fund_goal || 0)}</span>
               </p>
-              {/* <p className="text-sm text-gray-600">Set a higher funding goal for your fund pool.</p> */}
             </div>
 
             <form onSubmit={handleSubmitNewGoal} className="space-y-4">
@@ -205,7 +218,10 @@ export default function FundPoolCard({
               <Button variant="ghost" size="sm" onClick={handleBackToGoalReached} className="p-1 h-8 w-8 mr-2">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
-              <h3 className="text-xl font-bold text-gray-900">Close Fund Pool</h3>
+              <h3 className="text-xl font-bold text-gray-900 flex-1">Close Fund Pool</h3>
+              <Button variant="ghost" size="sm" onClick={handleCloseOverlay} className="p-1 h-8 w-8">
+                <X className="w-4 h-4" />
+              </Button>
             </div>
 
             <div className="text-center mb-6">
@@ -213,17 +229,17 @@ export default function FundPoolCard({
                 <Check className="w-6 h-6 text-green-600" />
               </div>
               <p className="text-sm text-gray-600 leading-relaxed">
-              Are you sure you want to mark this fund pool as closed?{" "}
+                Are you sure you want to mark this fund pool as closed?{" "}
                 {openInvestments > 0 && (
                   <>
                     <span className="font-medium text-orange-700">
-                      {openInvestments}{" "}
-                      {openInvestments === 1 ? "investment request" : "investment requests"} will be
+                      {openInvestments} {openInvestments === 1 ? "investment request" : "investment requests"} will be
                       declined.
                     </span>{" "}
                   </>
                 )}
-                You will be able to create a new fund pool when you are ready to accept more investment requests.              </p>
+                You will be able to create a new fund pool when you are ready to accept more investment requests.{" "}
+              </p>
             </div>
 
             <div className="space-y-3">
@@ -244,15 +260,25 @@ export default function FundPoolCard({
       default: // 'goal-reached'
         return (
           <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl border border-gray-100 animate-in fade-in-0 zoom-in-95 duration-300">
-            <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+            <div className="relative mb-6">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCloseOverlay}
+                className="absolute top-0 right-0 p-1 h-8 w-8"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <TrendingUp className="w-6 h-6 text-green-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">🎉 Goal Reached!</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Amazing! You've successfully raised{" "}
+                  <span className="font-semibold text-green-600">{formatCurrency(fundPool?.fund_goal || 0)}</span>
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">🎉 Goal Reached!</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Amazing! You've successfully raised{" "}
-                <span className="font-semibold text-green-600">{formatCurrency(fundPool?.fund_goal || 0)}</span>
-              </p>
             </div>
 
             <div className="space-y-3">
@@ -263,7 +289,6 @@ export default function FundPoolCard({
                 <TrendingUp className="w-4 h-4 mr-2" />
                 Increase Fund Goal
               </Button>
-
               <Button
                 onClick={handleCloseFundPool}
                 className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-medium py-3 rounded-lg shadow-md transition-all duration-200"
@@ -291,8 +316,27 @@ export default function FundPoolCard({
           </div>
         )}
 
+        {/* Goal Reached Badge with See Next Steps */}
+        {fundPool && isFundingGoalReached && !showOverlay && (
+          <div className="absolute right-0 top-0 z-10 flex flex-col items-end">
+            <Badge
+              variant="outline"
+              className="rounded-none rounded-bl-md bg-green-50 text-green-700 border-green-200 px-3 py-1.5 font-medium"
+            >
+              <Trophy className="w-4 h-4 mr-1" />
+              Goal Reached
+            </Badge>
+            <button
+              onClick={handleShowOverlay}
+              className="text-xs text-blue-600 hover:text-blue-800 mt-1 mr-2 transition-colors"
+            >
+              See Next Steps
+            </button>
+          </div>
+        )}
+
         {/* Funding Goal Reached Overlay */}
-        {fundPool && isFundingGoalReached && (
+        {fundPool && isFundingGoalReached && showOverlay && (
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-25 flex items-center justify-center p-4 pb-12">
             {renderOverlayContent()}
           </div>

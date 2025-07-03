@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const InvestmentStatusSchema = z.enum(["needs_action", "pending", "confirmed", "declined", "withdrawn"])
+const InvestmentStatusSchema = z.enum(["needs_action", "pending", "confirmed", "declined", "withdrawn", 'inactive'])
 
 // API Create Schema
 export const InvestmentCreateSchema = z.object({

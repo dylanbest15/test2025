@@ -1,6 +1,6 @@
 export type Notification = {
   id: string;
-  type: 'investment_created' | 'investment_accepted' | 'investment_confirmed' | 'investment_declined' | 'investment_withdrawn'
+  type: 'investment_created' | 'investment_accepted' | 'investment_confirmed' | 'investment_declined' | 'investment_withdrawn' | 'investment_inactive'
   seen: boolean;
   recipient_id: string;
   updated_at: string | null;
@@ -19,6 +19,8 @@ export function generateNotificationTitle(notification: Notification): string {
       return "Investment Declined."
     case "investment_withdrawn":
       return "Investment Withdrawn."
+    case "investment_inactive":
+      return "Investment Inactive."
     default:
       return "Notification Alert"
   }
@@ -36,6 +38,8 @@ export function generateNotificationMessage(notification: Notification): string 
       return "A startup has declined your investment request."
     case "investment_withdrawn":
       return "An investor has withdrawn their investment request."
+    case "investment_inactive":
+      return "An investor has closed their fund pool. Your investment request is now inactive."
     default:
       return "You have a new notification."
   }
@@ -48,6 +52,7 @@ export function generateNotificationLabel(notification: Notification): string {
     case "investment_confirmed":
     case "investment_declined":
     case "investment_withdrawn":
+    case "investment_inactive":
       return "Investment"
     default:
       return "Notification"

@@ -16,7 +16,7 @@ interface ViewStartupMobileProps {
   fundPool: FundPool | null
   investments: Investment[] | []
   onCreateFundPool: (amount: number) => Promise<boolean>
-  onIncreaseFundGoal: () => Promise<boolean>
+  onIncreaseFundGoal: (amount: number) => Promise<boolean>
   onCloseFundPool: () => Promise<boolean>
 }
 

@@ -1,13 +1,15 @@
 "use client"
 
 import { useCallback, useState } from "react"
+
 import type { Startup } from "@/types/startup"
 import type { FundPool } from "@/types/fund-pool"
 import { createFundPool } from "@/app/(dashboard)/my-startup/actions"
 import { toast } from "sonner"
 import ViewStartupMobile from "@/app/(dashboard)/my-startup/(view-startup)/(views)/view-startup-mobile"
 import ViewStartupDesktop from "@/app/(dashboard)/my-startup/(view-startup)/(views)/view-startup-desktop"
-import { Investment } from "@/types/investment"
+import type { Investment } from "@/types/investment"
+import { updateFundPool, updateInvestment } from "../../dashboard/actions"
 
 interface ViewStartupProps {
   startup: Startup
@@ -22,10 +24,11 @@ export default function ViewStartup({ startup, industries, fundPool, investments
   const handleCreateFundPool = useCallback(
     async (amount: number) => {
       try {
-        const fundPoolData = {
+        const fundPoolData: Partial<FundPool> = {
           startup_id: startup.id,
           fund_goal: amount,
         }
+
         const newFundPool = await createFundPool(fundPoolData)
 
         // Update the local state with the new data
@@ -37,6 +40,7 @@ export default function ViewStartup({ startup, industries, fundPool, investments
         toast.success("Success!", {
           description: "Your fund pool has been created successfully.",
         })
+
         return true
       } catch (error) {
         toast.error("Operation failed", {
@@ -50,67 +54,95 @@ export default function ViewStartup({ startup, industries, fundPool, investments
   )
 
   const handleInceaseFundGoal = useCallback(
-    async () => {
-      console.log('increase fund goal');
-      return true;
-      // try {
-      //   const fundPoolData = {
-      //     startup_id: startup.id,
-      //     fund_goal: amount,
-      //   }
-      //   const newFundPool = await createFundPool(fundPoolData)
+    async (amount: number) => {
+      // Check if currentFundPool exists and has an id
+      if (!currentFundPool?.id) {
+        toast.error("Operation failed", {
+          description: "No fund pool found to update.",
+        })
+        return false
+      }
 
-      //   // Update the local state with the new data
-      //   setCurrentFundPool((prev) => ({
-      //     ...prev,
-      //     ...newFundPool,
-      //   }))
+      try {
+        const updateData: Partial<FundPool> = {
+          fund_goal: amount,
+        }
 
-      //   toast.success("Success!", {
-      //     description: "Your fund pool has been created successfully.",
-      //   })
-      //   return true
-      // } catch (error) {
-      //   toast.error("Operation failed", {
-      //     description: "Failed to create fund pool.",
-      //   })
-      //   console.error("Failed to create fund pool:", error)
-      //   throw error
-      // }
+        const newFundPool = await updateFundPool(currentFundPool.id, updateData)
+
+        // Update the local state with the new data
+        setCurrentFundPool((prev) => ({
+          ...prev,
+          ...newFundPool,
+        }))
+
+        toast.success("Success!", {
+          description: "Your fund goal has been updated successfully.",
+        })
+
+        return true
+      } catch (error) {
+        toast.error("Operation failed", {
+          description: "Failed to increase fund goal",
+        })
+        console.error("Failed to increase fund goal", error)
+        throw error
+      }
     },
-    [startup.id],
+    [currentFundPool?.id], // Updated dependency to use currentFundPool
   )
 
   const handleCloseFundPool = useCallback(
     async () => {
-      console.log('closing fund pool');
-      return true;
-      // try {
-      //   const fundPoolData = {
-      //     startup_id: startup.id,
-      //     fund_goal: amount,
-      //   }
-      //   const newFundPool = await createFundPool(fundPoolData)
+      // Check if currentFundPool exists and has an id
+      if (!currentFundPool?.id) {
+        toast.error("Operation failed", {
+          description: "No fund pool found to close.",
+        })
+        return false
+      }
 
-      //   // Update the local state with the new data
-      //   setCurrentFundPool((prev) => ({
-      //     ...prev,
-      //     ...newFundPool,
-      //   }))
+      try {
+        const updateData: Partial<FundPool> = {
+          status: 'completed'
+        }
 
-      //   toast.success("Success!", {
-      //     description: "Your fund pool has been created successfully.",
-      //   })
-      //   return true
-      // } catch (error) {
-      //   toast.error("Operation failed", {
-      //     description: "Failed to create fund pool.",
-      //   })
-      //   console.error("Failed to create fund pool:", error)
-      //   throw error
-      // }
+        const newFundPool = await updateFundPool(currentFundPool.id, updateData)
+
+        // Filter open investments
+        const investmentsToUpdate = investments.filter(
+          (investment) =>
+            investment.status === "needs_action" || investment.status === "pending",
+        )
+
+        // Update each investment to 'inactive' status
+        const investmentUpdatePromises = investmentsToUpdate.map((investment) =>
+          updateInvestment(investment.id, { status: "inactive" }),
+        )
+
+        // Wait for all investment updates to complete
+        await Promise.all(investmentUpdatePromises)
+
+        // Update the local state with the new data
+        setCurrentFundPool((prev) => ({
+          ...prev,
+          ...newFundPool,
+        }))
+
+        toast.success("Success!", {
+          description: "Your fund pool has been closed successfully.",
+        })
+
+        return true
+      } catch (error) {
+        toast.error("Operation failed", {
+          description: "Failed to close fund pool.",
+        })
+        console.error("Failed to close fund pool:", error)
+        throw error
+      }
     },
-    [startup.id],
+    [currentFundPool?.id], // Updated dependency to use currentFundPool
   )
 
   const viewProps = {
@@ -120,7 +152,7 @@ export default function ViewStartup({ startup, industries, fundPool, investments
     investments,
     onCreateFundPool: handleCreateFundPool,
     onIncreaseFundGoal: handleInceaseFundGoal,
-    onCloseFundPool: handleCloseFundPool
+    onCloseFundPool: handleCloseFundPool,
   }
 
   return (
@@ -129,7 +161,6 @@ export default function ViewStartup({ startup, industries, fundPool, investments
       <div className="lg:hidden">
         <ViewStartupMobile {...viewProps} />
       </div>
-
       {/* Desktop View - Hidden on mobile */}
       <div className="hidden lg:block">
         <ViewStartupDesktop {...viewProps} />

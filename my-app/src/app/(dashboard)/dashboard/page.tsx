@@ -3,9 +3,16 @@ import { redirect } from "next/navigation";
 import { FundPool } from "@/types/fund-pool";
 import { Profile } from "@/types/profile";
 import { Investment } from "@/types/investment";
-import FounderDashboard from "./(founders)/founder-dashboard";
-import InvestorDashboard from "./(investors)/investor-dashboard";
+import FounderDashboard from "@/app/(dashboard)/dashboard/(founders)/founder-dashboard";
+import InvestorDashboard from "@/app/(dashboard)/dashboard/(investors)/investor-dashboard";
 import { Startup } from "@/types/startup";
+
+// 1. Fetch user
+// 2. If user is a founder, then fetch user profile
+// 3. If profile has a startup, then fetch joined investments
+// 4. Render Founder Dashboard
+// 5. If user is an investor, then fetch joined investments
+// 6. Render Investor Dashboard
 
 interface JoinedInvestment extends Investment {
   fund_pool: FundPool;

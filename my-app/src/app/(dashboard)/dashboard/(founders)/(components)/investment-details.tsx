@@ -16,8 +16,8 @@ import type { FundPool } from "@/types/fund-pool"
 import type { Investment } from "@/types/investment"
 import { displayName, getInitials, type Profile } from "@/types/profile"
 import type { Startup } from "@/types/startup"
-import { ArrowLeft, Check, MailIcon, X } from "lucide-react"
-import { useState } from "react"
+import { ArrowLeft, Check, MailIcon, X, AlertTriangle } from "lucide-react"
+import { useMemo, useState } from "react"
 
 interface JoinedInvestment extends Investment {
   fund_pool: FundPool
@@ -27,6 +27,7 @@ interface JoinedInvestment extends Investment {
 
 interface InvestmentDetailsProps {
   investment: JoinedInvestment
+  investments: JoinedInvestment[] | null
   onConfirmAccept?: (invesmentId: string) => void
   onConfirmDecline?: (invesmentId: string) => void
   onBack: () => void
@@ -34,6 +35,7 @@ interface InvestmentDetailsProps {
 
 export default function InvestmentDetails({
   investment,
+  investments,
   onConfirmAccept,
   onConfirmDecline,
   onBack,
@@ -41,6 +43,21 @@ export default function InvestmentDetails({
   const [isBioExpanded, setIsBioExpanded] = useState(false)
   const [showAcceptModal, setShowAcceptModal] = useState<boolean>(false)
   const [showDeclineModal, setShowDeclineModal] = useState<boolean>(false)
+
+  // Calculate total confirmed investments
+  const totalConfirmedInvestments = useMemo(() => {
+    if (investments) {
+      return investments
+        .filter((investment) => investment.status === "confirmed")
+        .reduce((total, investment) => total + investment.amount, 0)
+    } else {
+      return 0
+    }
+  }, [investments])
+
+  // Calculate if accepting this investment would exceed the funding goal
+  const newTotalAmount = totalConfirmedInvestments + investment.amount
+  const willExceedFundingGoal = newTotalAmount > investment.fund_pool.fund_goal
 
   const handleAcceptClick = () => {
     setShowAcceptModal(true)
@@ -88,6 +105,7 @@ export default function InvestmentDetails({
             </button>
           </div>
         )}
+
         <div className="container mx-auto py-4 px-4">
           <div className="space-y-2">
             {/* Header Section with Profile and Name */}
@@ -109,26 +127,11 @@ export default function InvestmentDetails({
               <div className="space-y-2">
                 <h1 className="text-xl font-bold">{displayName(investment.profile)}</h1>
                 <div className="flex flex-col text-xs text-gray-400">
-                  {/* <div className="flex items-center gap-1">
-                <MapPinIcon className="h-3 w-3" />
-                <span>
-                  {startup.city}, {startup.state}
-                </span>
-              </div> */}
                   <div className="flex items-center gap-1">
                     <MailIcon className="h-3 w-3" />
                     <span>{investment.profile.email}</span>
                   </div>
                 </div>
-                {/* {industries && industries.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {industries.map((industry, index) => (
-                  <Badge key={index} variant="secondary" className="text-xs px-2 py-0.5 h-auto">
-                    {industry}
-                  </Badge>
-                ))}
-              </div>
-            )} */}
               </div>
             </div>
 
@@ -168,21 +171,22 @@ export default function InvestmentDetails({
                       : investment.status === "pending"
                         ? "Fund Pool Request Accepted!"
                         : investment.status === "confirmed"
-                          ? "Invesment Confirmed!"
+                          ? "Investment Confirmed!"
                           : "Request Details"}
                   </h2>
 
                   {/* Status Badge */}
                   <div className="flex justify-start">
                     <span
-                      className={`text-xs font-medium px-3 py-1 rounded-full ${investment.status === "needs_action"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : investment.status === "pending"
-                          ? "bg-blue-100 text-blue-800"
-                          : investment.status === "confirmed"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
+                      className={`text-xs font-medium px-3 py-1 rounded-full ${
+                        investment.status === "needs_action"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : investment.status === "pending"
+                            ? "bg-blue-100 text-blue-800"
+                            : investment.status === "confirmed"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-100 text-gray-800"
+                      }`}
                     >
                       {investment.status === "needs_action"
                         ? "Needs Action"
@@ -208,8 +212,9 @@ export default function InvestmentDetails({
                         )}
                         {investment.status === "pending" && (
                           <div>
-                            {/* <div>Requested on {new Date(investment.created_at).toLocaleDateString()}</div> */}
-                            {investment.updated_at && <div>Accepted on {new Date(investment.updated_at).toLocaleDateString()}</div>}
+                            {investment.updated_at && (
+                              <div>Accepted on {new Date(investment.updated_at).toLocaleDateString()}</div>
+                            )}
                           </div>
                         )}
                         {investment.status === "confirmed" && investment.updated_at && (
@@ -227,8 +232,7 @@ export default function InvestmentDetails({
                         ? "You have accepted this request and are awaiting investor confirmation. When they confirm, the investment will be finalized and the amount will be added to your fund pool."
                         : investment.status === "confirmed"
                           ? "This investment has been finalized and the amount was added to your fund pool."
-                          : ""
-                    }
+                          : ""}
                   </p>
 
                   {/* Action Buttons - Right aligned */}
@@ -284,7 +288,33 @@ export default function InvestmentDetails({
                 <span className="text-sm text-gray-600">Amount:</span>
                 <span className="text-sm font-medium text-green-600">{formatCurrency(investment.amount)}</span>
               </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Pool Now:</span>
+                <span className="text-sm font-medium"><span className="text-green-600">{formatCurrency(totalConfirmedInvestments)}</span> / {formatCurrency(investment.fund_pool.fund_goal)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-600">Pool After:</span>
+                <span className="text-sm font-medium"><span className="text-green-600">{formatCurrency(newTotalAmount)}</span> / {formatCurrency(newTotalAmount)}</span>
+              </div>
             </div>
+
+            {/* Warning message if fund goal will be exceeded */}
+            {willExceedFundingGoal && (
+              <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <div className="text-sm">
+                    <p className="font-medium text-amber-800 mb-1">Fund Goal Will Be Exceeded</p>
+                    <p className="text-amber-700">
+                      Once confirmed, this investment will raise your fund goal from{" "}
+                      <span className="font-medium">{formatCurrency(investment.fund_pool.fund_goal)}</span> to{" "}
+                      <span className="font-medium">{formatCurrency(newTotalAmount)}</span> to accommodate the new total
+                      amount.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <DialogFooter className="flex space-x-2">

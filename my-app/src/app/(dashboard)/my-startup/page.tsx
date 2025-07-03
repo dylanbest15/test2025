@@ -3,7 +3,7 @@ import { redirect } from "next/navigation"
 import CreateStartupWrapper from "@/app/(dashboard)/my-startup/(create-startup)/create-startup-wrapper"
 import ViewStartup from "@/app/(dashboard)/my-startup/(view-startup)/view-startup"
 
-// 1. Fetch user profile
+// 1. Fetch user and user profile
 // 2. If profile does not have a startup, then render Create Startup
 // 3. If profile has a startup, then fetch startup
 // 4. Fetch startup industries

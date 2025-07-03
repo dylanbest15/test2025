@@ -7,7 +7,7 @@ import { Startup } from "@/types/startup";
 import ManageRequests from "@/app/(dashboard)/dashboard/(investors)/(components)/manage-requests";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { updateInvestment } from "@/app/(dashboard)/dashboard/actions";
+import { updateFundPool, updateInvestment } from "@/app/(dashboard)/dashboard/actions";
 import InvestmentHistory from "@/app/(dashboard)/dashboard/(investors)/(components)/investment-history";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronDown, ChevronUp, TrendingUp } from "lucide-react";

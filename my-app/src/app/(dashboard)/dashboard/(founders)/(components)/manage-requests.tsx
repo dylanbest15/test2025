@@ -147,6 +147,7 @@ export default function ManageRequests({ investments, onAcceptInvestment, onDecl
           {selectedInvestment && (
             <InvestmentDetails
               investment={selectedInvestment}
+              investments={investments}
               onConfirmAccept={onAcceptInvestment}
               onConfirmDecline={onDeclineInvestment}
               onBack={() => setSheetOpen(false)} />

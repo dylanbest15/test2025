@@ -16,8 +16,12 @@ export type Investment = {
 }
 
 export function getFormattedInvestmentStatus(status: Investment["status"]): string {
-  return status
-    .split("_")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ")
+  if (status === 'needs_action') {
+    return 'Submitted';
+  } else {
+    return status
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ")
+  }
 }

@@ -20,8 +20,6 @@ interface ViewFundPoolProps {
 export default function ViewFundPoolCard({ fundPool, investments, existingInvestment, onJoinFundPool }: ViewFundPoolProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  console.log(existingInvestment);
-
   // Calculate total confirmed investments
   const totalConfirmedInvestments = useMemo(() => {
     return investments

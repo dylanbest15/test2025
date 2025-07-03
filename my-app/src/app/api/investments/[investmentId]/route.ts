@@ -1,6 +1,5 @@
 import { getNotificationConfigForInvestment } from "@/lib/helpers/investment-notification";
 import { InvestmentUpdateSchema } from "@/lib/validation/investments";
-import { Notification } from "@/types/notification";
 import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -31,7 +30,49 @@ export async function PUT(req: NextRequest, { params }: { params: { investmentId
       return NextResponse.json({ error: investmentErr.message }, { status: 500 });
     }
 
-    console.log(investmentData);
+    // check if fund_goal needs to be updated
+    if (parseResult.data.status === "confirmed") {
+      // get fund pool for this investment
+      const { data: fundPool, error: fundPoolError } = await supabase
+        .from("fund_pools")
+        .select("*")
+        .eq("id", investmentData.fund_pool_id)
+        .single()
+
+        if (fundPoolError) {
+          console.error("Failed to fetch fund pool:", fundPoolError)
+        } else {
+          // get all confirmed investments for fund pool
+          const { data: confirmedInvestments, error: confirmedInvestmentsError } = await supabase
+          .from("investments")
+          .select("*")
+          .eq("fund_pool_id", investmentData.fund_pool_id)
+          .eq("status", "confirmed")
+
+          if (confirmedInvestmentsError) {
+            console.error("Failed to fetch confirmed investments:", confirmedInvestmentsError)
+          } else {
+            // calculate total confirmed amount
+            const totalConfirmedAmount = confirmedInvestments.reduce((sum, inv) => sum + (inv.amount || 0), 0)
+
+            // check if total exceeds fund goal
+            if (totalConfirmedAmount > fundPool.fund_goal) {
+              // update fund goal to match new total
+              const { error: updateFundPoolError } = await supabase
+              .from("fund_pools")
+              .update({
+                fund_goal: totalConfirmedAmount,
+                updated_at: new Date().toISOString(),
+              })
+              .eq("id", investmentData.fund_pool_id)
+
+              if (updateFundPoolError) {
+                console.error("Failed to update fund pool goal:", updateFundPoolError)
+              }
+            }
+          }
+        }
+    }
 
     // create notification
     const notificationConfig = getNotificationConfigForInvestment(investmentData)

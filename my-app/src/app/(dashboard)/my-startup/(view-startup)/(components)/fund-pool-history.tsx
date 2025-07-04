@@ -1,9 +1,8 @@
 "use client"
+
 import { formatCurrency } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { X, TrendingUp, Calendar, Target, CheckCircle, Timer, TimerIcon, Trophy, DollarSign } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { TrendingUp, Calendar, CheckCircle, Trophy } from "lucide-react"
 import type { FundPool } from "@/types/fund-pool"
 
 interface FundPoolHistoryProps {
@@ -24,15 +23,6 @@ export default function FundPoolHistory({ fundPools, onClose }: FundPoolHistoryP
       year: "numeric",
       month: "long",
       day: "numeric",
-    })
-  }
-
-  const formatDateShort = (dateString: string | null) => {
-    if (!dateString) return "Unknown"
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
     })
   }
 
@@ -117,9 +107,6 @@ export default function FundPoolHistory({ fundPools, onClose }: FundPoolHistoryP
                             </div>
                           </div>
                         </div>
-                        {/* <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                          Completed
-                        </Badge> */}
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

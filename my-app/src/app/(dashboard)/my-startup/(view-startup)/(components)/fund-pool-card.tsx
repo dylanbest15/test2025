@@ -42,8 +42,6 @@ export default function FundPoolCard({
   const [goalError, setGoalError] = useState("")
   const [showOverlay, setShowOverlay] = useState(true)
 
-  console.log(fundPools);
-
   // Calculate total confirmed investments
   const totalConfirmedInvestments = useMemo(() => {
     return investments

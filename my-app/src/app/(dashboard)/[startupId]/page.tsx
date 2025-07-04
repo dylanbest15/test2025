@@ -2,6 +2,12 @@ import { createClient } from "@/utils/supabase/server";
 import ViewStartupResult from "@/app/(dashboard)/[startupId]/view-startup-result";
 import { notFound } from "next/navigation";
 
+// 1. Fetch startup using startupId param
+// 2. Fetch startup industries
+// 3. Fetch investor favorites and check if startup is favorited
+// 4. Fetch startup fund pool
+// 5. If fund pool exists, then fetch an existing investment
+
 interface StartupResultProps {
   params: Promise<{ startupId: string }>
 }

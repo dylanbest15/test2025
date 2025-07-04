@@ -7,8 +7,9 @@ import ViewStartup from "@/app/(dashboard)/my-startup/(view-startup)/view-startu
 // 2. If profile does not have a startup, then render Create Startup
 // 3. If profile has a startup, then fetch startup
 // 4. Fetch startup industries
-// 5. Fetch startup fund pool
-// 6. If startup fund pool exists, fetch fund pool investments
+// 5. Fetch startup fund pools
+// 6. If startup fund pools exist, find open fund pool
+// 6. If open fund pool exists, fetch open fund pool investments
 // 7. Render View Startup
 
 export default async function MyStartup() {
@@ -61,39 +62,46 @@ export default async function MyStartup() {
       industries = industryRes.map(industry => industry.name);
     }
 
+    let fundPools = [];
     // Fetch the fund pool
-    const { data: fundPool, error: fundPoolErr } = await supabase
+    const { data: fundPoolRes, error: fundPoolErr } = await supabase
       .from("fund_pools")
       .select("*")
       .eq("startup_id", profile.startup_id)
-      .single()
 
-    // ignore PGRST116 error (no fund pool exists)
-    if (fundPoolErr && fundPoolErr.code !== 'PGRST116') {
+    if (fundPoolErr) {
       console.error("Error fetching fund pool:", fundPoolErr)
       // return notFound();
     }
+    if (fundPoolRes) {
+      fundPools = fundPoolRes;
+    }
 
+    let openFundPool = null;
     let investments = [];
-    // if fund pool exists, fetch investments
-    if (fundPool) {
-      const { data: investmentRes, error: investmentErr } = await supabase
-      .from("investments")
-      .select("*")
-      .in("status", ["needs_action", "pending", "confirmed"])
-      .eq("fund_pool_id", fundPool.id)
+    // if fund pools exist, find open fund pool
+    if (fundPools && fundPools.length > 0) {
+      openFundPool = fundPools.find((pool) => pool.status === "open")
 
-      if (investmentErr) {
-        console.error("Error fetching industries:", industryErr);
-        // return notFound();
-      }
-      if (investmentRes) {
-        investments = investmentRes;
+      if (openFundPool) {
+        const { data: investmentRes, error: investmentErr } = await supabase
+        .from("investments")
+        .select("*")
+        .in("status", ["needs_action", "pending", "confirmed"])
+        .eq("fund_pool_id", openFundPool.id)
+  
+        if (investmentErr) {
+          console.error("Error fetching industries:", industryErr);
+          // return notFound();
+        }
+        if (investmentRes) {
+          investments = investmentRes;
+        }
       }
     }
 
     if (startup) {
-      return <ViewStartup startup={startup} industries={industries} fundPool={fundPool} investments={investments} />
+      return <ViewStartup startup={startup} industries={industries} openFundPool={openFundPool} fundPools={fundPools} investments={investments} />
     }
   }
 }

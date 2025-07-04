@@ -1,7 +1,6 @@
 "use client"
 
 import { useCallback, useState } from "react"
-
 import type { Startup } from "@/types/startup"
 import type { FundPool } from "@/types/fund-pool"
 import { createFundPool } from "@/app/(dashboard)/my-startup/actions"
@@ -9,17 +8,18 @@ import { toast } from "sonner"
 import ViewStartupMobile from "@/app/(dashboard)/my-startup/(view-startup)/(views)/view-startup-mobile"
 import ViewStartupDesktop from "@/app/(dashboard)/my-startup/(view-startup)/(views)/view-startup-desktop"
 import type { Investment } from "@/types/investment"
-import { updateFundPool, updateInvestment } from "../../dashboard/actions"
+import { updateFundPool, updateInvestment } from "@/app/(dashboard)/dashboard/actions"
 
 interface ViewStartupProps {
   startup: Startup
   industries: string[]
-  fundPool: FundPool | null
+  openFundPool: FundPool | null
+  fundPools: FundPool[] | []
   investments: Investment[] | []
 }
 
-export default function ViewStartup({ startup, industries, fundPool, investments }: ViewStartupProps) {
-  const [currentFundPool, setCurrentFundPool] = useState<FundPool | null>(fundPool)
+export default function ViewStartup({ startup, industries, openFundPool, fundPools, investments }: ViewStartupProps) {
+  const [currentFundPool, setCurrentFundPool] = useState<FundPool | null>(openFundPool)
 
   const handleCreateFundPool = useCallback(
     async (amount: number) => {
@@ -148,7 +148,8 @@ export default function ViewStartup({ startup, industries, fundPool, investments
   const viewProps = {
     startup,
     industries,
-    fundPool: currentFundPool,
+    openfundPool: currentFundPool,
+    fundPools,
     investments,
     onCreateFundPool: handleCreateFundPool,
     onIncreaseFundGoal: handleInceaseFundGoal,

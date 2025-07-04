@@ -13,14 +13,15 @@ import { Investment } from "@/types/investment"
 interface ViewStartupMobileProps {
   startup: Startup
   industries: string[]
-  fundPool: FundPool | null
+  openfundPool: FundPool | null
+  fundPools: FundPool[] | []
   investments: Investment[] | []
   onCreateFundPool: (amount: number) => Promise<boolean>
   onIncreaseFundGoal: (amount: number) => Promise<boolean>
   onCloseFundPool: () => Promise<boolean>
 }
 
-export default function ViewStartupMobile({ startup, industries, fundPool, investments, onCreateFundPool, onIncreaseFundGoal, onCloseFundPool }: ViewStartupMobileProps) {
+export default function ViewStartupMobile({ startup, industries, openfundPool, fundPools, investments, onCreateFundPool, onIncreaseFundGoal, onCloseFundPool }: ViewStartupMobileProps) {
   const [activeTab, setActiveTab] = useState("pitch-deck")
   const [isOverviewExpanded, setIsOverviewExpanded] = useState(false)
 
@@ -106,7 +107,8 @@ export default function ViewStartupMobile({ startup, industries, fundPool, inves
 
           {/* Fund Pool Card */}
           <FundPoolCard 
-            fundPool={fundPool} 
+            openFundPool={openfundPool}
+            fundPools={fundPools} 
             investments={investments} 
             onCreateFundPool={onCreateFundPool} 
             onIncreaseFundGoal={onIncreaseFundGoal}

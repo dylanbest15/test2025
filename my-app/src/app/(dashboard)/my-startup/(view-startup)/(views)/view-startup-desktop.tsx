@@ -13,14 +13,15 @@ import { Investment } from "@/types/investment"
 interface ViewStartupDesktopProps {
   startup: Startup
   industries: string[]
-  fundPool: FundPool | null
+  openfundPool: FundPool | null
+  fundPools: FundPool[] | []
   investments: Investment[] | []
   onCreateFundPool: (amount: number) => Promise<boolean>
   onIncreaseFundGoal: (amount: number) => Promise<boolean>
   onCloseFundPool: () => Promise<boolean>
 }
 
-export default function ViewStartupDesktop({ startup, industries, fundPool, investments, onCreateFundPool, onIncreaseFundGoal, onCloseFundPool }: ViewStartupDesktopProps) {
+export default function ViewStartupDesktop({ startup, industries, openfundPool, fundPools, investments, onCreateFundPool, onIncreaseFundGoal, onCloseFundPool }: ViewStartupDesktopProps) {
   return (
     <div className="min-h-screen bg-background flex">
 
@@ -107,7 +108,8 @@ export default function ViewStartupDesktop({ startup, industries, fundPool, inve
 
           {/* Fund Pool Card */}
           <FundPoolCard 
-            fundPool={fundPool} 
+            openFundPool={openfundPool}
+            fundPools={fundPools}
             investments={investments} 
             onCreateFundPool={onCreateFundPool} 
             onIncreaseFundGoal={onIncreaseFundGoal} 

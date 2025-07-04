@@ -4,6 +4,10 @@ import { Favorite } from "@/types/favorite";
 import { Startup } from "@/types/startup";
 import ViewFavorites from "@/app/(dashboard)/favorites/view-favorites";
 
+// 1. Fetch user
+// 2. Fetch user profile
+// 3. Fetch investor favorites
+
 interface JoinedFavorite extends Favorite {
   startup: Startup;
 }

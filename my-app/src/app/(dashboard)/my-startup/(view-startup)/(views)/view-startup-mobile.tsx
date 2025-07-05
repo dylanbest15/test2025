@@ -3,12 +3,14 @@
 import { useState } from "react"
 import type { Startup } from "@/types/startup"
 import type { FundPool } from "@/types/fund-pool"
-import { MapPinIcon, MailIcon, FileText, Building2, Calendar } from "lucide-react"
+import { MapPinIcon, MailIcon, FileText, Building2, Calendar, QrCode } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import FundPoolCard from "@/app/(dashboard)/my-startup/(view-startup)/(components)/fund-pool-card"
-import { Investment } from "@/types/investment"
+import type { Investment } from "@/types/investment"
+import QRCodeDialog from "@/app/(dashboard)/my-startup/(view-startup)/(components)/qr-code-dialog"
 
 interface ViewStartupMobileProps {
   startup: Startup
@@ -21,17 +23,46 @@ interface ViewStartupMobileProps {
   onCloseFundPool: () => Promise<boolean>
 }
 
-export default function ViewStartupMobile({ startup, industries, openfundPool, fundPools, investments, onCreateFundPool, onIncreaseFundGoal, onCloseFundPool }: ViewStartupMobileProps) {
+export default function ViewStartupMobile({
+  startup,
+  industries,
+  openfundPool,
+  fundPools,
+  investments,
+  onCreateFundPool,
+  onIncreaseFundGoal,
+  onCloseFundPool,
+}: ViewStartupMobileProps) {
   const [activeTab, setActiveTab] = useState("pitch-deck")
   const [isOverviewExpanded, setIsOverviewExpanded] = useState(false)
+  const [qrDialogOpen, setQrDialogOpen] = useState(false)
+
+  // Generate the QR code URL using base URL + startup ID
+  const getQRCodeUrl = () => {
+    if (typeof window !== "undefined") {
+      const baseUrl = `${window.location.protocol}//${window.location.host}`
+      return `${baseUrl}/${startup.id}`
+    }
+    return ""
+  }
 
   return (
-    <div className="w-screen min-h-screen  px-4 py-6 mb-20 bg-[#f8f9fa]">
+    <div className="w-screen min-h-screen px-4 py-6 mb-20 bg-[#f8f9fa]">
       <div className="w-full max-w-5xl mx-auto">
-        <div className="space-y-2">
-
+        <div className="space-y-2 mt-6">
+            {/* QR Code Button - Top Right */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setQrDialogOpen(true)}
+              className="absolute top-2 right-2 text-sm"
+            >
+              <QrCode className="h-5 w-5" />
+              Share QR Code
+            </Button>
           {/* Header Section with Logo and Name */}
-          <div className="flex items-start gap-4 bg-white p-4">
+          <div className="flex items-start gap-4 bg-white p-4 relative">
+
             <div className="relative">
               {startup.logo_url ? (
                 <div className="h-20 w-20 border-2 border-border overflow-hidden rounded-md flex items-center justify-center">
@@ -50,7 +81,7 @@ export default function ViewStartupMobile({ startup, industries, openfundPool, f
             </div>
 
             {/* Name and details */}
-            <div className="space-y-2 flex-1">
+            <div className="space-y-2 flex-1 pr-16">
               <h1 className="text-xl font-bold">{startup.name}</h1>
               <div className="flex flex-col text-xs text-gray-400">
                 <div className="flex items-center gap-1">
@@ -106,13 +137,13 @@ export default function ViewStartupMobile({ startup, industries, openfundPool, f
           </div>
 
           {/* Fund Pool Card */}
-          <FundPoolCard 
+          <FundPoolCard
             openFundPool={openfundPool}
-            fundPools={fundPools} 
-            investments={investments} 
-            onCreateFundPool={onCreateFundPool} 
+            fundPools={fundPools}
+            investments={investments}
+            onCreateFundPool={onCreateFundPool}
             onIncreaseFundGoal={onIncreaseFundGoal}
-            onCloseFundPool={onCloseFundPool} 
+            onCloseFundPool={onCloseFundPool}
           />
 
           {/* Tabs Section */}
@@ -121,9 +152,7 @@ export default function ViewStartupMobile({ startup, industries, openfundPool, f
               <TabsTrigger value="pitch-deck">Pitch Deck</TabsTrigger>
               <TabsTrigger value="ask-founders">Ask The Founders</TabsTrigger>
             </TabsList>
-
             <TabsContent value="pitch-deck" className="mt-2">
-
               {/* Pitch Deck Card */}
               <Card>
                 <CardHeader>
@@ -138,7 +167,6 @@ export default function ViewStartupMobile({ startup, industries, openfundPool, f
                 </CardContent>
               </Card>
             </TabsContent>
-
             <TabsContent value="ask-founders" className="mt-2">
               <Card>
                 <CardHeader>
@@ -156,6 +184,14 @@ export default function ViewStartupMobile({ startup, industries, openfundPool, f
           </Tabs>
         </div>
       </div>
+
+      {/* QR Code Dialog */}
+      <QRCodeDialog
+        open={qrDialogOpen}
+        onOpenChange={setQrDialogOpen}
+        url={getQRCodeUrl()}
+        startupName={startup.name}
+      />
     </div>
   )
 }

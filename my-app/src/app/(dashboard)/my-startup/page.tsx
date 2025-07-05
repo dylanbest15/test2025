@@ -63,7 +63,7 @@ export default async function MyStartup() {
     }
 
     let fundPools = [];
-    // Fetch the fund pool
+    // Fetch fund pools
     const { data: fundPoolRes, error: fundPoolErr } = await supabase
       .from("fund_pools")
       .select("*")
@@ -79,10 +79,11 @@ export default async function MyStartup() {
 
     let openFundPool = null;
     let investments = [];
-    // if fund pools exist, find open fund pool
+    // If fund pools exist, find open fund pool
     if (fundPools && fundPools.length > 0) {
       openFundPool = fundPools.find((pool) => pool.status === "open")
 
+      // If open fund pool exists, find investments
       if (openFundPool) {
         const { data: investmentRes, error: investmentErr } = await supabase
         .from("investments")

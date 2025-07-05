@@ -26,7 +26,8 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
   const [activeTab, setActiveTab] = useState("pitch-deck")
   const [profileId, setProfileId] = useState<string>("")
   const [industries, setIndustries] = useState<string[] | []>([])
-  const [fundPool, setFundPool] = useState<FundPool | null>(null)
+  const [openFundPool, setOpenFundPool] = useState<FundPool | null>(null)
+  const [fundPools, setFundPools] = useState<FundPool[] | []>([])
   const [investments, setInvestments] = useState<Investment[] | []>([])
   const [existingInvestment, setExistingInvestment] = useState<Investment | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -64,37 +65,39 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
           .from("fund_pools")
           .select("*")
           .eq("startup_id", startup.id)
-          .single()
 
-        // ignore PGRST116 error (no fund pool exists)
-        if (fundPoolErr && fundPoolErr.code !== "PGRST116") {
+        if (fundPoolErr) {
           console.error("Error fetching fund pool:", fundPoolErr)
         } else {
-          setFundPool(fundPoolData)
+          setFundPools(fundPoolData)
 
-          // If fund pool exists, get investments and check for existing investment
-          if (fundPoolData && user) {
-            const { data: investmentData, error: investmentsErr } = await supabase
-              .from("investments")
-              .select("*")
-              .eq("fund_pool_id", fundPoolData.id)
-              .in("status", ["needs_action", "pending", "confirmed"])
+          if (fundPoolData && fundPoolData.length > 0) {
+            const openFundPool = fundPoolData.find((pool) => pool.status === "open") || null
+            setOpenFundPool(openFundPool)
 
-            if (investmentsErr) {
-              console.error("Error fetching investments:", investmentsErr)
-            } else {
-              // Find the existing investment
-              const userInvestment = investmentData.find(inv => inv.profile_id === user.id)
-              setExistingInvestment(userInvestment || null)
-
-              // Store all investments for display/calculations
-              setInvestments(investmentData)
+            if (openFundPool && user) {
+              const { data: investmentData, error: investmentsErr } = await supabase
+                .from("investments")
+                .select("*")
+                .eq("fund_pool_id", openFundPool.id)
+                .in("status", ["needs_action", "pending", "confirmed"])
+  
+              if (investmentsErr) {
+                console.error("Error fetching investments:", investmentsErr)
+              } else {
+                // Find the existing investment
+                const userInvestment = investmentData.find(inv => inv.profile_id === user.id)
+                setExistingInvestment(userInvestment || null)
+  
+                // Store all investments for display/calculations
+                setInvestments(investmentData)
+              }
             }
           }
+
         }
       } catch (error) {
-        console.error("Failed to fetch fund pool:", error)
-        setFundPool(null)
+        console.error("Failed to fetch fund pools:", error)
       } finally {
         setIsLoading(false)
       }
@@ -113,7 +116,7 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
   const handleJoinFundPool = useCallback(
     async (amount: number) => {
       try {
-        if (!fundPool) {
+        if (!openFundPool) {
           toast.error("Operation failed", {
             description: "Fund pool not available.",
           })
@@ -122,7 +125,7 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
 
         const investmentData = {
           amount,
-          fund_pool_id: fundPool.id,
+          fund_pool_id: openFundPool.id,
           startup_id: startup.id,
           profile_id: profileId
         }
@@ -143,7 +146,7 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
         throw error
       }
     },
-    [startup.id, fundPool, profileId],
+    [startup.id, openFundPool, profileId],
   )
 
   if (isLoading) {
@@ -257,7 +260,7 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
           </div>
 
           {/* Fund Pool Card */}
-          <ViewFundPool fundPool={fundPool} investments={investments} existingInvestment={existingInvestment} onJoinFundPool={handleJoinFundPool} />
+          <ViewFundPool fundPool={openFundPool} investments={investments} existingInvestment={existingInvestment} onJoinFundPool={handleJoinFundPool} />
 
           {/* Tabs Section */}
           <Tabs defaultValue="pitch-deck" className="w-full mt-4" onValueChange={setActiveTab}>

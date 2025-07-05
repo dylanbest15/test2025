@@ -69,37 +69,45 @@ export default async function StartupResult({ params }: StartupResultProps) {
       }
     }
 
-    // Fetch the fund pool
-    let { data: fundPool, error: fundPoolErr } = await supabase
+    let fundPools = [];
+    // Fetch fund pools
+    let { data: fundPoolRes, error: fundPoolErr } = await supabase
       .from("fund_pools")
-      .select()
+      .select("*")
       .eq("startup_id", startupId)
-      .single()
 
-    // ignore PGRST116 error (no fund pool exists)
-    if (fundPoolErr && fundPoolErr.code !== 'PGRST116') {
+    if (fundPoolErr) {
       console.error("Error fetching fund pool:", fundPoolErr)
       // return notFound();
     }
+    if (fundPoolRes) {
+      fundPools = fundPoolRes;
+    }
 
+    let openFundPool = null;
     let existingInvestment = null;
     let investments = [];
-    // If fund pool exists, check for existing pending investment
-    if (fundPool && user) {
-      const { data: investmentData, error: investmentsErr } = await supabase
-        .from("investments")
-        .select("*")
-        .eq("fund_pool_id", fundPool.id)
-        .in("status", ["needs_action", "pending", "confirmed"])
+    // If fund pools exist, find openFundPool
+    if (fundPools && fundPools.length > 0) {
+      openFundPool = fundPools.find((pool) => pool.status === "open")
 
-      if (investmentsErr) {
-        console.error("Error fetching investments:", investmentsErr)
-      } else {
-        // Find the existing investment
-        const userInvestment = investmentData.find(inv => inv.profile_id === user.id)
-        existingInvestment = userInvestment || null
-
-        investments = investmentData
+      // If open fund pool exists, check for existing pending investment
+      if (openFundPool && user) {
+        const { data: investmentData, error: investmentsErr } = await supabase
+          .from("investments")
+          .select("*")
+          .eq("fund_pool_id", openFundPool.id)
+          .in("status", ["needs_action", "pending", "confirmed"])
+  
+        if (investmentsErr) {
+          console.error("Error fetching investments:", investmentsErr)
+        } else {
+          // Find the existing investment
+          const userInvestment = investmentData.find(inv => inv.profile_id === user.id)
+          existingInvestment = userInvestment || null
+  
+          investments = investmentData
+        }
       }
     }
 
@@ -109,7 +117,7 @@ export default async function StartupResult({ params }: StartupResultProps) {
           startup={startup}
           industries={industries}
           favorite={favorite}
-          fundPool={fundPool}
+          fundPool={openFundPool}
           investments={investments}
           existingInvestment={existingInvestment}
         />

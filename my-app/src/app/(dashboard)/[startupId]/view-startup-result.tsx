@@ -15,7 +15,8 @@ import { Investment } from "@/types/investment"
 interface ViewStartupResultProps {
   startup: Startup
   industries: string[]
-  fundPool: FundPool | null
+  openFundPool: FundPool | null
+  fundPools: FundPool[] | []
   investments: Investment[] | []
   existingInvestment: Investment | null
   favorite: Partial<Favorite> | null
@@ -24,14 +25,16 @@ interface ViewStartupResultProps {
 export default function ViewStartupResult({
   startup,
   industries: industriesProp,
-  fundPool: fundPoolProp,
+  openFundPool: openFundPoolProp,
+  fundPools: fundPoolsProp,
   investments: investmentsProp,
   existingInvestment: existingInvestmentProp,
   favorite: favoriteProp,
 }: ViewStartupResultProps) {
   const [profileId, setProfileId] = useState<string>("")
   const [industries, setIndustries] = useState<string[]>(industriesProp)
-  const [fundPool, setFundPool] = useState<FundPool | null>(fundPoolProp)
+  const [openFundPool, setOpenFundPool] = useState<FundPool | null>(openFundPoolProp)
+  const [fundPools, setFundPools] = useState<FundPool[] | []>(fundPoolsProp)
   const [favorite, setFavorite] = useState<Partial<Favorite> | null>(favoriteProp)
   const [investments, setInvestments] = useState<Investment[] | []>(investmentsProp)
   const [existingInvestment, setExistingInvestment] = useState<Investment | null>(existingInvestmentProp)
@@ -62,7 +65,7 @@ export default function ViewStartupResult({
     }
 
     loadData()
-  }, [startup.id, industriesProp, favoriteProp, fundPoolProp])
+  }, [startup.id, industriesProp, favoriteProp, openFundPoolProp])
 
   const handleFollowClick = useCallback(async () => {
     try {
@@ -98,7 +101,7 @@ export default function ViewStartupResult({
   const handleJoinFundPool = useCallback(
     async (amount: number) => {
       try {
-        if (!fundPool) {
+        if (!openFundPool) {
           toast.error("Operation failed", {
             description: "Fund pool not available.",
           })
@@ -107,7 +110,7 @@ export default function ViewStartupResult({
 
         const investmentData = {
           amount,
-          fund_pool_id: fundPool.id,
+          fund_pool_id: openFundPool.id,
           startup_id: startup.id,
           profile_id: profileId
         }
@@ -128,13 +131,14 @@ export default function ViewStartupResult({
         throw error
       }
     },
-    [startup.id, fundPool, profileId],
+    [startup.id, openFundPool, profileId],
   )
 
   const viewProps = {
     startup,
     industries,
-    fundPool,
+    openFundPool,
+    fundPools,
     investments,
     existingInvestment,
     following,

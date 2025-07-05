@@ -117,7 +117,8 @@ export default async function StartupResult({ params }: StartupResultProps) {
           startup={startup}
           industries={industries}
           favorite={favorite}
-          fundPool={openFundPool}
+          openFundPool={openFundPool}
+          fundPools={fundPools}
           investments={investments}
           existingInvestment={existingInvestment}
         />

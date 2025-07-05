@@ -13,7 +13,8 @@ import { Investment } from "@/types/investment"
 interface StartupResultMobileProps {
   startup: Startup
   industries: string[]
-  fundPool: FundPool | null
+  openFundPool: FundPool | null
+  fundPools: FundPool[] | []
   investments: Investment[] | []
   existingInvestment: Investment | null
   following: boolean
@@ -24,7 +25,8 @@ interface StartupResultMobileProps {
 export default function StartupResultMobile({
   startup,
   industries,
-  fundPool,
+  openFundPool,
+  fundPools,
   investments,
   existingInvestment,
   following,
@@ -127,7 +129,7 @@ export default function StartupResultMobile({
           </div>
 
           {/* Fund Pool Card */}
-          <ViewFundPool fundPool={fundPool} investments={investments} existingInvestment={existingInvestment} onJoinFundPool={onJoinFundPool} />
+          <ViewFundPool openFundPool={openFundPool} fundPools={fundPools} investments={investments} existingInvestment={existingInvestment} onJoinFundPool={onJoinFundPool} />
 
           {/* Tabs Section */}
           <Tabs defaultValue="pitch-deck" className="w-full mt-4" onValueChange={setActiveTab}>

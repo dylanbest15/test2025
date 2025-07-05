@@ -13,7 +13,8 @@ import { Investment } from "@/types/investment"
 interface StartupResultDesktopProps {
   startup: Startup
   industries: string[]
-  fundPool: FundPool | null
+  openFundPool: FundPool | null
+  fundPools: FundPool[] | []
   investments: Investment[] | []
   existingInvestment: Investment | null
   following: boolean
@@ -24,7 +25,8 @@ interface StartupResultDesktopProps {
 export default function StartupResultDesktop({
   startup,
   industries,
-  fundPool,
+  openFundPool,
+  fundPools,
   investments,
   existingInvestment,
   following,
@@ -130,7 +132,7 @@ export default function StartupResultDesktop({
           </div>
 
           {/* Fund Pool */}
-          <ViewFundPool fundPool={fundPool} investments={investments} existingInvestment={existingInvestment} onJoinFundPool={onJoinFundPool} />
+          <ViewFundPool openFundPool={openFundPool} fundPools={fundPools} investments={investments} existingInvestment={existingInvestment} onJoinFundPool={onJoinFundPool} />
 
           {/* Two Column Content */}
           <div className="grid grid-cols-3 gap-6">

@@ -11,13 +11,14 @@ import { useMemo, useState } from "react"
 import { getFormattedInvestmentStatus, Investment } from "@/types/investment"
 
 interface ViewFundPoolProps {
-  fundPool: FundPool | null
+  openFundPool: FundPool | null
+  fundPools: FundPool[] | []
   investments: Investment[] | []
   existingInvestment: Investment | null
   onJoinFundPool: (amount: number) => void
 }
 
-export default function ViewFundPoolCard({ fundPool, investments, existingInvestment, onJoinFundPool }: ViewFundPoolProps) {
+export default function ViewFundPoolCard({ openFundPool, fundPools, investments, existingInvestment, onJoinFundPool }: ViewFundPoolProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
 
   // Calculate total confirmed investments
@@ -29,9 +30,9 @@ export default function ViewFundPoolCard({ fundPool, investments, existingInvest
 
   // Calculate progress percentage
   const progressPercentage = useMemo(() => {
-    if (!fundPool?.fund_goal || fundPool.fund_goal === 0) return 0
-    return Math.min((totalConfirmedInvestments / fundPool.fund_goal) * 100, 100)
-  }, [totalConfirmedInvestments, fundPool?.fund_goal])
+    if (!openFundPool?.fund_goal || openFundPool.fund_goal === 0) return 0
+    return Math.min((totalConfirmedInvestments / openFundPool.fund_goal) * 100, 100)
+  }, [totalConfirmedInvestments, openFundPool?.fund_goal])
 
   const handleJoinFundPool = (amount: number) => {
     if (onJoinFundPool) {
@@ -55,7 +56,7 @@ export default function ViewFundPoolCard({ fundPool, investments, existingInvest
         )} */}
 
         <CardContent className="p-6 pt-0 pb-0">
-          {fundPool ? (
+          {openFundPool ? (
             <div className="space-y-4">
               {/* <div>
                 <p className="text-xs text-muted-foreground">Funding Goal</p>
@@ -67,7 +68,7 @@ export default function ViewFundPoolCard({ fundPool, investments, existingInvest
                   <span className="font-medium">Progress</span>
                   <span>
                     {formatCurrency(totalConfirmedInvestments)} of{" "}
-                    <span className="font-bold">{formatCurrency(fundPool.fund_goal)}</span>
+                    <span className="font-bold">{formatCurrency(openFundPool.fund_goal)}</span>
                   </span>
                 </div>
                 <Progress value={progressPercentage} className="h-2.5 [&>div]:bg-green-500" />

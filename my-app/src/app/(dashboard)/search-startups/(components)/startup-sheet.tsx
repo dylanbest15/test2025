@@ -260,7 +260,7 @@ export default function StartupSheet({ startup, following, onFollowClick, onBack
           </div>
 
           {/* Fund Pool Card */}
-          <ViewFundPool fundPool={openFundPool} investments={investments} existingInvestment={existingInvestment} onJoinFundPool={handleJoinFundPool} />
+          <ViewFundPool openFundPool={openFundPool} fundPools={fundPools} investments={investments} existingInvestment={existingInvestment} onJoinFundPool={handleJoinFundPool} />
 
           {/* Tabs Section */}
           <Tabs defaultValue="pitch-deck" className="w-full mt-4" onValueChange={setActiveTab}>
